@@ -11,3 +11,10 @@ Cuando terminan:
 git add .
 git commit -m "Lo que hayan hecho"
 git push
+
+cuando se te pone la consola rara:
+Pulsa Esc
+
+Escribe :wq
+
+Pulsa Enter
