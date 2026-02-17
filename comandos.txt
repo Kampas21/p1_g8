@@ -17,6 +17,6 @@ git push
 cuando se te pone la consola rara:
 Pulsa Esc
 
-Escribe :wq
+Escribe ":wq"
 
 Pulsa Enter
