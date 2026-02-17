@@ -1,4 +1,4 @@
-<!doctype html>
+<!-- <!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
@@ -17,4 +17,390 @@
 
 </body>
 
+</html> rob-->
+
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bocetos | Bistro FDI</title>
+
+  <style>
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+    }
+
+    h2 {
+      margin-top: 60px;
+    }
+
+    .intro {
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .indice {
+      background: #fafafa;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 15px 18px;
+      margin: 20px 0 35px;
+    }
+
+    .indice ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .boceto {
+      border-top: 1px solid #eee;
+      padding-top: 28px;
+      margin-top: 28px;
+    }
+
+    figure {
+      margin: 14px 0;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      background: #fff;
+    }
+
+    figcaption {
+      margin-top: 8px;
+      font-size: 0.95rem;
+      color: #333;
+    }
+
+    .bloque {
+      margin-top: 10px;
+      line-height: 1.55;
+    }
+
+    .nota {
+      background: #fff8e1;
+      border: 1px solid #f3e2a6;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin: 18px 0;
+    }
+
+    .volver {
+      margin-top: 10px;
+    }
+
+    .flujos {
+      border-top: 2px solid #ddd;
+      margin-top: 40px;
+      padding-top: 25px;
+    }
+  </style>
+</head>
+
+<body>
+  <header id="main-header"></header>
+  <script src="JS/header-loader.js"></script>
+
+  <main>
+    <h2 id="top">Bocetos de la aplicación</h2>
+
+    <div class="intro">
+      <p>
+        En esta página presentamos bocetos de baja fidelidad (wireframes) para las pantallas intermedias que verán los
+        distintos usuarios de Bistro FDI (cliente, camarero, cocinero y gerente). Incluimos una explicación textual de
+        cada pantalla y cómo se navega entre ellas, paso a paso, desde la página principal.
+      </p>
+    </div>
+
+    <div class="nota">
+      <p>
+        Nota de diseño: para la creación de pedidos, el cliente usará principalmente un móvil en vertical; camareros y
+        cocineros utilizarán tablets con interfaces sencillas; y el gerente usará un ordenador con vistas
+        pensadas para gestión y formularios.
+      </p>
+    </div>
+
+    <nav class="indice" aria-label="Índice de bocetos">
+      <p><strong>Índice</strong> (cada boceto indica la funcionalidad a la que pertenece):</p>
+      <ul>
+        <li><a href="#b1">Boceto 1 — Inicio (Desktop)</a></li>
+        <li><a href="#b2">Boceto 2 — Login / Registro</a></li>
+        <li><a href="#b3">Boceto 3 — Carta: categorías y productos (Móvil)</a></li>
+        <li><a href="#b4">Boceto 4 — Detalle de producto (Móvil)</a></li>
+        <li><a href="#b5">Boceto 5 — Carrito (Móvil)</a></li>
+        <li><a href="#b6">Boceto 6 — Pago (Móvil)</a></li>
+        <li><a href="#b7">Boceto 7 — Confirmación</a></li>
+        <li><a href="#b8">Boceto 8 — Perfil y pedidos (Desktop)</a></li>
+        <li><a href="#b9">Boceto 9 — Cocina (Tablet apaisada)</a></li>
+        <li><a href="#b10">Boceto 10 — Camarero (Tablet apaisada)</a></li>
+        <li><a href="#b11">Boceto 11 — Gerente: gestión de productos</a></li>
+        <li><a href="#flujos">Flujos paso a paso desde la página principal</a></li>
+      </ul>
+    </nav>
+
+    <section id="b1" class="boceto">
+      <h3>Boceto 1 — Inicio (Desktop)</h3>
+      <figure>
+        <img src="img/boceto_01_inicio_desktop.png" alt="Boceto de la pantalla de inicio en escritorio">
+        <figcaption>Funcionalidad: entrada / navegación general (accesos a carta, pedidos y perfil).</figcaption>
+      </figure>
+
+      <div class="bloque">
+        <p><strong>Qué se ve:</strong> imagen principal, descripción breve del proyecto y accesos rápidos a las acciones
+          más frecuentes.</p>
+        <p><strong>Navegación:</strong></p>
+        <ul>
+          <li>“Iniciar sesión / Registrarse” lleva al <a href="#b2">Boceto 2</a>.</li>
+          <li>“Ver carta” lleva al <a href="#b3">Boceto 3</a>.</li>
+          <li>“Mis pedidos / Perfil” lleva al <a href="#b8">Boceto 8</a> (si el usuario está identificado).</li>
+        </ul>
+        <p class="volver"><a href="#top">Volver arriba</a></p>
+      </div>
+    </section>
+
+    <section id="b2" class="boceto">
+      <h3>Boceto 2 — Login / Registro</h3>
+      <figure>
+        <img src="img/boceto_02_login_registro.png" alt="Boceto de la pantalla de login y registro">
+        <figcaption>Funcionalidad 0: gestión de usuarios (login y registro como cliente).</figcaption>
+      </figure>
+
+      <div class="bloque">
+        <p><strong>Qué se ve:</strong> formulario de login y registro (cliente) con datos básicos y avatar.</p>
+        <p><strong>Navegación:</strong></p>
+        <ul>
+          <li>Tras login correcto, se vuelve a Inicio (<a href="#b1">Boceto 1</a>) o se redirige a la Carta (<a
+              href="#b3">Boceto 3</a>).</li>
+          <li>Tras registro, el usuario queda creado como “cliente” y puede comenzar el flujo de pedido.</li>
+        </ul>
+        <p class="volver"><a href="#top">Volver arriba</a></p>
+      </div>
+    </section>
+
+    <section id="b3" class="boceto">
+      <h3>Boceto 3 — Carta: categorías y productos (Móvil)</h3>
+      <figure>
+        <img src="img/boceto_03_carta_categorias.png" alt="Boceto de la carta con categorías y productos en móvil">
+        <figcaption>Funcionalidad 1-2: listar productos y añadir productos al pedido (cliente).</figcaption>
+      </figure>
+
+      <div class="bloque">
+        <p><strong>Qué se ve:</strong> selector del tipo de pedido (Local / Llevar), categorías y listado de productos
+          con botones rápidos para añadir.</p>
+        <p><strong>Navegación:</strong></p>
+        <ul>
+          <li>Pulse en un producto para ir al <a href="#b4">Boceto 4</a> (detalle).</li>
+          <li>“Añadir (+)” agrega una unidad al carrito.</li>
+          <li>El icono/botón “Carrito” del header lleva al <a href="#b5">Boceto 5</a>.</li>
+        </ul>
+        <p class="volver"><a href="#top">Volver arriba</a></p>
+      </div>
+    </section>
+
+    <section id="b4" class="boceto">
+      <h3>Boceto 4 — Detalle de producto (Móvil)</h3>
+      <figure>
+        <img src="img/boceto_04_detalle_producto.png" alt="Boceto del detalle de un producto en móvil">
+        <figcaption>Funcionalidad 1-2: visualizar detalle de producto y añadir cantidad al carrito.</figcaption>
+      </figure>
+
+      <div class="bloque">
+        <p><strong>Qué se ve:</strong> imagen(es), nombre, descripción, precio base, IVA y precio final.</p>
+        <p><strong>Navegación:</strong></p>
+        <ul>
+          <li>Selector de cantidad y botón “Añadir al carrito”.</li>
+          <li>Enlace a “Carrito” para revisar el pedido: <a href="#b5">Boceto 5</a>.</li>
+          <li>Botón “Atrás” para volver a la carta: <a href="#b3">Boceto 3</a>.</li>
+        </ul>
+        <p class="volver"><a href="#top">Volver arriba</a></p>
+      </div>
+    </section>
+    
+    <section id="b5" class="boceto">
+      <h3>Boceto 5 — Carrito (Móvil)</h3>
+      <figure>
+        <img src="img/boceto_05_carrito.png" alt="Boceto del carrito en móvil">
+        <figcaption>Funcionalidad 2: creación del pedido (confirmar o cancelar).</figcaption>
+      </figure>
+
+      <div class="bloque">
+        <p><strong>Qué se ve:</strong> listado de productos en el pedido, ajuste de unidades, totales y acciones.</p>
+        <p><strong>Navegación:</strong></p>
+        <ul>
+          <li>“Cancelar pedido” vuelve a la Carta (no se almacena el pedido).</li>
+          <li>“Confirmar pedido” pasa el pedido a estado “Recibido” y lleva al Pago: <a href="#b6">Boceto 6</a>.</li>
+        </ul>
+        <p class="volver"><a href="#top">Volver arriba</a></p>
+      </div>
+    </section>
+
+    <section id="b6" class="boceto">
+      <h3>Boceto 6 — Pago (Móvil)</h3>
+      <figure>
+        <img src="img/boceto_06_pago.png" alt="Boceto del pago en móvil">
+        <figcaption>Funcionalidad 2: pago (tarjeta simulada o pago al camarero).</figcaption>
+      </figure>
+
+      <div class="bloque">
+        <p><strong>Qué se ve:</strong> elección del método de pago y formulario de tarjeta con validaciones.</p>
+        <p><strong>Navegación:</strong></p>
+        <ul>
+          <li>“Confirmar pago” cambia el estado del pedido a “En preparación”.</li>
+          <li>Tras pagar, se muestra la confirmación: <a href="#b7">Boceto 7</a>.</li>
+        </ul>
+        <p class="volver"><a href="#top">Volver arriba</a></p>
+      </div>
+    </section>
+
+    <section id="b7" class="boceto">
+      <h3>Boceto 7 — Confirmación</h3>
+      <figure>
+        <img src="img/boceto_07_confirmacion.png" alt="Boceto de confirmación del pedido">
+        <figcaption>Funcionalidad 2: confirmación del pedido y seguimiento por estados.</figcaption>
+      </figure>
+
+      <div class="bloque">
+        <p><strong>Qué se ve:</strong> número de pedido (único del día), estado actual y una línea temporal de estados.
+        </p>
+        <p><strong>Navegación:</strong></p>
+        <ul>
+          <li>“Ver mis pedidos” lleva al perfil: <a href="#b8">Boceto 8</a>.</li>
+          <li>“Volver al inicio” recarga para volver a <a href="#b1">Inicio</a>.</li>
+        </ul>
+        <p class="volver"><a href="#top">Volver arriba</a></p>
+      </div>
+    </section>
+    
+    <section id="b8" class="boceto">
+      <h3>Boceto 8 — Perfil y pedidos (Desktop)</h3>
+      <figure>
+        <img src="img/boceto_08_perfil_pedidos.png" alt="Boceto del perfil del cliente con pedidos activos e histórico">
+        <figcaption>Funcionalidad 0-2: perfil del usuario, pedidos activos y pedidos pasados.</figcaption>
+      </figure>
+
+      <div class="bloque">
+        <p><strong>Qué se ve:</strong> avatar y datos del usuario (editable), pedidos activos (estados relevantes) e
+          histórico en forma de tabla.</p>
+        <p><strong>Navegación:</strong></p>
+        <ul>
+          <li>En “Editar perfil”, el usuario puede actualizar datos y avatar.</li>
+          <li>En el histórico, al pulsar sobre un pedido se podría abrir un detalle con productos y total.</li>
+        </ul>
+        <p class="volver"><a href="#top">Volver arriba</a></p>
+      </div>
+    </section>
+
+    <section id="b9" class="boceto">
+      <h3>Boceto 9 — Cocina (Tablet apaisada)</h3>
+      <figure>
+        <img src="img/boceto_09_tablet_cocinero.png" alt="Boceto de la vista de cocina en tablet apaisada">
+        <figcaption>Funcionalidad 3: preparación de pedidos (cocinero).</figcaption>
+      </figure>
+
+      <div class="bloque">
+        <p><strong>Qué se ve:</strong> listado de pedidos “En preparación”, detalle del pedido y checklist de productos.
+        </p>
+        <p><strong>Navegación:</strong></p>
+        <ul>
+          <li>El cocinero “se queda con” un pedido: pasa a “Cocinando”.</li>
+          <li>Marca productos como preparados y finaliza el pedido: pasa a “Listo cocina”.</li>
+        </ul>
+        <p class="volver"><a href="#top">Volver arriba</a></p>
+      </div>
+    </section>
+
+    <section id="b10" class="boceto">
+      <h3>Boceto 10 — Camarero (Tablet apaisada)</h3>
+      <figure>
+        <img src="img/boceto_10_tablet_camarero.png" alt="Boceto de la vista del camarero en tablet apaisada">
+        <figcaption>Funcionalidad 2: cobro y entrega de pedidos (camarero).</figcaption>
+      </figure>
+
+      <div class="bloque">
+        <p><strong>Qué se ve:</strong> pedidos “Recibido” para confirmar pago, pedidos “Listo cocina” para preparar y
+          pedidos “Terminado” para entregar.</p>
+        <p><strong>Navegación:</strong></p>
+        <ul>
+          <li>Seleccionar pedido “Recibido” y confirmar pago: pasa a “En preparación”.</li>
+          <li>Seleccionar “Listo cocina” y pasar a “Terminado” tras preparar extras.</li>
+          <li>Seleccionar “Terminado” y confirmar entrega: pasa a “Entregado”.</li>
+        </ul>
+        <p class="volver"><a href="#top">Volver arriba</a></p>
+      </div>
+    </section>
+
+    <section id="b11" class="boceto">
+      <h3>Boceto 11 — Gerente: gestión de productos</h3>
+      <figure>
+        <img src="img/boceto_11_gerente_productos.png" alt="Boceto de gestión de categorías y productos para el gerente">
+        <figcaption>Funcionalidad 1: CRUD de categorías y productos (gerente).</figcaption>
+      </figure>
+
+      <div class="bloque">
+        <p><strong>Qué se ve:</strong> panel de categorías, tabla de productos y formulario de alta/edición con
+          previsualización del precio final (precio base + IVA).</p>
+        <p><strong>Navegación:</strong></p>
+        <ul>
+          <li>Desde la tabla, botones “ver / editar / retirar (ofertado)” en cada producto.</li>
+          <li>Formulario único para crear/actualizar (cambia según si hay id o no).</li>
+        </ul>
+        <p class="volver"><a href="#top">Volver arriba</a></p>
+      </div>
+    </section>
+
+    <section id="flujos" class="flujos">
+      <h3>Flujos paso a paso desde la página principal</h3>
+
+      <p>Estos flujos resumen cómo se realizarían las funcionalidades principales desde Inicio.</p>
+
+      <h4>Flujo A — Cliente: realizar un pedido completo (Funcionalidad 2)</h4>
+      <ol>
+        <li>Inicio (<a href="#b1">Boceto 1</a>) → Iniciar sesión / Registrarse (<a href="#b2">Boceto 2</a>).</li>
+        <li>Acceder a la Carta (<a href="#b3">Boceto 3</a>) y elegir tipo de pedido (Local / Llevar).</li>
+        <li>Seleccionar productos (listado o detalle: <a href="#b4">Boceto 4</a>) y añadirlos al carrito.</li>
+        <li>Ir al Carrito (<a href="#b5">Boceto 5</a>) para ajustar cantidades y confirmar pedido (estado “Recibido”).</li>
+        <li>Pagar (<a href="#b6">Boceto 6</a>) con tarjeta (simulado) o al camarero (cambia a “En preparación”).</li>
+        <li>Ver Confirmación (<a href="#b7">Boceto 7</a>) con nº de pedido y estados.</li>
+        <li>Consultar el estado del pedido en el Perfil (<a href="#b8">Boceto 8</a>).</li>
+      </ol>
+
+      <h4>Flujo B — Camarero: cobrar y entregar pedidos (Funcionalidad 2)</h4>
+      <ol>
+        <li>Login como camarero (<a href="#b2">Boceto 2</a>) → Panel camarero (<a href="#b10">Boceto 10</a>).</li>
+        <li>Seleccionar un pedido “Recibido” y confirmar pago → pasa a “En preparación”.</li>
+        <li>Cuando cocina avisa “Listo cocina”, revisar extras y pasar a “Terminado”.</li>
+        <li>Seleccionar pedido “Terminado” y confirmar entrega → pasa a “Entregado”.</li>
+      </ol>
+
+      <h4>Flujo C — Cocinero: preparar un pedido (Funcionalidad 3)</h4>
+      <ol>
+        <li>Login como cocinero (<a href="#b2">Boceto 2</a>) → Panel cocina (<a href="#b9">Boceto 9</a>).</li>
+        <li>Elegir un pedido “En preparación” y “quedárselo” → pasa a “Cocinando”.</li>
+        <li>Marcar cada producto como preparado y finalizar → pasa a “Listo cocina”.</li>
+      </ol>
+
+      <h4>Flujo D — Gerente: crear/editar productos (Funcionalidad 1)</h4>
+      <ol>
+        <li>Login como gerente (<a href="#b2">Boceto 2</a>) → Panel gerente (<a href="#b11">Boceto 11</a>).</li>
+        <li>Crear/editar categorías en el panel lateral.</li>
+        <li>Crear/editar productos con selector de categoría, imágenes y cálculo del precio final.</li>
+        <li>Retirar productos de la carta actualizando “ofertado”.</li>
+      </ol>
+
+      <p class="volver"><a href="#top">Volver arriba</a></p>
+    </section>
+  </main>
+</body>
+
 </html>
+
+
