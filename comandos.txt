@@ -1,3 +1,5 @@
+Comando para enlazar proyecto: Ctrl + Shift + P y después poner el enlace y elegir carpeta
+
 Cada vez que lo abran:
 git pull
 
