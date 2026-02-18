@@ -1,0 +1,21 @@
+ h2 {
+      margin-top: 100px;
+      margin-left: 20px;
+    }
+
+    p {
+      margin-left: 40px;
+      margin-right: 70px;
+      max-width: 1000px;
+    }
+
+    .hero {
+      margin-left: 40px;
+      margin-top: 30px;
+    }
+
+    .hero img {
+      max-width: 600px;
+      width: 100%;
+      height: auto;
+    }
