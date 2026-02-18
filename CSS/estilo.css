@@ -11,7 +11,7 @@ h3 {
     margin-left: 30px;
 }
 
-h4{
+h4 {
     margin-top: 30px;
     margin-left: 40px;
 }
@@ -60,6 +60,11 @@ table {
 
 }
 
+.boceto {
+    margin-top: 60px;
+    margin-left: 30px;
+}
+
 .miembro {
     padding-top: 25px;
     margin-top: 25px;
@@ -78,25 +83,30 @@ table {
 }
 
 .indice {
-  padding: 15px 18px;
-  margin: 20px 0 35px;
+    padding: 15px 18px;
+    margin: 20px 0 35px;
 }
 
 .indice ul {
-  margin: 0;
-  padding-left: 20px;
+    margin: 0;
+    padding-left: 20px;
 }
 
 .nota {
-  background: #fff8e1;
-  border: 1px solid #f3e2a6;
-  border-radius: 10px;
-  padding: 12px 14px;
-  margin: 18px 0;
+    background: #fff8e1;
+    border: 1px solid #f3e2a6;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin: 18px 0;
 }
 
 .volver {
-  margin-top: 10px;
+    margin-top: 10px;
+}
+
+.flujos{
+    margin-top: 80px;
+    margin-left: 30px;
 }
 
 /*estilo general del la tabla*/
@@ -116,7 +126,8 @@ thead tr {
 }
 
 /* para que haya espacio en las celdas*/
-th, td {
+th,
+td {
     padding: 12px 15px;
 }
 
