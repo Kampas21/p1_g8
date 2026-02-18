@@ -1,9 +1,9 @@
-h1{
+h1 {
     margin-bottom: 20px;
 }
 
 h2 {
-    margin-left: 20px;  
+    margin-left: 20px;
 }
 
 h3 {
@@ -11,7 +11,12 @@ h3 {
     margin-left: 30px;
 }
 
-p{
+h4{
+    margin-top: 30px;
+    margin-left: 40px;
+}
+
+p {
     margin-left: 40px;
     margin-right: 70px;
 }
@@ -24,4 +29,98 @@ fieldset {
 table {
     margin-left: 40px;
     margin-right: 70px;
+}
+
+
+.foto_centrada {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+    max-height: 500px;
+}
+
+
+.foto_boceto {
+    max-width: 70%;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.foto-miembro {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    margin-left: 40px;
+    margin-right: 5px;
+
+}
+
+.miembro {
+    padding-top: 25px;
+    margin-top: 25px;
+}
+
+.miembro-contenido {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.datos-miembro {
+    flex: 1;
+    min-width: 260px;
+}
+
+.indice {
+  padding: 15px 18px;
+  margin: 20px 0 35px;
+}
+
+.indice ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.nota {
+  background: #fff8e1;
+  border: 1px solid #f3e2a6;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 18px 0;
+}
+
+.volver {
+  margin-top: 10px;
+}
+
+/*estilo general del la tabla*/
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 20px 0;
+    font-size: 0.9em;
+    min-width: 400px;
+}
+
+/* Para el encabezado de la tabla */
+thead tr {
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+}
+
+/* para que haya espacio en las celdas*/
+th, td {
+    padding: 12px 15px;
+}
+
+/* Para poner las rayas entre filas */
+tbody tr {
+    border-bottom: 1px solid #dddddd;
 }
