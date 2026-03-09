@@ -1,12 +1,46 @@
-class Categoria {
+<?php
+require_once __DIR__ . '/../includes/application.php';
 
-    public static function getCategorias(){}
+class Categoria
+{
 
-    public static function getCategoriaById($id){}
+    public static function getCategorias()
+    {
+        global $conn;
 
-    public static function createCategoria($data){}
+        $query = "SELECT * FROM categorias";
+        $rs = $conn->query($query);
 
-    public static function updateCategoria($data){}
+        $categorias = [];
 
-    public static function deleteCategoria($id){}
+        while ($fila = $rs->fetch_assoc()) {
+            $categorias[] = $fila;
+        }
+
+        return $categorias;
+    }
+
+    public static function crearCategoria($nombre, $descripcion)
+    {
+        global $conn;
+
+        $stmt = $conn->prepare(
+            "INSERT INTO categorias (nombre, descripcion) VALUES (?, ?)"
+        );
+
+        $stmt->bind_param("ss", $nombre, $descripcion);
+        $stmt->execute();
+    }
+
+    public static function borrarCategoria($id)
+    {
+        global $conn;
+        
+        $stmt = $conn->prepare(
+            "DELETE FROM categorias WHERE id=?"
+        );
+
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+    }
 }
