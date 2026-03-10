@@ -32,3 +32,7 @@ $categorias = Categoria::getCategorias();
     </tr>
     <?php endforeach; ?>
 </table>
+
+<p>
+    <a href="../../index.html">Volver al inicio</a>
+</p>
