@@ -8,9 +8,8 @@ $descripcion = $modoEdicion ? $producto['descripcion'] : '';
 $categoria = $modoEdicion ? $producto['categoria_id'] : '';
 $precio_base = $modoEdicion ? $producto['precio_base'] : '';
 $iva = $modoEdicion ? $producto['iva'] : '';
-$precio_final= Producto::getPrecioFinal($precio_base, $iva);
 $disponible = $modoEdicion ? $producto['disponible'] : '';
-$ofertado = $modoEdicion ? $producto['ofertado'] : '';
+// $ofertado = $modoEdicion ? $producto['ofertado'] : '';
 
 $categorias = Categoria::getCategorias();
 ?>
