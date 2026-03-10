@@ -7,4 +7,3 @@ define("DB_NAME", "BistroFDI_G8");
 
 ?>
 
-<!-- n0A35DSbiMkvi1f9dCXS -->
