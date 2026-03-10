@@ -10,30 +10,25 @@ $categorias = Categoria::getCategorias();
 
 <h1>Lista de Categorías</h1>
 
-<a href="crearCategoria.php">Nueva Categoría</a>
+<p><a href="crearCategoria.php">Nueva Categoría</a></p>
 
 <table border="1">
-
-<tr>
+    <tr>
+      <th>ID</th>
 <th>Nombre</th>
 <th>Descripción</th>
 <th>Acciones</th>
-</tr>
+    </tr>
 
-<?php foreach($categorias as $cat): ?>
-
-<tr>
-
-<td><?= $cat['nombre'] ?></td>
-<td><?= $cat['descripcion'] ?></td>
-
-<td>
-<a href="editarCategoria.php?id=<?= $cat['id'] ?>">Editar</a>
-<a href="borrarCategoria.php?id=<?= $cat['id'] ?>">Borrar</a>
-</td>
-
-</tr>
-
-<?php endforeach; ?>
-
+    <?php foreach($categorias as $cat): ?>
+    <tr>
+        <td><?= $cat['id'] ?></td>
+        <td><?= htmlspecialchars($cat['nombre']) ?></td>
+        <td><?= htmlspecialchars($cat['descripcion']) ?></td>
+        <td>
+            <a href="editarCategoria.php?id=<?= $cat['id'] ?>">Editar</a>
+            <a href="borrarCategoria.php?id=<?= $cat['id'] ?>">Borrar</a>
+        </td>
+    </tr>
+    <?php endforeach; ?>
 </table>
