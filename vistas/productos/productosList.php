@@ -20,6 +20,7 @@ $productos = Producto::getProductos();
 <th>Categoria</th>
 <th>Precio base</th>
 <th>IVA</th>
+<th>Precio final</th>
 <th>Disponible</th>
 <th>Ofertado</th>
 <th>Acciones</th>
@@ -33,10 +34,12 @@ $productos = Producto::getProductos();
         <td><?= htmlspecialchars($cat['categoria_id']) ?></td>
         <td><?= htmlspecialchars($cat['precio_base']) ?></td>
         <td><?= htmlspecialchars($cat['iva']) ?></td>
+        <td><?= Producto::getPrecioFinal($cat['precio_base'], $cat['iva']); ?></td>
         <td><?= htmlspecialchars($cat['disponible']) ?></td>
         <td><?= htmlspecialchars($cat['ofertado']) ?></td>
         <td>
             <a href="editarProducto.php?id=<?= $cat['id'] ?>">Editar</a>
+            <a href="activarProducto.php?id=<?= $cat['id'] ?>">Activar</a>
             <a href="borrarProducto.php?id=<?= $cat['id'] ?>">Borrar</a>
         </td>
     </tr>

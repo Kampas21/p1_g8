@@ -8,6 +8,7 @@ $descripcion = $modoEdicion ? $producto['descripcion'] : '';
 $categoria = $modoEdicion ? $producto['categoria_id'] : '';
 $precio_base = $modoEdicion ? $producto['precio_base'] : '';
 $iva = $modoEdicion ? $producto['iva'] : '';
+$precio_final= Producto::getPrecioFinal($precio_base, $iva);
 $disponible = $modoEdicion ? $producto['disponible'] : '';
 $ofertado = $modoEdicion ? $producto['ofertado'] : '';
 
@@ -47,9 +48,13 @@ $categorias = Categoria::getCategorias();
         <input type="number" name="iva" id="iva" value="<?= htmlspecialchars($iva) ?>" step="0.01" min="0" required>
     </p>
 
+    <!-- <p>
+        Precio final: <?= htmlspecialchars(Producto::getPrecioFinal(['precio_base'], ['iva'])) ?><br>
+    </p> -->
+
     <p>
         <label for="disponible">Disponible:</label><br>
-         <input type="number" name="disponible" id="disponible" value="<?= htmlspecialchars($disponible) ?>" step="1" min="0" required>
+        <input type="number" name="disponible" id="disponible" value="<?= htmlspecialchars($disponible) ?>" step="1" min="0" required>
     </p>
     <p>
         <label for="ofertado">Ofertado:</label><br>

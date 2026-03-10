@@ -14,18 +14,18 @@ if (!$producto) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    Producto::borrarProducto((int)$id);
+    Producto::activarProducto((int)$id);
     header('Location: productosList.php');
     exit();
 }
 ?>
 
-<h1>Borrar producto</h1>
+<h1>Activar producto</h1>
 
-<p>¿Seguro que quieres retirar de la carta este producto <strong><?= htmlspecialchars($producto['nombre']) ?></strong>?</p>
+<p>¿Seguro que quieres volver a poner este producto en la carta <strong><?= htmlspecialchars($producto['nombre']) ?></strong>?</p>
 
 <form method="POST">
-    <button type="submit">Sí, borrar</button>
+    <button type="submit">Sí, activar</button>
 </form>
 
 <p>

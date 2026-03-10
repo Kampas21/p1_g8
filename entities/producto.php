@@ -1,4 +1,4 @@
-<?php 
+<?php
 require_once __DIR__ . '/../includes/application.php';
 
 class Producto
@@ -61,12 +61,34 @@ class Producto
     public static function borrarProducto($id)
     {
         global $conn;
-        
+
         $stmt = $conn->prepare(
             "UPDATE productos SET ofertado = 0 WHERE id = ?"
         );
 
         $stmt->bind_param("i", $id);
         return $stmt->execute();
+    }
+
+    public static function activarProducto($id)
+    {
+        global $conn;
+
+        $stmt = $conn->prepare(
+            "UPDATE productos SET ofertado = 1 WHERE id = ?"
+        );
+
+        $stmt->bind_param("i", $id);
+        return $stmt->execute();
+    }
+
+    public static function getPrecioFinal($precio_base, $iva)
+    {
+        $precio_base = (float) $precio_base;
+        $iva = (float) $iva;
+
+        $precio_final = $precio_base * (1 + $iva / 100);
+
+        return round($precio_final, 2);
     }
 }
