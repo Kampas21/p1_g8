@@ -91,4 +91,18 @@ class Producto
 
         return round($precio_final, 2);
     }
+
+    public static function getProductosConCategoria()
+    {
+        global $conn;
+        $query = "SELECT p.*, c.nombre AS categoria_nombre 
+              FROM productos p 
+              JOIN categorias c ON p.categoria_id = c.id";
+        $rs = $conn->query($query);
+        $productos = [];
+        while ($fila = $rs->fetch_assoc()) {
+            $productos[] = $fila;
+        }
+        return $productos;
+    }
 }

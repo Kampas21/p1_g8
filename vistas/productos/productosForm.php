@@ -9,7 +9,7 @@ $categoria = $modoEdicion ? $producto['categoria_id'] : '';
 $precio_base = $modoEdicion ? $producto['precio_base'] : '';
 $iva = $modoEdicion ? $producto['iva'] : '';
 $disponible = $modoEdicion ? $producto['disponible'] : '';
-// $ofertado = $modoEdicion ? $producto['ofertado'] : '';
+$ofertado = $modoEdicion ? $producto['ofertado'] : '';
 
 $categorias = Categoria::getCategorias();
 ?>
@@ -44,12 +44,16 @@ $categorias = Categoria::getCategorias();
     </p>
     <p>
         <label for="iva">IVA:</label><br>
-        <input type="number" name="iva" id="iva" value="<?= htmlspecialchars($iva) ?>" step="0.01" min="0" required>
+        <select name="iva" id="iva" required>
+            <option value="4" <?= $iva == 4 ? 'selected' : '' ?>>4</option>
+            <option value="10" <?= $iva == 10 ? 'selected' : '' ?>>10</option>
+            <option value="21" <?= $iva == 21 ? 'selected' : '' ?>>21</option>
+        </select>
     </p>
 
     <!-- <p>
-        Precio final: <?= htmlspecialchars(Producto::getPrecioFinal(['precio_base'], ['iva'])) ?><br>
-    </p> -->
+        Precio final: <?= htmlspecialchars(Producto::getPrecioFinal($precio_base, $iva)) ?><br>
+    </p>  -->
 
     <p>
         <label for="disponible">Disponible:</label><br>

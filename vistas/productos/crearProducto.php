@@ -10,14 +10,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $disponible = trim($_POST['disponible'] ?? '');
     $ofertado = trim($_POST['ofertado'] ?? '');
 
-    $categoria = (int) $categoria;
     $precio_base = (float) $precio_base;
-    $iva = (int) $iva;
     $disponible = (int) $disponible;
-    $ofertado = (int) $ofertado;
 
-    // Validación extra
-    if ($precio_base < 0 || $iva < 0 || $disponible < 0 || $ofertado < 0) {
+    if ($precio_base < 0 || $disponible < 0) {
         $error = "Valores numéricos no pueden ser negativos.";
     } elseif (
         $nombre !== '' && $descripcion !== '' && $categoria !== ''

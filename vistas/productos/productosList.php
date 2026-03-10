@@ -4,8 +4,9 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require_once __DIR__ . '/../../entities/producto.php';
+require_once __DIR__ . '/../../entities/categoria.php';
 
-$productos = Producto::getProductos();
+$productos = Producto::getProductosConCategoria();
 ?>
 
 <h1>Lista de Productos</h1>
@@ -31,7 +32,7 @@ $productos = Producto::getProductos();
         <td><?= $cat['id'] ?></td>
         <td><?= htmlspecialchars($cat['nombre']) ?></td>
         <td><?= htmlspecialchars($cat['descripcion']) ?></td>
-        <td><?= htmlspecialchars($cat['categoria_id']) ?></td>
+        <td><?= htmlspecialchars($cat['categoria_nombre']) ?></td>
         <td><?= htmlspecialchars($cat['precio_base']) ?></td>
         <td><?= htmlspecialchars($cat['iva']) ?></td>
         <td><?= Producto::getPrecioFinal($cat['precio_base'], $cat['iva']); ?></td>

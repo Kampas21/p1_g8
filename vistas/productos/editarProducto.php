@@ -16,8 +16,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $disponible = trim($_POST['disponible'] ?? '');
     $ofertado = trim($_POST['ofertado'] ?? '');
 
-    if ($nombre !== '' && $descripcion !== '' && $categoria !== '' 
-    && $precio_base !== '' && $iva !== '' && $disponible !== '' && $ofertado !== '') {
+    $precio_base = (float) $precio_base;
+    $disponible = (int) $disponible;
+
+    if ($precio_base < 0 || $disponible < 0) {
+        $error = "Valores numéricos no pueden ser negativos.";
+    } elseif (
+        $nombre !== '' && $descripcion !== '' && $categoria !== ''
+        && $precio_base !== '' && $iva !== '' && $disponible !== '' && $ofertado !== ''
+    ) {
         Producto::editarProducto((int)$id, $nombre, $descripcion, $categoria, $precio_base, $iva, $disponible, $ofertado);
         header('Location: productosList.php');
         exit();
