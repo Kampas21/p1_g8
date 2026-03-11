@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS `categorias` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     `nombre` VARCHAR(100),
     `descripcion` TEXT,
-    `imagen` VARCHAR(255)
+    `imagen` VARCHAR(255), 
+    `activa` TINYINT(1) NOT NULL DEFAULT 1
 );
 
 CREATE TABLE IF NOT EXISTS `productos` (

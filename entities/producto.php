@@ -164,7 +164,7 @@ public static function getProductosConCategoria()
 
     $stmt = $conn->prepare(
         "UPDATE productos 
-         SET ofertado = 0, categoria_id = NULL
+         SET ofertado = 0
          WHERE categoria_id = ?"
     );
 
