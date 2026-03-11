@@ -5,7 +5,7 @@ error_reporting(E_ALL);
 
 require_once __DIR__.'/../../entities/categoria.php';
 
-$categorias = Categoria::getCategorias();
+$categorias = Categoria::getCategorias(true);
 ?>
 
 <h1>Lista de Categorías</h1>
