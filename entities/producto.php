@@ -31,30 +31,30 @@ class Producto
         return $resultado->fetch_assoc();
     }
 
-    public static function crearProducto($nombre, $descripcion, $categoria_id, $precio_base, $iva, $disponible, $ofertado)
+    public static function crearProducto($nombre, $descripcion, $categoria_id, $precio_base, $iva, $disponible, $ofertado, $imagen)
     {
         global $conn;
 
         $stmt = $conn->prepare(
             "INSERT INTO productos 
-            (nombre, descripcion, categoria_id, precio_base, iva, disponible, ofertado) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)"
+            (nombre, descripcion, categoria_id, precio_base, iva, disponible, ofertado, imagen) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
         );
 
-        $stmt->bind_param("ssidiii", $nombre, $descripcion, $categoria_id, $precio_base, $iva, $disponible, $ofertado);
+        $stmt->bind_param("ssidiiis", $nombre, $descripcion, $categoria_id, $precio_base, $iva, $disponible, $ofertado, $imagen);
         return $stmt->execute();
     }
 
-    public static function editarProducto($id, $nombre, $descripcion, $categoria_id, $precio_base, $iva, $disponible, $ofertado)
+    public static function editarProducto($id, $nombre, $descripcion, $categoria_id, $precio_base, $iva, $disponible, $ofertado, $imagen)
     {
         global $conn;
 
         $stmt = $conn->prepare(
-            "UPDATE productos SET nombre = ?, descripcion = ?, categoria_id  = ?, precio_base  = ?, iva  = ?, disponible  = ?, ofertado  = ?
+            "UPDATE productos SET nombre = ?, descripcion = ?, categoria_id  = ?, precio_base  = ?, iva  = ?, disponible  = ?, ofertado  = ?, imagen= ?
              WHERE id = ?"
         );
 
-        $stmt->bind_param("ssidiiii", $nombre, $descripcion, $categoria_id, $precio_base, $iva, $disponible, $ofertado, $id);
+        $stmt->bind_param("ssidiiiis", $nombre, $descripcion, $categoria_id, $precio_base, $iva, $disponible, $ofertado, $id, $imagen);
         return $stmt->execute();
     }
 
@@ -97,12 +97,52 @@ class Producto
         global $conn;
         $query = "SELECT p.*, c.nombre AS categoria_nombre 
               FROM productos p 
-              JOIN categorias c ON p.categoria_id = c.id";
+              JOIN categorias c ON p.categoria_id = c.id
+              ORDER BY p.id ASC";
         $rs = $conn->query($query);
+
         $productos = [];
         while ($fila = $rs->fetch_assoc()) {
             $productos[] = $fila;
         }
         return $productos;
     }
+
+    public static function getProductosPorCategoria($categoria_id)
+    {
+        global $conn;
+
+        $stmt = $conn->prepare("SELECT p.*, c.nombre AS categoria_nombre 
+              FROM productos p
+              JOIN categorias c ON p.categoria_id = c.id
+              WHERE p.categoria_id = ?");
+
+        $stmt->bind_param("i", $categoria_id);
+        $stmt->execute();
+
+        $resultado = $stmt->get_result();
+
+        $productos = [];
+
+        while ($fila = $resultado->fetch_assoc()) {
+            $productos[] = $fila;
+        }
+
+        return $productos;
+    }
+
+        /**
+     * Obtiene los productos de una categoría específica que están disponibles.
+     */
+    public static function getProductosByCategoria($categoria_id)
+    {
+        global $conn;
+        $stmt = $conn->prepare(
+            "SELECT * FROM productos WHERE categoria_id = ? AND disponible = 1"
+        );
+        $stmt->bind_param("i", $categoria_id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
 }

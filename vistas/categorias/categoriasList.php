@@ -12,6 +12,12 @@ $categorias = Categoria::getCategorias();
 
 <p><a href="crearCategoria.php">Nueva Categoría</a></p>
 
+<li>
+      <a href="../productos/productosList.php">
+        Ver todos los productos
+      </a>
+</li><br>
+
 <table border="1">
     <tr>
       <th>ID</th>
@@ -27,6 +33,7 @@ $categorias = Categoria::getCategorias();
         <td><?= htmlspecialchars($cat['descripcion']) ?></td>
         <td>
             <a href="editarCategoria.php?id=<?= $cat['id'] ?>">Editar</a>
+            <a href="../productos/mostrarProductosCategoria.php?id=<?= $cat['id'] ?>">Productos</a>
             <a href="borrarCategoria.php?id=<?= $cat['id'] ?>">Borrar</a>
         </td>
     </tr>

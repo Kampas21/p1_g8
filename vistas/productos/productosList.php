@@ -48,5 +48,5 @@ $productos = Producto::getProductosConCategoria();
 </table>
 
 <p>
-    <a href="../../index.html">Volver al inicio</a>
+    <a href="../categorias/categoriasList.php">Volver al inicio</a>
 </p>

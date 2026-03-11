@@ -1,0 +1,67 @@
+<?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+require_once __DIR__ . '/../../entities/producto.php';
+require_once __DIR__ . '/../../entities/categoria.php';
+
+$categoria_id = $_GET['id'] ?? null;
+
+if (!$categoria_id || !is_numeric($categoria_id)) {
+    die("ID de esta categoria no es válido.");
+}
+
+$productos = Producto::getProductosPorCategoria($categoria_id);
+?>
+
+<h1>Lista de Productos</h1>
+
+<!-- <p><a href="crearProducto.php?id=<?= $categoria_id ?>">Nuevo Producto</a></p> -->
+<p><a href="crearProducto.php">Nuevo Producto</a></p>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th>Categoria</th>
+        <th>Precio base</th>
+        <th>IVA</th>
+        <th>Precio final</th>
+        <th>Disponible</th>
+        <th>Ofertado</th>
+        <th>Imagen</th>
+        <th>Acciones</th>
+    </tr>
+
+    <?php foreach ($productos as $cat): ?>
+        <tr>
+            <td><?= $cat['id'] ?></td>
+            <td><?= htmlspecialchars($cat['nombre']) ?></td>
+            <td><?= htmlspecialchars($cat['descripcion']) ?></td>
+            <td><?= htmlspecialchars($cat['categoria_nombre']) ?></td>
+            <td><?= htmlspecialchars($cat['precio_base']) ?></td>
+            <td><?= htmlspecialchars($cat['iva']) ?></td>
+            <td><?= Producto::getPrecioFinal($cat['precio_base'], $cat['iva']); ?></td>
+            <td><?= htmlspecialchars($cat['disponible']) ?></td>
+            <td><?= htmlspecialchars($cat['ofertado']) ?></td>
+            <td>
+                <?php if (!empty($cat['imagen'])): ?>
+                    <img src=<?= htmlspecialchars($cat['imagen']) ?> alt="Imagen de <?= htmlspecialchars($cat['nombre']) ?>" width="100">
+                <?php else: ?>
+                    No hay imagen
+                <?php endif; ?>
+            </td>
+            <td>
+                <a href="editarProducto.php?id=<?= $cat['id'] ?>">Editar</a>
+                <a href="activarProducto.php?id=<?= $cat['id'] ?>">Activar</a>
+                <a href="borrarProducto.php?id=<?= $cat['id'] ?>">Borrar</a>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+</table>
+
+<p>
+    <a href="../categorias/categoriasList.php">Volver al inicio</a>
+</p>

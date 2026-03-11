@@ -16,7 +16,7 @@ $categorias = Categoria::getCategorias();
 
 <h1><?= $modoEdicion ? 'Editar Producto' : 'Nuevo Producto' ?></h1>
 
-<form method="POST" action="<?= $action ?>">
+<form method="POST" action="<?= $action ?>" enctype="multipart/form-data">
     <p>
         <label for="nombre">Nombre:</label><br>
         <input type="text" name="nombre" id="nombre" value="<?= htmlspecialchars($nombre) ?>" required>
@@ -67,6 +67,11 @@ $categorias = Categoria::getCategorias();
         </select>
     </p>
 
+    <p>
+        <label for="imagen">Imagen:</label><br>
+        <input type="file" name="imagen" id="imagen" accept="image/*">
+    </p>
+
 
     <button type="submit">Guardar</button>
 </form>
@@ -74,3 +79,24 @@ $categorias = Categoria::getCategorias();
 <p>
     <a href="productosList.php">Volver al listado</a>
 </p>
+
+<!-- <select name="categoria_id" id="categoria_id" required <?= ((isset($categoria_id) && $categoria_id == $cat['id']) || $categoria == $cat['id']) ? 'selected' : '' ?>>
+
+            <option value="">-- Selecciona una categoría --</option>
+
+            <?php foreach ($categorias as $cat): ?>
+                <option value="<?= $cat['id'] ?>"
+                    <?= ($categoria_id == $cat['id'] || $categoria == $cat['id']) ? 'selected' : '' ?>>
+
+                    <?= htmlspecialchars($cat['nombre']) ?>
+
+                </option>
+            <?php endforeach; ?>
+
+        </select>
+
+        <?php if (isset($categoria_id) && $categoria_id): ?>
+            <input type="hidden" name="categoria_id" value="<?= $categoria_id ?>">
+        <?php endif; ?>
+
+<a href="<?= isset($categoria_id) ? "mostrarProductosCategoria.php?id=$categoria_id" : "productosList.php" ?>"> -->
