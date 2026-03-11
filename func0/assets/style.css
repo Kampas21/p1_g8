@@ -353,3 +353,26 @@ footer {
 .user-detail-list dd {
   color: #333;
 }
+.hidden {
+  display: none;
+}
+
+.avatar-box {
+  margin-top: 16px;
+}
+
+.avatar-option {
+  display: inline-block;
+  margin: 10px 14px 10px 0;
+  vertical-align: top;
+  text-align: center;
+}
+
+.avatar-option img {
+  display: block;
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  margin: 0 auto 8px;
+  border-radius: 14px;
+}
