@@ -41,5 +41,5 @@ $categorias = Categoria::getCategorias();
 </table>
 
 <p>
-    <a href="../../index.html">Volver al inicio</a>
+    <a href="../../index.php">Volver al inicio</a>
 </p>

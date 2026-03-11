@@ -63,5 +63,5 @@ $productos = Producto::getProductosPorCategoria($categoria_id);
 </table>
 
 <p>
-    <a href="../categorias/categoriasList.php">Volver al inicio</a>
+    <a href="../categorias/categoriasList.php">Volver</a>
 </p>

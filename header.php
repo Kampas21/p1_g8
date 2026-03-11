@@ -7,7 +7,7 @@
     </div>
     <nav aria-label="Navegación principal">
       <ul class="nav-list">
-        <li><a href="index.html">Inicio</a></li>
+        <li><a href="index.php">Inicio</a></li>
         <li><a href="detalles.html">Detalles</a></li>
         <li><a href="bocetos.html">Bocetos</a></li>
         <li><a href="miembros.html">Miembros</a></li>
