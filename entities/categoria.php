@@ -1,5 +1,6 @@
 <?php 
 require_once __DIR__ . '/../includes/application.php';
+require_once __DIR__ . '/producto.php';
 
 class Categoria
 {
@@ -56,14 +57,49 @@ class Categoria
     }
 
     public static function borrarCategoria($id)
-    {
-        global $conn;
-        
-        $stmt = $conn->prepare(
-            "DELETE FROM categorias WHERE id = ?"
-        );
+{
+    global $conn;
 
+    $conn->begin_transaction();
+
+    try {
+        Producto::desactivarProductosPorCategoria($id);
+
+        $stmt = $conn->prepare(
+            "UPDATE categorias SET activa = 0 WHERE id = ?"
+        );
         $stmt->bind_param("i", $id);
-        return $stmt->execute();
+        $stmt->execute();
+
+        $conn->commit();
+        return true;
+    } catch (Throwable $e) {
+        $conn->rollback();
+        return false;
     }
+}
+
+public static function activarCategoria($id)
+{
+    global $conn;
+
+    $conn->begin_transaction();
+
+    try {
+        Producto::activarProductosPorCategoria($id);
+
+        $stmt = $conn->prepare(
+            "UPDATE categorias SET activa = 1 WHERE id = ?"
+        );
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+
+        $conn->commit();
+        return true;
+
+    } catch (Throwable $e) {
+        $conn->rollback();
+        return false;
+    }
+}
 }
