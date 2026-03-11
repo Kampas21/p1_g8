@@ -23,16 +23,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <h1>Desactivar categoría</h1>
 
 <p>
-    ¿Seguro que quieres desactivar la categoría 
+    ¿Seguro que quieres desactivar la categoría
     <strong><?= htmlspecialchars($categoria['nombre']) ?></strong>?
 </p>
 
 <p>
-    Esto pondrá como no ofertados todos los productos de esta categoría.
+    Sus productos pasarán a no ofertados.
 </p>
 
 <form method="POST">
-    <button type="submit">Sí, desactivar</button>
+<button type="submit">Sí, desactivar</button>
 </form>
 
 <p>

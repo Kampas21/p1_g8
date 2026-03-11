@@ -50,11 +50,12 @@ class Producto
         global $conn;
 
         $stmt = $conn->prepare(
-            "UPDATE productos SET nombre = ?, descripcion = ?, categoria_id  = ?, precio_base  = ?, iva  = ?, disponible  = ?, ofertado  = ?, imagen= ?
+            "UPDATE productos 
+             SET nombre = ?, descripcion = ?, categoria_id = ?, precio_base = ?, iva = ?, disponible = ?, ofertado = ?, imagen = ?
              WHERE id = ?"
         );
 
-        $stmt->bind_param("ssidiiiis", $nombre, $descripcion, $categoria_id, $precio_base, $iva, $disponible, $ofertado, $id, $imagen);
+        $stmt->bind_param("ssidiiisi", $nombre, $descripcion, $categoria_id, $precio_base, $iva, $disponible, $ofertado, $imagen, $id);
         return $stmt->execute();
     }
 
@@ -82,6 +83,18 @@ class Producto
         return $stmt->execute();
     }
 
+public static function desactivarProductosPorCategoria($categoria_id)
+{
+    global $conn;
+
+    $stmt = $conn->prepare(
+        "UPDATE productos SET ofertado = 0 WHERE categoria_id = ?"
+    );
+
+    $stmt->bind_param("i", $categoria_id);
+    return $stmt->execute();
+}
+
     public static function getPrecioFinal($precio_base, $iva)
     {
         $precio_base = (float) $precio_base;
@@ -91,31 +104,33 @@ class Producto
 
         return round($precio_final, 2);
     }
+public static function getProductosConCategoria()
+{
+    global $conn;
 
-    public static function getProductosConCategoria()
-    {
-        global $conn;
-        $query = "SELECT p.*, c.nombre AS categoria_nombre 
-              FROM productos p 
-              JOIN categorias c ON p.categoria_id = c.id
+    $query = "SELECT p.*, COALESCE(c.nombre, 'Sin categoría') AS categoria_nombre
+              FROM productos p
+              LEFT JOIN categorias c ON p.categoria_id = c.id
               ORDER BY p.id ASC";
-        $rs = $conn->query($query);
+    $rs = $conn->query($query);
 
-        $productos = [];
-        while ($fila = $rs->fetch_assoc()) {
-            $productos[] = $fila;
-        }
-        return $productos;
+    $productos = [];
+    while ($fila = $rs->fetch_assoc()) {
+        $productos[] = $fila;
     }
 
+    return $productos;
+}
     public static function getProductosPorCategoria($categoria_id)
     {
         global $conn;
 
-        $stmt = $conn->prepare("SELECT p.*, c.nombre AS categoria_nombre 
-              FROM productos p
-              JOIN categorias c ON p.categoria_id = c.id
-              WHERE p.categoria_id = ?");
+        $stmt = $conn->prepare(
+            "SELECT p.*, c.nombre AS categoria_nombre 
+             FROM productos p
+             JOIN categorias c ON p.categoria_id = c.id
+             WHERE p.categoria_id = ?"
+        );
 
         $stmt->bind_param("i", $categoria_id);
         $stmt->execute();
@@ -123,7 +138,6 @@ class Producto
         $resultado = $stmt->get_result();
 
         $productos = [];
-
         while ($fila = $resultado->fetch_assoc()) {
             $productos[] = $fila;
         }
@@ -131,104 +145,43 @@ class Producto
         return $productos;
     }
 
-        /**
-     * Obtiene los productos de una categoría específica que están disponibles.
-     */
     public static function getProductosByCategoria($categoria_id)
     {
         global $conn;
+
         $stmt = $conn->prepare(
             "SELECT * FROM productos WHERE categoria_id = ? AND disponible = 1"
         );
         $stmt->bind_param("i", $categoria_id);
         $stmt->execute();
+
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
-    <?php 
-require_once __DIR__ . '/../includes/application.php';
-require_once __DIR__ . '/producto.php';
-
-class Categoria
+    public static function desvincularYDesofertarProductosPorCategoria($categoria_id)
 {
-    public static function getCategorias($soloActivas = false)
-    {
-        global $conn;
+    global $conn;
 
-        $query = "SELECT * FROM categorias";
-        if ($soloActivas) {
-            $query .= " WHERE activa = 1";
-        }
+    $stmt = $conn->prepare(
+        "UPDATE productos 
+         SET ofertado = 0, categoria_id = NULL
+         WHERE categoria_id = ?"
+    );
 
-        $rs = $conn->query($query);
+    $stmt->bind_param("i", $categoria_id);
+    return $stmt->execute();
+}
 
-        $categorias = [];
+public static function activarProductosPorCategoria($categoria_id)
+{
+    global $conn;
 
-        while ($fila = $rs->fetch_assoc()) {
-            $categorias[] = $fila;
-        }
+    $stmt = $conn->prepare(
+        "UPDATE productos SET ofertado = 1 WHERE categoria_id = ?"
+    );
 
-        return $categorias;
-    }
-
-    public static function getCategoriaById($id)
-    {
-        global $conn;
-
-        $stmt = $conn->prepare("SELECT * FROM categorias WHERE id = ?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-
-        $resultado = $stmt->get_result();
-        return $resultado->fetch_assoc();
-    }
-
-    public static function crearCategoria($nombre, $descripcion)
-    {
-        global $conn;
-
-        $stmt = $conn->prepare(
-            "INSERT INTO categorias (nombre, descripcion, activa) VALUES (?, ?, 1)"
-        );
-
-        $stmt->bind_param("ss", $nombre, $descripcion);
-        return $stmt->execute();
-    }
-
-    public static function editarCategoria($id, $nombre, $descripcion)
-    {
-        global $conn;
-
-        $stmt = $conn->prepare(
-            "UPDATE categorias SET nombre = ?, descripcion = ? WHERE id = ?"
-        );
-
-        $stmt->bind_param("ssi", $nombre, $descripcion, $id);
-        return $stmt->execute();
-    }
-
-    public static function borrarCategoria($id)
-    {
-        global $conn;
-
-        $conn->begin_transaction();
-
-        try {
-            Producto::desactivarProductosPorCategoria($id);
-
-            $stmt = $conn->prepare(
-                "UPDATE categorias SET activa = 0 WHERE id = ?"
-            );
-            $stmt->bind_param("i", $id);
-            $stmt->execute();
-
-            $conn->commit();
-            return true;
-        } catch (Throwable $e) {
-            $conn->rollback();
-            return false;
-        }
-    }
+    $stmt->bind_param("i", $categoria_id);
+    return $stmt->execute();
 }
 
 }
