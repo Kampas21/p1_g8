@@ -105,4 +105,18 @@ class Producto
         }
         return $productos;
     }
+
+    /**
+     * Obtiene los productos de una categoría específica que están disponibles.
+     */
+    public static function getProductosByCategoria($categoria_id)
+    {
+        global $conn;
+        $stmt = $conn->prepare(
+            "SELECT * FROM productos WHERE categoria_id = ? AND disponible = 1"
+        );
+        $stmt->bind_param("i", $categoria_id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
 }
