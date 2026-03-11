@@ -59,3 +59,9 @@ INSERT INTO `productos` (`nombre`, `descripcion`, `categoria_id`, `precio_base`,
 ('Helado Limón','Cucurucho de helado de limón',3,3.50,10,1,0),
 ('Zumo Piña','Zumo natural de piña',4,2.50,10,1,0),
 ('Cerveza Roja','Cerveza ale 330ml',4,3.00,10,1,0);
+
+INSERT INTO `usuarios`(`username`, `email`, `nombre`, `apellidos`, `password_hash`, `rol`, `avatar_tipo`, `avatar_valor`, `activo`, `deleted_at`, `created_at`, `updated_at`) VALUES
+('gerente','gerente@bistrofdi.local','Gema','García','gerente123','gerente','preset','preset_manager',1,NULL,NOW(),NOW()),
+('cocinero','cocinero@bistrofdi.local','Carlos','Lucas','cocinero123','cocinero','preset','preset_chef',1,NULL,NOW(),NOW()),
+('camarero','camarero@bistrofdi.local','Clara','Gómez','camarero123','camarero','preset','preset_waiter',1,NULL,NOW(),NOW()),
+('cliente','cliente@bistrofdi.local','Lucía','Lopez','cliente123','cliente','default',NULL,1,NULL,NOW(),NOW());

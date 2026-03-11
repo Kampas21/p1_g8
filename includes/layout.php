@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 function nav_links(?array $user): array {
     $links = [
-        ['href' => '../index.html', 'label' => 'Inicio'],
+        ['href' => '../index.php', 'label' => 'Inicio'],
         ['href' => 'acceso.php', 'label' => 'Acceso'],
     ];
 
     if ($user) {
         $links = [
-            ['href' => '../index.html', 'label' => 'Inicio'],
+            ['href' => '../index.php', 'label' => 'Inicio'],
             ['href' => 'perfil.php', 'label' => 'Perfil'],
         ];
 

@@ -66,18 +66,22 @@ CREATE TABLE IF NOT EXISTS `productos_en_pedido` (
     UNIQUE (pedido_id, producto_id)
 );
 
-CREATE TABLE IF NOT EXISTS usuarios (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT NOT NULL UNIQUE,
-    email TEXT NOT NULL UNIQUE,
-    nombre TEXT NOT NULL,
-    apellidos TEXT NOT NULL,
-    password_hash TEXT NOT NULL,
-    rol TEXT NOT NULL CHECK (rol IN ('cliente', 'camarero', 'cocinero', 'gerente')),
-    avatar_tipo TEXT NOT NULL DEFAULT 'default' CHECK (avatar_tipo IN ('default', 'preset', 'custom')),
-    avatar_valor TEXT NULL,
-    activo INTEGER NOT NULL DEFAULT 1 CHECK (activo IN (0,1)),
-    deleted_at TEXT NULL,
-    created_at TEXT NOT NULL,
-    updated_at TEXT NOT NULL
+CREATE TABLE IF NOT EXISTS `usuarios` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+
+    `username` VARCHAR(100) NOT NULL UNIQUE,
+    `email` VARCHAR(255) NOT NULL UNIQUE,
+    `nombre` VARCHAR(100) NOT NULL,
+    `apellidos` VARCHAR(150) NOT NULL,
+    `password` TEXT NOT NULL,
+
+    `rol` ENUM('cliente', 'camarero', 'cocinero', 'gerente') NOT NULL,
+
+    `avatar_tipo` ENUM('default', 'preset', 'custom') NOT NULL DEFAULT 'default',
+    `avatar_valor` TEXT NULL,
+
+    `activo` TINYINT(1) NOT NULL DEFAULT 1,
+    `deleted_at` DATETIME NULL,
+    `created_at` DATETIME NOT NULL,
+    `updated_at` DATETIME NOT NULL
 );

@@ -36,10 +36,10 @@
           <h4 style="margin:0 0 12px 0;">Acceso</h4>
           <p style="margin:0 0 14px 0;">Entra o crea una cuenta para acceder.</p>
           <div style="display:flex; gap:12px; flex-wrap:wrap;">
-            <a href="func0/acceso.php#login" style="display:inline-block; padding:10px 14px; border:1px solid #bbb; border-radius:10px; text-decoration:none; font-weight:bold;">
+            <a href="vistas/usuarios/acceso.php#login" style="display:inline-block; padding:10px 14px; border:1px solid #bbb; border-radius:10px; text-decoration:none; font-weight:bold;">
               Iniciar sesión
             </a>
-            <a href="func0/acceso.php#registro" style="display:inline-block; padding:10px 14px; border:1px solid #bbb; border-radius:10px; text-decoration:none; font-weight:bold;">
+            <a href="vistas/usuarios/acceso.php#registro" style="display:inline-block; padding:10px 14px; border:1px solid #bbb; border-radius:10px; text-decoration:none; font-weight:bold;">
               Registrarse
             </a>
           </div>
