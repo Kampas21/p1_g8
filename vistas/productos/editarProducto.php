@@ -1,4 +1,8 @@
 <?php
+$tituloPagina = 'Editar Producto';
+$rutaCSS = '../../CSS/estilo.css';
+ob_start();
+
 require_once __DIR__ . '/../../entities/producto.php';
 
 $id = $_GET['id'] ?? null;
@@ -65,3 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 require __DIR__ . '/productosForm.php';
+
+
+$contenidoPrincipal = ob_get_clean();
+require __DIR__ . '/../../includes/plantilla.php';

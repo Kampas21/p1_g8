@@ -16,14 +16,9 @@ ob_start();
 <h1>Lista de Categorías</h1>
 
 <p>
-    <a href="crearCategoria.php">Nueva Categoría</a>
+    <a class="btn-nuevo"href="crearCategoria.php">Nueva Categoría</a>
 </p>
 
-<ul>
-    <li>
-        <a href="../productos/productosList.php">Ver todos los productos</a>
-    </li>
-</ul>
 
 <table border="1">
     <tr>

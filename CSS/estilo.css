@@ -208,10 +208,10 @@ td.descripcion {
     text-overflow: ellipsis; /* agrega "..." al final */
 }
 
-body {
+body { 
     margin: 0;
     padding: 0;
-    background-color: #f3f3f3;
+    background-color: #e6d8c3; /* fondo tierra */
     font-family: Arial, sans-serif;
 }
 
@@ -220,42 +220,52 @@ body {
     max-width: 1400px;
     min-height: 85vh;
     margin: 30px auto;
-    border: 1px solid #bbb;
-    background-color: white;
+    border: 2px solid #6b4f3a; /* marrón oscuro */
+    background-color: #f5efe6; /* beige */
     display: flex;
     flex-direction: column;
 }
 
+/* CABECERA */
 #cabecera-web {
-    border-bottom: 1px solid #bbb;
+    border-bottom: 2px solid #6b4f3a;
     padding: 20px 30px;
+    background-color: #6b4f3a;
+    color: white;
 }
 
+/* ZONA CENTRAL */
 #zona-central {
     display: grid;
     grid-template-columns: 220px 1fr 220px;
     min-height: 600px;
 }
 
+/* SIDEBAR IZQUIERDO */
 #sidebar-izq {
-    border-right: 1px solid #ccc;
+    border-right: 1px solid #b89b7a;
     padding: 20px;
-    background-color: #fafafa;
+    background-color: #d9c4a5;
 }
 
+/* CONTENIDO */
 #contenido-web {
     padding: 30px;
-    background-color: white;
+    background-color: #fffaf3;
 }
 
+/* SIDEBAR DERECHO */
 #sidebar-der {
-    border-left: 1px solid #ccc;
+    border-left: 1px solid #b89b7a;
     padding: 20px;
-    background-color: #fafafa;
+    background-color: #e4d4bd;
 }
 
+/* PIE */
 #pie-web {
-    border-top: 1px solid #bbb;
+    border-top: 2px solid #6b4f3a;
     padding: 20px;
     text-align: center;
+    background-color: #6b4f3a;
+    color: white;
 }

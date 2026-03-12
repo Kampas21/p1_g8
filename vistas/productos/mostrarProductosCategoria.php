@@ -17,6 +17,9 @@ if (!$categoria_id || !is_numeric($categoria_id)) {
 $productos = Producto::getProductosPorCategoria($categoria_id);
 $nombreCategoria = Categoria::getCategoriaById($categoria_id);
 
+$tituloPagina = 'Lista de productos';
+$rutaCSS = '../../CSS/estilo.css';
+ob_start();
 ?>
 
 <link href="../../CSS/estilo.css" rel="stylesheet" type="text/css">
@@ -84,3 +87,7 @@ $nombreCategoria = Categoria::getCategoriaById($categoria_id);
 <p>
     <a class="btn-volver" href="../categorias/categoriasList.php">Volver</a>
 </p>
+
+  <?php
+$contenidoPrincipal = ob_get_clean();
+require __DIR__ . '/../../includes/plantilla.php';
