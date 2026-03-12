@@ -5,14 +5,14 @@ error_reporting(E_ALL);
 
 require_once __DIR__ . '/../../entities/producto.php';
 
-// $categoria_id = $_POST['categoria_id'] ?? $_GET['id'] ?? null;
+$categoria_id = $_GET['id'] ?? null;
 
 // $desdeCategoria = isset($_GET['id']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre = trim($_POST['nombre'] ?? '');
     $descripcion = trim($_POST['descripcion'] ?? '');
-    $categoria_id = trim($_POST['categoria_id'] ?? '');
+    //$categoria_id = trim($_POST['categoria_id'] ?? '');
     $precio_base = trim($_POST['precio_base'] ?? '');
     $iva = trim($_POST['iva'] ?? '');
     $disponible = trim($_POST['disponible'] ?? '');
@@ -27,7 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $nombre !== '' && $descripcion !== '' && $categoria_id !== ''
         && $precio_base !== '' && $iva !== '' && $disponible !== '' && $ofertado !== ''
     ) {
-
         $imagenPath = null;
         if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
             $nombreArchivo = $_FILES['imagen']['name'];
@@ -53,8 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // if ($desdeCategoria) {
         //     header("Location: mostrarProductosCategoria.php?id=$categoria_id");
         // } else {
-        header('Location: productosList.php');
-        //}
+        header("Location: mostrarProductosCategoria.php?id=$categoria_id");
         exit();
     }
 

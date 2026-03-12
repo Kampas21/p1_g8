@@ -104,7 +104,7 @@ table {
     margin-top: 10px;
 }
 
-.flujos{
+.flujos {
     margin-top: 80px;
     margin-left: 30px;
 }
@@ -134,4 +134,73 @@ td {
 /* Para poner las rayas entre filas */
 tbody tr {
     border-bottom: 1px solid #dddddd;
+}
+
+.btn {
+    display: inline-block;
+    padding: 3px 6px;
+    margin: 1px;
+    font-size: 12px;
+    text-decoration: none;
+    border-radius: 3px;
+    color: white;
+    font-weight: bold;
+}
+
+.editar {
+    background-color: #3498db;
+}
+
+.activar {
+    background-color: #2ecc71;
+}
+
+.borrar {
+    background-color: #e74c3c;
+}
+
+.btn-nuevo {
+    display: inline-block;
+    padding: 8px 14px;
+    font-size: 14px;
+    background-color: #de6f13;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.btn-aceptar {
+    display: inline-block;
+    padding: 6px 12px;
+    font-size: 13px;
+    background-color: #2ecc71;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.btn-volver {
+    display: inline-block;
+    padding: 6px 12px;
+    font-size: 13px;
+    background-color: #7f8c8d;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.btn:hover,
+.btn-nuevo:hover,
+.btn-volver:hover {
+    opacity: 0.85;
+}
+
+td.descripcion {
+    max-width: 300px;   /* ancho máximo */
+    /*white-space: nowrap;*/ /* evita salto de línea dentro de la celda */
+    overflow: hidden;    /* corta el texto si es muy largo */
+    text-overflow: ellipsis; /* agrega "..." al final */
 }

@@ -14,12 +14,6 @@ $categorias = Categoria::getCategorias();
 <a href="crearCategoria.php">Nueva Categoría</a>
 </p>
 
-<ul>
-<li>
-<a href="../productos/productosList.php">Ver todos los productos</a>
-</li>
-</ul>
-
 <table border="1">
 
 <tr>

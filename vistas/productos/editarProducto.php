@@ -4,13 +4,17 @@ require_once __DIR__ . '/../../entities/producto.php';
 $id = $_GET['id'] ?? null;
 
 if (!$id || !is_numeric($id)) {
-    die("ID de producto no válido.");
+    echo '<p>ID de produto no válido.</p>';
+    echo '<a class="btn-volver" href="mostrarProductosCategoria.php?id=' . $categoria_id . '">Volver</a>';
+    exit();
 }
 
 $producto = Producto::getProductoById((int)$id);
 
 if (!$producto) {
-    die("El producto no existe.");
+    echo '<p>El producto no existe.</p>';
+    echo '<a class="btn-volver" href="mostrarProductosCategoria.php?id=' . $categoria_id . '">Volver</a>';
+    exit();
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -52,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         Producto::editarProducto((int)$id, $nombre, $descripcion, $categoria, $precio_base, $iva, $disponible, $ofertado, $imagenPath);
-        header('Location: productosList.php');
+        header("Location: mostrarProductosCategoria.php?id=$categoria");
         exit();
     }
 
