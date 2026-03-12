@@ -194,7 +194,7 @@ layout_header($isCreate ? 'Crear usuario' : 'Editar usuario', 'usuarios.php');
 
       <div class="actions-inline" style="margin-top:14px;">
         <button class="primary" type="submit"><?= $isCreate ? 'Crear usuario' : 'Guardar cambios' ?></button>
-        <a class="btn" href="<?= $isCreate ? 'usuarios.php' : ('usuario_ver.php?id=' . (int)$user['id']) ?>">Cancelar</a>
+        <a class="btn" href="<?= $isCreate ? '/p1_g8/entities/usuarios.php' : ('/p1_g8/vistas/usuarios/usuario_ver.php?id=' . (int)$user['id']) ?>">Cancelar</a>
       </div>
     </form>
   </section>

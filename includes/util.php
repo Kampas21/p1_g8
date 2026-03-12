@@ -30,15 +30,31 @@ function flash_get_all(): array {
 }
 
 function csrf_token(): string {
-    if (empty($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(24));
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
     }
-    return (string)$_SESSION['csrf_token'];
+
+    if (!isset($_SESSION['csrf']) || !is_string($_SESSION['csrf']) || $_SESSION['csrf'] === '') {
+        $_SESSION['csrf'] = bin2hex(random_bytes(32));
+    }
+
+    return $_SESSION['csrf'];
 }
 
 function csrf_validate(?string $token): bool {
-    $current = $_SESSION['csrf_token'] ?? '';
-    return is_string($current) && is_string($token) && hash_equals($current, $token);
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
+    }
+
+    if (!is_string($token) || $token === '') {
+        return false;
+    }
+
+    if (!isset($_SESSION['csrf']) || !is_string($_SESSION['csrf'])) {
+        return false;
+    }
+
+    return hash_equals($_SESSION['csrf'], $token);
 }
 
 function require_csrf(): void {
@@ -51,14 +67,14 @@ function require_csrf(): void {
 
 function avatar_presets(): array {
     return [
-        'preset_chef' => ['label' => 'Opcion 1', 'path' => '../img/cocinero.png'],
-        'preset_waiter' => ['label' => 'Opcion 2', 'path' => '../img/camarero.png'],
-        'preset_manager' => ['label' => 'Opcion 3', 'path' => '../img/gerente.png'],
+        'preset_chef' => ['label' => 'Opcion 1', 'path' => '/p1_g8/img/avatares/cocinero.png'],
+        'preset_waiter' => ['label' => 'Opcion 2', 'path' => '/p1_g8/img/avatares/camarero.png'],
+        'preset_manager' => ['label' => 'Opcion 3', 'path' => '/p1_g8/img/avatares/gerente.png'],
     ];
 }
 
 function avatar_default_path(): string {
-    return '../img/default.png';
+    return '/p1_g8/img/avatares/default.png';
 }
 
 function valid_roles(): array {
@@ -115,7 +131,7 @@ function upload_avatar_from_request(string $fieldName = 'avatar_upload'): ?array
         throw new RuntimeException('Formato de avatar no permitido. Usa JPG, PNG, WEBP o GIF.');
     }
 
-    $uploadsDir = __DIR__ . '/../uploads/avatars';
+    $uploadsDir = __DIR__ . '/../img/avatares';
     if (!is_dir($uploadsDir)) {
         mkdir($uploadsDir, 0775, true);
     }
@@ -129,7 +145,7 @@ function upload_avatar_from_request(string $fieldName = 'avatar_upload'): ?array
 
     return [
         'type' => 'custom',
-        'value' => 'uploads/avatars/' . $filename,
+        'value' => $filename,
     ];
 }
 
@@ -174,7 +190,7 @@ function delete_custom_avatar_file(?string $path): void {
         return;
     }
     $relative = str_replace('\\', '/', $path);
-    if (!str_starts_with($relative, 'uploads/avatars/')) {
+    if (!str_starts_with($relative, 'img/avatares/')) {
         return;
     }
     $full = __DIR__ . '/../' . $relative;

@@ -1,10 +1,16 @@
 <?php
 declare(strict_types=1);
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
 require_once __DIR__ . '/../../includes/user_repo.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/layout.php';
 
 $user = require_login();
+
 $errors = [];
 $formValues = [
     'username' => $user['username'],
@@ -25,6 +31,7 @@ if (is_post()) {
 
     if ($accion === 'guardar_perfil') {
         [$clean, $errors] = user_validate_data($_POST, false, (int)$user['id'], false);
+
         $formValues = [
             'username' => $clean['username'],
             'email' => $clean['email'],
@@ -33,6 +40,7 @@ if (is_post()) {
         ];
 
         $avatarChoice = null;
+
         if (!$errors) {
             try {
                 $avatarChoice = resolve_avatar_choice_from_request($user, false);
@@ -42,39 +50,77 @@ if (is_post()) {
         }
 
         if (!$errors) {
-            user_update((int)$user['id'], $clean, ['avatar_choice' => $avatarChoice, 'allow_role' => false]);
+            user_update((int)$user['id'], $clean, [
+                'avatar_choice' => $avatarChoice,
+                'allow_role' => false
+            ]);
+
             flash_set('success', 'Perfil actualizado correctamente.');
             redirect('perfil.php');
         }
     }
 }
 
-$user = current_user() ?? $user; // refrescar después de posible actualización fallida/exit no llega
-$pdo = get_pdo();
+$user = current_user() ?? $user;
+
+/* =========================
+   PEDIDOS DEL USUARIO
+   ========================= */
+
 $pedidosActivos = [];
 $pedidosHistorico = [];
-$pedidosDisponibles = db_table_exists($pdo, 'pedidos');
+$pedidosDisponibles = false;
 
-if ($pedidosDisponibles) {
-    $stmtAct = $pdo->prepare("
-      SELECT numero_pedido, estado, fecha_hora, total
-      FROM pedidos
-      WHERE cliente_id = :uid AND estado IN ('En preparación', 'Cocinando', 'Listo cocina', 'Terminado')
-      ORDER BY fecha_hora DESC
-    ");
-    $stmtAct->execute(['uid' => (int)$user['id']]);
-    $pedidosActivos = $stmtAct->fetchAll();
+$conn = crearConexion();
 
-    $stmtHist = $pdo->prepare("
-      SELECT numero_pedido, fecha_hora, tipo, total, estado
-      FROM pedidos
-      WHERE cliente_id = :uid
-      ORDER BY fecha_hora DESC
-      LIMIT 15
-    ");
-    $stmtHist->execute(['uid' => (int)$user['id']]);
-    $pedidosHistorico = $stmtHist->fetchAll();
+/* Comprobar si existe la tabla pedidos */
+$checkTable = $conn->query("SHOW TABLES LIKE 'pedidos'");
+if ($checkTable && $checkTable->num_rows > 0) {
+    $pedidosDisponibles = true;
 }
+
+/* Cargar pedidos si la tabla existe */
+if ($pedidosDisponibles) {
+    $uid = (int)$user['id'];
+
+    $sqlActivos = "
+        SELECT numero_pedido, estado, fecha_hora, total
+        FROM pedidos
+        WHERE cliente_id = ?
+          AND estado IN ('En preparación', 'Cocinando', 'Listo cocina', 'Terminado')
+        ORDER BY fecha_hora DESC
+    ";
+    $stmtAct = $conn->prepare($sqlActivos);
+    $stmtAct->bind_param("i", $uid);
+    $stmtAct->execute();
+    $resultAct = $stmtAct->get_result();
+
+    while ($row = $resultAct->fetch_assoc()) {
+        $pedidosActivos[] = $row;
+    }
+
+    $stmtAct->close();
+
+    $sqlHist = "
+        SELECT numero_pedido, fecha_hora, tipo, total, estado
+        FROM pedidos
+        WHERE cliente_id = ?
+        ORDER BY fecha_hora DESC
+        LIMIT 15
+    ";
+    $stmtHist = $conn->prepare($sqlHist);
+    $stmtHist->bind_param("i", $uid);
+    $stmtHist->execute();
+    $resultHist = $stmtHist->get_result();
+
+    while ($row = $resultHist->fetch_assoc()) {
+        $pedidosHistorico[] = $row;
+    }
+
+    $stmtHist->close();
+}
+
+$conn->close();
 
 layout_header('Perfil', 'perfil.php');
 ?>
@@ -87,19 +133,14 @@ layout_header('Perfil', 'perfil.php');
   <div class="profile-layout">
     <section class="panel profile-card">
       <h3>Avatar + datos de usuario</h3>
+
       <div class="profile-top">
         <img class="avatar lg" src="<?= e($user['avatar_url']) ?>" alt="Avatar de <?= e($user['username']) ?>">
         <div>
-          <dl>
-            <dt>Usuario</dt>
-            <dd><?= e($user['username']) ?></dd>
-            <dt>Email</dt>
-            <dd><?= e($user['email']) ?></dd>
-            <dt>Nombre y apellidos</dt>
-            <dd><?= e($user['nombre']) ?> <?= e($user['apellidos']) ?></dd>
-            <dt>Rol</dt>
-            <dd><?= e(role_label((string)$user['rol'])) ?></dd>
-          </dl>
+          <p><strong>Usuario:</strong> <?= e($user['username']) ?></p>
+          <p><strong>Email:</strong> <?= e($user['email']) ?></p>
+          <p><strong>Nombre y apellidos:</strong> <?= e($user['nombre']) ?> <?= e($user['apellidos']) ?></p>
+          <p><strong>Rol:</strong> <?= e(role_label((string)$user['rol'])) ?></p>
         </div>
       </div>
 
@@ -153,6 +194,7 @@ layout_header('Perfil', 'perfil.php');
 
             <div class="full">
               <label>Avatar</label>
+
               <div class="actions-inline">
                 <label><input type="radio" name="avatar_mode" value="keep" checked> Mantener actual</label>
                 <label><input type="radio" name="avatar_mode" value="default"> Usar por defecto</label>
@@ -163,6 +205,7 @@ layout_header('Perfil', 'perfil.php');
               <div class="panel" style="margin-top:10px;">
                 <div class="muted">Avatar actual:</div>
                 <img class="avatar" src="<?= e($user['avatar_url']) ?>" alt="Avatar actual">
+
                 <div class="avatar-option-grid" style="margin-top:12px;">
                   <?php foreach (avatar_presets() as $key => $preset): ?>
                     <label class="avatar-option">
@@ -172,6 +215,7 @@ layout_header('Perfil', 'perfil.php');
                     </label>
                   <?php endforeach; ?>
                 </div>
+
                 <div style="margin-top:10px;">
                   <label for="pf-avatar-upload">Subir nueva imagen</label>
                   <input id="pf-avatar-upload" type="file" name="avatar_upload" accept=".jpg,.jpeg,.png,.webp,.gif,image/*">
@@ -185,14 +229,17 @@ layout_header('Perfil', 'perfil.php');
                   </div>
                 <?php endif; ?>
               </div>
-              <?php if (isset($errors['avatar'])): ?><div class="notice error"><?= e($errors['avatar']) ?></div><?php endif; ?>
+
+              <?php if (isset($errors['avatar'])): ?>
+                <div class="notice error"><?= e($errors['avatar']) ?></div>
+              <?php endif; ?>
             </div>
           </div>
 
           <div class="actions-inline" style="margin-top:12px;">
             <button class="primary" type="submit">Guardar cambios</button>
             <?php if (user_has_role($user, 'gerente')): ?>
-              <a class="btn" href="usuarios.php">Ir a gestión de usuarios</a>
+              <a class="btn" href="../../entities/usuarios.php">Ir a gestión de usuarios</a>
             <?php endif; ?>
           </div>
         </form>
@@ -204,7 +251,6 @@ layout_header('Perfil', 'perfil.php');
       <p class="muted">Estados relevantes: En preparación / Cocinando / Listo cocina / Terminado.</p>
 
       <?php if (!$pedidosDisponibles): ?>
-
         <div class="pedido-linea">
           <strong>Ejemplo visual (boceto)</strong>
           <div class="progress-steps">
@@ -229,6 +275,7 @@ layout_header('Perfil', 'perfil.php');
 
   <section class="panel">
     <h3>Histórico de pedidos</h3>
+
     <?php if (!$pedidosDisponibles): ?>
       <div class="table-wrap">
         <table>
@@ -240,8 +287,10 @@ layout_header('Perfil', 'perfil.php');
           </tbody>
         </table>
       </div>
+
     <?php elseif (!$pedidosHistorico): ?>
       <p>No hay pedidos registrados todavía.</p>
+
     <?php else: ?>
       <div class="table-wrap">
         <table>

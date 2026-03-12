@@ -3,21 +3,21 @@ declare(strict_types=1);
 
 function nav_links(?array $user): array {
     $links = [
-        ['href' => '../index.php', 'label' => 'Inicio'],
-        ['href' => 'acceso.php', 'label' => 'Acceso'],
+        ['href' => '/p1_g8/index.php', 'label' => 'Inicio'],
+        ['href' => '/p1_g8/vistas/usuarios/acceso.php', 'label' => 'Acceso'],
     ];
 
     if ($user) {
         $links = [
-            ['href' => '../index.php', 'label' => 'Inicio'],
-            ['href' => 'perfil.php', 'label' => 'Perfil'],
+            ['href' => '/p1_g8/index.php', 'label' => 'Inicio'],
+            ['href' => '/p1_g8/vistas/usuarios/perfil.php', 'label' => 'Perfil'],
         ];
 
         if (user_has_role($user, 'gerente')) {
-            $links[] = ['href' => 'usuarios.php', 'label' => 'Usuarios'];
+            $links[] = ['href' => '/p1_g8/entities/usuarios.php', 'label' => 'Usuarios'];
         }
 
-        $links[] = ['href' => 'logout.php', 'label' => 'Salir'];
+        $links[] = ['href' => '/p1_g8/vistas/usuarios/logout.php', 'label' => 'Salir'];
     }
 
     return $links;
@@ -32,13 +32,13 @@ function layout_header(string $title, string $activeHref = ''): void {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><?= e($title) ?> | Bistro FDI</title>
-  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="/p1_g8/CSS/styleFunc0.css">
 </head>
 <body>
 <header class="site-header">
   <div class="header-container">
     <div class="logo-title">
-      <img src="../img/logo_personalizado.png" alt="Logo Bistro FDI" class="logo">
+      <img src="/p1_g8/img/logo_personalizado.png" alt="Logo Bistro FDI" class="logo">
       <div>
         <h1>Bistro FDI</h1>
       </div>

@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
     email TEXT NOT NULL UNIQUE,
     nombre TEXT NOT NULL,
     apellidos TEXT NOT NULL,
-    password_hash TEXT NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
     rol TEXT NOT NULL CHECK (rol IN ('cliente', 'camarero', 'cocinero', 'gerente')),
     avatar_tipo TEXT NOT NULL DEFAULT 'default' CHECK (avatar_tipo IN ('default', 'preset', 'custom')),
     avatar_valor TEXT NULL,

@@ -30,7 +30,7 @@ function require_login(): array {
     $user = current_user();
     if (!$user) {
         flash_set('error', 'Debes iniciar sesión para acceder a esa página.');
-        redirect('acceso.php#login');
+        redirect('/p1_g8/vistas/usuarios/acceso.php#login');
     }
     return $user;
 }
@@ -43,11 +43,9 @@ function require_role(string $minRole): array {
     $user = require_login();
     if (!user_has_role($user, $minRole)) {
         http_response_code(403);
-        require_once __DIR__ . '/layout.php';
         layout_header('Acceso denegado');
         echo '<main><div class="panel"><h2>Acceso denegado</h2><p>No tienes permisos suficientes para esta acción.</p>';
-        echo '<p><a class="btn" href="index.php">Volver al inicio</a></p></div></main>';
-        layout_footer();
+        echo '<p><a class="btn" href="../index.php">Volver al inicio</a></p></div></main>';
         exit;
     }
     return $user;

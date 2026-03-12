@@ -61,7 +61,7 @@ INSERT INTO `productos` (`nombre`, `descripcion`, `categoria_id`, `precio_base`,
 ('Cerveza Roja','Cerveza ale 330ml',4,3.00,10,1,0);
 
 INSERT INTO `usuarios`(`username`, `email`, `nombre`, `apellidos`, `password_hash`, `rol`, `avatar_tipo`, `avatar_valor`, `activo`, `deleted_at`, `created_at`, `updated_at`) VALUES
-('gerente','gerente@bistrofdi.local','Gema','García','gerente123','gerente','preset','preset_manager',1,NULL,NOW(),NOW()),
-('cocinero','cocinero@bistrofdi.local','Carlos','Lucas','cocinero123','cocinero','preset','preset_chef',1,NULL,NOW(),NOW()),
-('camarero','camarero@bistrofdi.local','Clara','Gómez','camarero123','camarero','preset','preset_waiter',1,NULL,NOW(),NOW()),
-('cliente','cliente@bistrofdi.local','Lucía','Lopez','cliente123','cliente','default',NULL,1,NULL,NOW(),NOW());
+('gerente','gerente@bistrofdi.local','Gema','García','$2y$10$I2vqnj3l34w4TkDp2vhwcO3nB2GvNN8.CtzPg1aoW1QsGTAalMYyy','gerente','preset','preset_manager',1,NULL,NOW(),NOW()),
+('cocinero','cocinero@bistrofdi.local','Carlos','Lucas','$2y$10$Utc.tEtSUnEs3K30JRuOSOPBrXLHFsL/YsyVaIbfcHePq7sFUqRYy','cocinero','preset','preset_chef',1,NULL,NOW(),NOW()),
+('camarero','camarero@bistrofdi.local','Clara','Gómez','$2y$10$R5/GSm23GKVSrK82tILtzeoh7HVuIn2tRWnODNjKTnGnbsagFBPDe','camarero','preset','preset_waiter',1,NULL,NOW(),NOW()),
+('cliente','cliente@bistrofdi.local','Lucía','Lopez','$2y$10$1PE57AaW9hYc45FOd0RA/ebfNdQ4vaOsxRGO3HRJvHiLryxt8I2b.','cliente','default',NULL,1,NULL,NOW(),NOW());

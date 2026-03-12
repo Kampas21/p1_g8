@@ -1,6 +1,12 @@
 <?php
 declare(strict_types=1);
-require_once __DIR__ . '/includes/bootstrap.php';
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+require_once __DIR__ . '/../includes/user_repo.php';
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/layout.php';
 
 $admin = require_role('gerente');
 
@@ -12,7 +18,7 @@ if (is_post()) {
     if ($id > 0 && $accion === 'reactivar') {
         user_reactivate($id);
         flash_set('success', 'Usuario reactivado.');
-        redirect('usuarios.php?ver=todo');
+        redirect('../entities/usuarios.php?ver=todo');
     }
 }
 
@@ -20,7 +26,7 @@ $search = trim((string)($_GET['q'] ?? ''));
 $includeInactive = (string)($_GET['ver'] ?? '') === 'todo';
 $users = user_list(['search' => $search, 'include_inactive' => $includeInactive]);
 
-layout_header('Listado de usuarios', 'usuarios.php');
+layout_header('Listado de usuarios', '../../entities/usuarios.php');
 ?>
 <main>
   <div class="panel">
@@ -32,8 +38,8 @@ layout_header('Listado de usuarios', 'usuarios.php');
       <input id="q" type="text" name="q" value="<?= e($search) ?>" style="width:260px;">
       <label><input type="checkbox" name="ver" value="todo" <?= $includeInactive ? 'checked' : '' ?>> Mostrar inactivos</label>
       <button type="submit">Aplicar</button>
-      <a class="btn" href="usuarios.php">Limpiar</a>
-      <a class="btn primary" href="usuario_form.php?modo=crear">Crear nuevo usuario</a>
+      <a class="btn" href="../entities/usuarios.php">Limpiar</a>
+      <a class="btn primary" href="../vistas/usuarios/usuario_form.php?modo=crear">Crear nuevo usuario</a>
     </form>
   </div>
 
@@ -66,11 +72,11 @@ layout_header('Listado de usuarios', 'usuarios.php');
               <td><?= (int)$u['activo'] === 1 ? 'Activo' : 'Inactivo' ?></td>
               <td>
                 <div class="actions-inline">
-                  <a class="btn small" href="usuario_ver.php?id=<?= (int)$u['id'] ?>">Ver</a>
-                  <a class="btn small" href="usuario_form.php?id=<?= (int)$u['id'] ?>">Editar</a>
+                  <a class="btn small" href="/p1_g8/vistas/usuarios/usuario_ver.php?id=<?= (int)$u['id'] ?>">Ver</a>
+                  <a class="btn small" href="/p1_g8/vistas/usuarios/usuario_form.php?id=<?= (int)$u['id'] ?>">Editar</a>
 
                   <?php if ((int)$u['activo'] === 1): ?>
-                    <form method="post" action="usuario_eliminar.php" onsubmit="return confirm('¿Desactivar este usuario?');" style="display:inline;">
+                    <form method="post" action="/p1_g8/vistas/usuarios/usuario_eliminar.php" onsubmit="return confirm('¿Desactivar este usuario?');" style="display:inline;">
                       <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
                       <input type="hidden" name="id" value="<?= (int)$u['id'] ?>">
                       <button class="btn small danger" type="submit" <?= (int)$u['id'] === (int)$admin['id'] ? 'disabled title="No puedes desactivarte a ti mismo/a"' : '' ?>>Borrar</button>
