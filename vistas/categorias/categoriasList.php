@@ -34,7 +34,7 @@ $categorias = Categoria::getCategorias();
 
 <td><?= htmlspecialchars($cat['nombre']) ?></td>
 
-<td><?= htmlspecialchars($cat['descripcion']) ?></td>
+<td class="descripcion"><?= htmlspecialchars($cat['descripcion']) ?></td>
 
 <td>
 <?= $cat['activa'] 
