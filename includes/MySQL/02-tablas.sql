@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS `productos` (
     `iva` INT,
     `disponible` BOOLEAN,
     `ofertado` BOOLEAN,
+    `imagen` VARCHAR(250),
     FOREIGN KEY (`categoria_id`) REFERENCES `categorias`(`id`)
 );
 
