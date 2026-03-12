@@ -8,29 +8,27 @@ if (session_status() === PHP_SESSION_NONE) {
 <head>
     <meta charset="UTF-8">
     <title><?= isset($tituloPagina) ? htmlspecialchars($tituloPagina) : 'Bistro FDI' ?></title>
-    <link rel="stylesheet" type="text/css" href="<?= $rutaCSS ?? '../../CSS/estilo.css' ?>" />
+    <link rel="stylesheet" type="text/css" href="<?= $rutaCSS ?? 'CSS/estilo.css' ?>">
 </head>
 <body>
 
 <div id="contenedor-web">
-    
+
     <header id="cabecera-web">
         <?php require __DIR__ . '/../cabecera.php'; ?>
     </header>
 
     <div id="zona-central">
         <aside id="sidebar-izq">
-            <?php require __DIR__ . '/../sidebarIzq.php'; ?>
+            <?php require __DIR__ . '/../sideBarIzq.php'; ?>
         </aside>
 
         <main id="contenido-web">
-            <article>
-                <?= $contenidoPrincipal ?? '' ?>
-            </article>
+            <?= $contenidoPrincipal ?? '' ?>
         </main>
 
         <aside id="sidebar-der">
-            <?php require __DIR__ . '/../sidebarDer.php'; ?>
+            <?php require __DIR__ . '/../sideBarDer.php'; ?>
         </aside>
     </div>
 

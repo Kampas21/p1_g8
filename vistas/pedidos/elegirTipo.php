@@ -31,6 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $error = "Debes elegir un tipo de pedido.";
 }
+$tituloPagina = 'Elegir pedido';
+$rutaCSS = '../../CSS/estilo.css';
+ob_start();
 ?>
 
 <h1>Nuevo Pedido</h1>
@@ -49,3 +52,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         🥡 Para llevar
     </button>
 </form>
+
+
+<?php
+
+
+$contenidoPrincipal = ob_get_clean();
+require __DIR__ . '/../../includes/plantilla.php';
