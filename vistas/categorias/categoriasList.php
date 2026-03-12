@@ -52,14 +52,14 @@ Productos
 
 <?php if ($cat['activa']): ?>
 
-<a class="btn activar" href="borrarCategoria.php?id=<?= $cat['id'] ?>"
+<a class="btn borrar" href="borrarCategoria.php?id=<?= $cat['id'] ?>"
 onclick="return confirm('¿Seguro que quieres desactivar esta categoría?')">
 Desactivar
 </a>
 
 <?php else: ?>
 
-<a class="btn borrar" href="activarCategoria.php?id=<?= $cat['id'] ?>">
+<a class="btn activar" href="activarCategoria.php?id=<?= $cat['id'] ?>">
 Activar
 </a>
 
