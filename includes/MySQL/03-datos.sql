@@ -10,7 +10,7 @@ INSERT INTO `categorias` (`nombre`, `descripcion`, `imagen`) VALUES
 ('Bebidas','Bebidas frías y calientes, alcohólicas y no alcohólicas','bebidas.jpg');
 
 INSERT INTO `productos` (`nombre`, `descripcion`, `categoria_id`, `precio_base`, `iva`, `disponible`, `ofertado`) VALUES
-('Pizza Margherita','Pizza clásica con tomate, mozzarella y albahaca',1,8.50,10,1,0),
+('Pizza Margherita','Pizza clásica con tomate, mozzarella y albahaca',1,8.50,10,1,0,'/p1_g8/img/img_productos/pizza-margarita.jpg'),
 ('Spaghetti Carbonara','Pasta con salsa carbonara y panceta',1,9.75,10,1,0),
 ('Ensalada César','Lechuga, pollo, crutones y salsa César',2,7.00,10,1,1),
 ('Hamburguesa Gourmet','Hamburguesa de ternera con queso cheddar y bacon',1,11.50,10,1,0),
