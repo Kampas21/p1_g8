@@ -207,3 +207,55 @@ td.descripcion {
     overflow: hidden;    /* corta el texto si es muy largo */
     text-overflow: ellipsis; /* agrega "..." al final */
 }
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f3f3f3;
+    font-family: Arial, sans-serif;
+}
+
+#contenedor-web {
+    width: 85%;
+    max-width: 1400px;
+    min-height: 85vh;
+    margin: 30px auto;
+    border: 1px solid #bbb;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+#cabecera-web {
+    border-bottom: 1px solid #bbb;
+    padding: 20px 30px;
+}
+
+#zona-central {
+    display: grid;
+    grid-template-columns: 220px 1fr 220px;
+    min-height: 600px;
+}
+
+#sidebar-izq {
+    border-right: 1px solid #ccc;
+    padding: 20px;
+    background-color: #fafafa;
+}
+
+#contenido-web {
+    padding: 30px;
+    background-color: white;
+}
+
+#sidebar-der {
+    border-left: 1px solid #ccc;
+    padding: 20px;
+    background-color: #fafafa;
+}
+
+#pie-web {
+    border-top: 1px solid #bbb;
+    padding: 20px;
+    text-align: center;
+}
