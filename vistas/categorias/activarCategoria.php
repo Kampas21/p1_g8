@@ -11,3 +11,4 @@ Categoria::activarCategoria((int)$id);
 
 header("Location: categoriasList.php");
 exit();
+

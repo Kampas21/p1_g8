@@ -43,6 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header("Location: mostrarProductosCategoria.php?id=$categoria_id");
     exit();
 }
+$tituloPagina = 'Borrar producto';
+$rutaCSS = '../../CSS/estilo.css';
+ob_start();
 ?>
 
 <link href="../../CSS/estilo.css" rel="stylesheet" type="text/css">
@@ -60,3 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         Cancelar
     </a>
 </p>
+
+<?php
+
+$contenidoPrincipal = ob_get_clean();
+require __DIR__ . '/../../includes/plantilla.php';

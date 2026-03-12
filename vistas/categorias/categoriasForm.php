@@ -3,6 +3,9 @@ $modoEdicion = isset($categoria);
 $action = $modoEdicion ? "editarCategoria.php?id=" . $categoria['id'] : "crearCategoria.php";
 $nombre = $modoEdicion ? $categoria['nombre'] : '';
 $descripcion = $modoEdicion ? $categoria['descripcion'] : '';
+$tituloPagina = 'Editar categoria';
+$rutaCSS = '../../CSS/estilo.css';
+ob_start();
 ?>
 
 <link href="../../CSS/estilo.css" rel="stylesheet" type="text/css">
@@ -27,3 +30,6 @@ $descripcion = $modoEdicion ? $categoria['descripcion'] : '';
 <p>
     <a class="btn-volver" href="categoriasList.php">Volver al listado</a>
 </p>
+<?php
+$contenidoPrincipal = ob_get_clean();
+require __DIR__ . '/../../includes/plantilla.php';

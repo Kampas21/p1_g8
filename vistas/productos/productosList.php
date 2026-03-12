@@ -7,6 +7,10 @@ require_once __DIR__ . '/../../entities/producto.php';
 require_once __DIR__ . '/../../entities/categoria.php';
 
 $productos = Producto::getProductosConCategoria();
+
+$tituloPagina = 'Lista de productos';
+$rutaCSS = '../../CSS/estilo.css';
+ob_start();
 ?>
 
 <h1>Lista de Productos</h1>
@@ -50,3 +54,6 @@ $productos = Producto::getProductosConCategoria();
 <p>
     <a href="../categorias/categoriasList.php">Volver</a>
 </p>
+<?php
+$contenidoPrincipal = ob_get_clean();
+require __DIR__ . '/../../includes/plantilla.php';

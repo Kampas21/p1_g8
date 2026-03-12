@@ -18,6 +18,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Location: categoriasList.php');
     exit();
 }
+
+$tituloPagina = 'Borrar Categorías';
+$rutaCSS = '../../CSS/estilo.css';
+ob_start();
 ?>
 
 <link href="../../CSS/estilo.css" rel="stylesheet" type="text/css">
@@ -41,3 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <p>
     <a class="btn-volver" href="categoriasList.php">Cancelar</a>
 </p>
+
+<?php
+$contenidoPrincipal = ob_get_clean();
+require __DIR__ . '/../../includes/plantilla.php';
