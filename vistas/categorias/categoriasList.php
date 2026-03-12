@@ -8,6 +8,8 @@ require_once __DIR__.'/../../entities/categoria.php';
 $categorias = Categoria::getCategorias();
 ?>
 
+<link href="../../CSS/estilo.css" rel="stylesheet" type="text/css">
+
 <h1>Lista de Categorías</h1>
 
 <p>
@@ -42,22 +44,22 @@ $categorias = Categoria::getCategorias();
 
 <td>
 
-<a href="editarCategoria.php?id=<?= $cat['id'] ?>">Editar</a>
+<a class="btn editar" href="editarCategoria.php?id=<?= $cat['id'] ?>">Editar</a>
 
-<a href="../productos/mostrarProductosCategoria.php?id=<?= $cat['id'] ?>">
+<a class="btn prod" href="../productos/mostrarProductosCategoria.php?id=<?= $cat['id'] ?>">
 Productos
 </a>
 
 <?php if ($cat['activa']): ?>
 
-<a href="borrarCategoria.php?id=<?= $cat['id'] ?>"
+<a class="btn activar" href="borrarCategoria.php?id=<?= $cat['id'] ?>"
 onclick="return confirm('¿Seguro que quieres desactivar esta categoría?')">
 Desactivar
 </a>
 
 <?php else: ?>
 
-<a href="activarCategoria.php?id=<?= $cat['id'] ?>">
+<a class="btn borrar" href="activarCategoria.php?id=<?= $cat['id'] ?>">
 Activar
 </a>
 
@@ -72,5 +74,5 @@ Activar
 </table>
 
 <p>
-<a href="../../index.php">Volver al inicio</a>
+<a class="btn-volver" href="../../index.php">Volver al inicio</a>
 </p>

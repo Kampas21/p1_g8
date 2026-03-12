@@ -5,6 +5,9 @@ $nombre = $modoEdicion ? $categoria['nombre'] : '';
 $descripcion = $modoEdicion ? $categoria['descripcion'] : '';
 ?>
 
+<link href="../../CSS/estilo.css" rel="stylesheet" type="text/css">
+
+
 <h1><?= $modoEdicion ? 'Editar categoría' : 'Nueva categoría' ?></h1>
 
 <form method="POST" action="<?= $action ?>">
@@ -18,9 +21,9 @@ $descripcion = $modoEdicion ? $categoria['descripcion'] : '';
         <textarea name="descripcion" id="descripcion" rows="5" cols="40" required><?= htmlspecialchars($descripcion) ?></textarea>
     </p>
 
-    <button type="submit">Guardar</button>
+    <button type="submit" class="btn-aceptar">Guardar</button>
 </form>
 
 <p>
-    <a href="categoriasList.php">Volver al listado</a>
+    <a class="btn-volver" href="categoriasList.php">Volver al listado</a>
 </p>

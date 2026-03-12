@@ -20,6 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
+<link href="../../CSS/estilo.css" rel="stylesheet" type="text/css">
+
+
 <h1>Desactivar categoría</h1>
 
 <p>
@@ -32,9 +35,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </p>
 
 <form method="POST">
-<button type="submit">Sí, desactivar</button>
+<button type="submit" class="btn-aceptar">Sí, desactivar</button>
 </form>
 
 <p>
-    <a href="categoriasList.php">Cancelar</a>
+    <a class="btn-volver" href="categoriasList.php">Cancelar</a>
 </p>
