@@ -32,7 +32,7 @@ function layout_header(string $title, string $activeHref = ''): void {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><?= e($title) ?> | Bistro FDI</title>
-  <link rel="stylesheet" href="/p1_g8/CSS/styleFunc0.css">
+  <link rel="stylesheet" href="/p1_g8/CSS/style.css">
 </head>
 <body>
 <header class="site-header">

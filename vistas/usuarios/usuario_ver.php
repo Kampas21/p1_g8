@@ -1,5 +1,10 @@
 <?php
 declare(strict_types=1);
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
 require_once __DIR__ . '/../../includes/user_repo.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/layout.php';
@@ -10,10 +15,10 @@ $user = $id > 0 ? user_find_by_id($id) : null;
 
 if (!$user) {
     flash_set('error', 'Usuario no encontrado.');
-    redirect('usuarios.php');
+    redirect('/p1_g8/entities/usuarios.php');
 }
 
-layout_header('Ver usuario', 'usuarios.php');
+layout_header('Ver usuario', '/p1_g8/entities/usuarios.php');
 ?>
 <main>
   <div class="panel">
@@ -40,8 +45,8 @@ layout_header('Ver usuario', 'usuarios.php');
     </div>
 
     <div class="actions-inline" style="margin-top:14px;">
-      <a class="btn" href="usuarios.php">Volver al listado</a>
-      <a class="btn primary" href="usuario_form.php?id=<?= (int)$user['id'] ?>">Editar usuario</a>
+      <a class="btn" href="/p1_g8/entities/usuarios.php">Volver al listado</a>
+      <a class="btn primary" href="/p1_g8/vistas/usuarios/usuario_form.php?id=<?= (int)$user['id'] ?>">Editar usuario</a>
 
       <?php if ((int)$user['activo'] === 1): ?>
         <form method="post" action="usuario_eliminar.php" onsubmit="return confirm('¿Desactivar este usuario?');" style="display:inline;">
