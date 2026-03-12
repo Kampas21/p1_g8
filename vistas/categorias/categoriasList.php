@@ -51,19 +51,27 @@ ob_start();
                 Productos
             </a>
 
-            <?php if ($cat['activa']): ?>
-                <a class="btn activar" href="borrarCategoria.php?id=<?= $cat['id'] ?>"
-                   onclick="return confirm('¿Seguro que quieres desactivar esta categoría?')">
-                    Desactivar
-                </a>
-            <?php else: ?>
-                <a class="btn borrar" href="activarCategoria.php?id=<?= $cat['id'] ?>">
-                    Activar
-                </a>
-            <?php endif; ?>
-        </td>
-    </tr>
-    <?php endforeach; ?>
+<?php if ($cat['activa']): ?>
+
+<a class="btn activar" href="borrarCategoria.php?id=<?= $cat['id'] ?>"
+onclick="return confirm('¿Seguro que quieres desactivar esta categoría?')">
+Desactivar
+</a>
+
+<?php else: ?>
+
+<a class="btn borrar" href="activarCategoria.php?id=<?= $cat['id'] ?>">
+Activar
+</a>
+
+<?php endif; ?>
+
+</td>
+
+</tr>
+
+<?php endforeach; ?>
+
 </table>
 
 <p>

@@ -1,5 +1,10 @@
 <?php
 declare(strict_types=1);
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
 require_once __DIR__ . '/../../includes/user_repo.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/layout.php';
@@ -156,40 +161,57 @@ layout_header($isCreate ? 'Crear usuario' : 'Editar usuario', 'usuarios.php');
         <?php endif; ?>
 
         <div class="full">
-          <label>Avatar</label>
-          <div class="actions-inline">
-            <?php if (!$isCreate): ?>
-              <label><input type="radio" name="avatar_mode" value="keep" checked> Mantener actual</label>
-            <?php endif; ?>
-            <label><input type="radio" name="avatar_mode" value="default" <?= $isCreate ? 'checked' : '' ?>> Por defecto</label>
-            <label><input type="radio" name="avatar_mode" value="preset"> Predefinido</label>
-            <label><input type="radio" name="avatar_mode" value="upload"> Subir foto</label>
-          </div>
+         <label>Avatar</label>
 
-          <?php if (!$isCreate && $user): ?>
-            <div style="margin: 10px 0;">
-              <span class="muted">Avatar actual:</span><br>
-              <img class="avatar" src="<?= e($user['avatar_url']) ?>" alt="Avatar actual">
-              <div class="muted"><?= e((string)$user['avatar_tipo']) ?><?= $user['avatar_valor'] ? ' · ' . e((string)$user['avatar_valor']) : '' ?></div>
-            </div>
-          <?php endif; ?>
+  <div class="actions-inline">
+    <?php if (!$isCreate): ?>
+      <label><input type="radio" name="avatar_mode" value="keep" checked> Mantener actual</label>
+    <?php endif; ?>
 
-          <div class="avatar-option-grid">
-            <?php foreach (avatar_presets() as $key => $preset): ?>
-              <label class="avatar-option">
-                <input type="radio" name="avatar_preset" value="<?= e($key) ?>">
-                <img src="<?= e($preset['path']) ?>" alt="<?= e($preset['label']) ?>">
-                <div><?= e($preset['label']) ?></div>
-              </label>
-            <?php endforeach; ?>
-          </div>
+    <label>
+      <input type="radio" name="avatar_mode" value="default" <?= $isCreate ? 'checked' : '' ?>>
+      Por defecto
+    </label>
 
-          <div style="margin-top:10px;">
-            <label for="uf-avatar-upload">Subir imagen (JPG/PNG/WEBP/GIF, máx. 2MB)</label>
-            <input id="uf-avatar-upload" type="file" name="avatar_upload" accept=".jpg,.jpeg,.png,.webp,.gif,image/*">
-          </div>
-          <?php if (isset($errors['avatar'])): ?><div class="notice error"><?= e($errors['avatar']) ?></div><?php endif; ?>
-        </div>
+    <label>
+      <input type="radio" name="avatar_mode" value="preset">
+      Predefinido
+    </label>
+
+    <label>
+      <input type="radio" name="avatar_mode" value="upload">
+      Subir foto
+    </label>
+  </div>
+
+  <?php if (!$isCreate && $user): ?>
+    <div id="avatar-current-box" class="panel avatar-panel-block" style="margin-top:10px;">
+      <span class="muted">Avatar actual:</span><br>
+      <img class="avatar" src="<?= e($user['avatar_url']) ?>" alt="Avatar actual">
+    </div>
+  <?php endif; ?>
+
+  <div id="avatar-preset-box" class="panel hidden avatar-panel-block" style="margin-top:10px;">
+    <div class="avatar-option-grid">
+      <?php foreach (avatar_presets() as $key => $preset): ?>
+        <label class="avatar-option">
+          <input type="radio" name="avatar_preset" value="<?= e($key) ?>">
+          <img src="<?= e($preset['path']) ?>" alt="<?= e($preset['label']) ?>">
+          <div><?= e($preset['label']) ?></div>
+        </label>
+      <?php endforeach; ?>
+    </div>
+  </div>
+
+  <div id="avatar-upload-box" class="panel hidden avatar-panel-block" style="margin-top:10px;">
+    <label for="uf-avatar-upload">Subir imagen (JPG/PNG/WEBP/GIF, máx. 2MB)</label>
+    <input id="uf-avatar-upload" type="file" name="avatar_upload" accept=".jpg,.jpeg,.png,.webp,.gif,image/*">
+  </div>
+
+  <?php if (isset($errors['avatar'])): ?>
+    <div class="notice error"><?= e($errors['avatar']) ?></div>
+  <?php endif; ?>
+</div>
       </div>
 
       <div class="actions-inline" style="margin-top:14px;">
@@ -199,3 +221,38 @@ layout_header($isCreate ? 'Crear usuario' : 'Editar usuario', 'usuarios.php');
     </form>
   </section>
 </main>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const modeInputs = document.querySelectorAll('input[name="avatar_mode"]');
+    const currentBox = document.getElementById('avatar-current-box');
+    const presetBox = document.getElementById('avatar-preset-box');
+    const uploadBox = document.getElementById('avatar-upload-box');
+
+    function updateAvatarAdminUI() {
+        const selected = document.querySelector('input[name="avatar_mode"]:checked');
+        const mode = selected ? selected.value : '';
+
+        if (currentBox) currentBox.classList.add('hidden');
+        if (presetBox) presetBox.classList.add('hidden');
+        if (uploadBox) uploadBox.classList.add('hidden');
+
+        if (mode === 'keep' && currentBox) {
+            currentBox.classList.remove('hidden');
+        }
+
+        if (mode === 'preset' && presetBox) {
+            presetBox.classList.remove('hidden');
+        }
+
+        if (mode === 'upload' && uploadBox) {
+            uploadBox.classList.remove('hidden');
+        }
+    }
+
+    modeInputs.forEach(function (input) {
+        input.addEventListener('change', updateAvatarAdminUI);
+    });
+
+    updateAvatarAdminUI();
+});
+</script>

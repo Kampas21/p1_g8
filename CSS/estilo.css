@@ -138,9 +138,9 @@ tbody tr {
 
 .btn {
     display: inline-block;
-    padding: 3px 6px;
-    margin: 1px;
-    font-size: 12px;
+    padding: 6px 12px;
+    margin: 6px;
+    font-size: 13px;
     text-decoration: none;
     border-radius: 3px;
     color: white;

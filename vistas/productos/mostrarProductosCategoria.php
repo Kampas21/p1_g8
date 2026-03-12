@@ -58,15 +58,24 @@ $nombreCategoria = Categoria::getCategoriaById($categoria_id);
                     : '<span style="color:red">Inactivo</span>' ?></td>
             <td>
                 <?php if (!empty($cat['imagen'])): ?>
-                    <img src=<?= htmlspecialchars($cat['imagen']) ?> alt="Imagen de <?= htmlspecialchars($cat['nombre']) ?>" width="100">
+                    <img src=<?= htmlspecialchars($cat['imagen']) ?> alt="Imagen de <?= htmlspecialchars($cat['nombre']) ?>" width="120">
                 <?php else: ?>
                     No hay imagen
                 <?php endif; ?>
             </td>
             <td>
                 <a class="btn editar" href="editarProducto.php?id=<?= $cat['id'] ?>">Editar</a>
-                <a class="btn activar" href="activarProducto.php?id=<?= $cat['id'] ?>&categoria_id=<?= $categoria_id ?>">Activar</a>
-                <a class="btn borrar" href="borrarProducto.php?id=<?= $cat['id'] ?>&categoria_id=<?= $categoria_id ?>">Borrar</a>
+
+                <?php if ($cat['ofertado']): ?>
+
+                    <a class="btn borrar" href="borrarProducto.php?id=<?= $cat['id'] ?>&categoria_id=<?= $categoria_id ?>">Borrar</a>
+
+                <?php else: ?>
+
+                    <a class="btn activar" href="activarProducto.php?id=<?= $cat['id'] ?>&categoria_id=<?= $categoria_id ?>">Activar</a>
+
+                <?php endif; ?>
+
             </td>
         </tr>
     <?php endforeach; ?>

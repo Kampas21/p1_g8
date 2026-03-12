@@ -176,32 +176,36 @@ layout_header('Acceso', 'acceso.php');
           </div>
 
           <div class="full">
-            <label>Avatar</label>
-            <div class="actions-inline" style="margin-bottom: 8px;">
-              <label><input type="radio" name="avatar_mode" value="default" checked> Por defecto</label>
-              <label><input type="radio" name="avatar_mode" value="preset"> Seleccionar predefinido</label>
-              <label><input type="radio" name="avatar_mode" value="upload"> Subir foto</label>
-            </div>
+  <label>Avatar</label>
 
-            <div class="panel" style="margin:0;">
-              <p class="muted" style="margin-top:0;">Avatares predefinidos</p>
-              <div class="avatar-option-grid">
-                <?php foreach (avatar_presets() as $key => $preset): ?>
-                  <label class="avatar-option">
-                    <input type="radio" name="avatar_preset" value="<?= e($key) ?>">
-                    <img src="<?= e($preset['path']) ?>" alt="<?= e($preset['label']) ?>">
-                    <div><?= e($preset['label']) ?></div>
-                  </label>
-                <?php endforeach; ?>
-              </div>
+  <div class="actions-inline" style="margin-bottom: 8px;">
+    <label><input type="radio" name="avatar_mode" value="default" checked> Por defecto</label>
+    <label><input type="radio" name="avatar_mode" value="preset"> Seleccionar predefinido</label>
+    <label><input type="radio" name="avatar_mode" value="upload"> Subir foto</label>
+  </div>
 
-              <div style="margin-top:12px;">
-                <label for="reg-avatar-upload">Subir imagen (JPG/PNG/WEBP/GIF, máx. 2MB)</label>
-                <input id="reg-avatar-upload" type="file" name="avatar_upload" accept=".jpg,.jpeg,.png,.webp,.gif,image/*">
-              </div>
-            </div>
-            <?php if (isset($registerErrors['avatar'])): ?><div class="notice error"><?= e($registerErrors['avatar']) ?></div><?php endif; ?>
-          </div>
+  <div id="avatar-preset-box" class="panel hidden avatar-panel-block" style="margin:0;">
+    <p class="muted" style="margin-top:0;">Avatares predefinidos</p>
+    <div class="avatar-option-grid">
+      <?php foreach (avatar_presets() as $key => $preset): ?>
+        <label class="avatar-option">
+          <input type="radio" name="avatar_preset" value="<?= e($key) ?>">
+          <img src="<?= e($preset['path']) ?>" alt="<?= e($preset['label']) ?>">
+          <div><?= e($preset['label']) ?></div>
+        </label>
+      <?php endforeach; ?>
+    </div>
+  </div>
+
+  <div id="avatar-upload-box" class="panel hidden avatar-panel-block" style="margin-top:12px;">
+    <label for="reg-avatar-upload">Subir imagen (JPG/PNG/WEBP/GIF, máx. 2MB)</label>
+    <input id="reg-avatar-upload" type="file" name="avatar_upload" accept=".jpg,.jpeg,.png,.webp,.gif,image/*">
+  </div>
+
+  <?php if (isset($registerErrors['avatar'])): ?>
+    <div class="notice error"><?= e($registerErrors['avatar']) ?></div>
+  <?php endif; ?>
+</div>
         </div>
 
         <div class="auth-actions actions-inline">
@@ -212,3 +216,33 @@ layout_header('Acceso', 'acceso.php');
     </section>
   </div>
 </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const modeInputs = document.querySelectorAll('input[name="avatar_mode"]');
+    const presetBox = document.getElementById('avatar-preset-box');
+    const uploadBox = document.getElementById('avatar-upload-box');
+
+    function updateAvatarRegisterUI() {
+        const selected = document.querySelector('input[name="avatar_mode"]:checked');
+        const mode = selected ? selected.value : 'default';
+
+        if (presetBox) presetBox.classList.add('hidden');
+        if (uploadBox) uploadBox.classList.add('hidden');
+
+        if (mode === 'preset' && presetBox) {
+            presetBox.classList.remove('hidden');
+        }
+
+        if (mode === 'upload' && uploadBox) {
+            uploadBox.classList.remove('hidden');
+        }
+    }
+
+    modeInputs.forEach(function (input) {
+        input.addEventListener('change', updateAvatarRegisterUI);
+    });
+
+    updateAvatarRegisterUI();
+});
+</script>

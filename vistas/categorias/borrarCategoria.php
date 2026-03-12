@@ -1,4 +1,4 @@
-<?php 
+<?php
 require_once __DIR__ . '/../../entities/categoria.php';
 
 $id = $_GET['id'] ?? null;
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </p>
 
 <form method="POST">
-<button type="submit" class="btn-aceptar">Sí, desactivar</button>
+    <p><button type="submit" class="btn-aceptar">Sí, desactivar</button></p>
 </form>
 
 <p>

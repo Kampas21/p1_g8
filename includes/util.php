@@ -185,16 +185,11 @@ function resolve_avatar_choice_from_request(array $currentUser = null, bool $isC
 }
 
 
-function delete_custom_avatar_file(?string $path): void {
-    if (!$path) {
-        return;
-    }
-    $relative = str_replace('\\', '/', $path);
-    if (!str_starts_with($relative, 'img/avatares/')) {
-        return;
-    }
-    $full = __DIR__ . '/../' . $relative;
-    if (is_file($full)) {
-        @unlink($full);
+function delete_custom_avatar_file(string $relativePath): void {
+    $relativePath = ltrim($relativePath, '/');
+    $fullPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relativePath);
+
+    if (is_file($fullPath)) {
+        unlink($fullPath);
     }
 }

@@ -21,7 +21,7 @@ $descripcion = $modoEdicion ? $categoria['descripcion'] : '';
         <textarea name="descripcion" id="descripcion" rows="5" cols="40" required><?= htmlspecialchars($descripcion) ?></textarea>
     </p>
 
-    <button type="submit" class="btn-aceptar">Guardar</button>
+    <p><button type="submit" class="btn-aceptar">Guardar</button></p>
 </form>
 
 <p>
