@@ -14,12 +14,16 @@ if (function_exists('current_user')) {
 <ul class="menu-izq">
     <!-- Enlaces públicos para todos (logueados o no) -->
     <li><a href="<?= RUTA_APP ?>/index.php">Inicio</a></li>
-    <li><a href="<?= RUTA_APP ?>/vistas/categorias/categoriasList.php">Categorías</a></li>
     <li><a href="<?= RUTA_APP ?>/vistas/pedidos/elegirTipo.php">Nuevo pedido</a></li>
     
     <!-- Enlaces solo para usuarios logueados -->
     <?php if ($user): ?>
         <li><a href="<?= RUTA_APP ?>/vistas/pedidos/listarPedidosCliente.php">Mis Pedidos</a></li>
+        
+        <!-- Categorías: Solo Administrador / Gerente -->
+        <?php if ($user['rol'] === 'gerente'): ?>
+            <li><a href="<?= RUTA_APP ?>/vistas/categorias/categoriasList.php">Categorías</a></li>
+        <?php endif; ?>
         
         <!-- Panel Camarero: Solo Camareros y Gerentes -->
         <?php if ($user['rol'] === 'camarero' || $user['rol'] === 'gerente'): ?>
