@@ -18,7 +18,7 @@ $rol = $user['rol'] ?? 'No autenticado';
 <hr>
 
 <h4>Accesos rápidos</h4>
-<ul>
+<ul class="menu-izq">
     <?php if ($user): ?>
         <li><a href="<?= RUTA_APP ?>/vistas/usuarios/perfil.php">Mi perfil</a></li>
         <li><a href="<?= RUTA_APP ?>/vistas/usuarios/logout.php">Cerrar sesión</a></li>
