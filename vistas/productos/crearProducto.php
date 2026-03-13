@@ -48,8 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $destinoFinal = $carpetaDestino . $nombreUnico;
 
             if (move_uploaded_file($temporal, $destinoFinal)) {
-                $imagenPath = RUTA_APP . '/img/img_productos/' . $nombreUnico;
-            } else {
+$imagenPath = 'img/img_productos/' . $nombreUnico;            } else {
                 $error = "Error al subir la imagen.";
             }
         }
