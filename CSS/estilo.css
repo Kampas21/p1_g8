@@ -135,7 +135,8 @@ tbody tr {
     font-size: 13px;
     text-decoration: none;
     border-radius: 3px;
-    color: white;
+    color: white; 
+    background-color: #8b7355; 
     font-weight: bold;
 }
 
