@@ -380,3 +380,29 @@ body {
     margin:30px auto;
     text-align:center;
 }
+
+
+.menu-izq{
+    list-style:none;
+    padding:0;
+}
+
+.menu-izq li{
+    margin-bottom:10px;
+}
+
+.menu-izq a{
+    display:block;
+    padding:8px 10px;
+    background-color:#5a3e2b;   /* marrón oscuro restaurante */
+    color:white;
+    text-decoration:none;
+    border-radius:6px;
+    font-weight:bold;
+    font-size:13px;
+    text-align:center;
+}
+
+.menu-izq a:hover{
+    background-color:#7a553c;
+}

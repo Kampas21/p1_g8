@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 ?>
 
 <h3>Menú</h3>
-<ul>
+<ul class="menu-izq">
     <li><a href="/P1/p1_g8/index.php">Inicio</a></li>
     <li><a href="/P1/p1_g8/vistas/categorias/categoriasList.php">Categorías</a></li>
     <li><a href="/P1/p1_g8/vistas/pedidos/elegirTipo.php">Nuevo pedido</a></li>
