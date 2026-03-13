@@ -11,7 +11,7 @@ define("DB_NAME", "BistroFDI_G8");
  * - En PC local: define('RUTA_APP', '/p1_g8');
  * - En el VPS : define('RUTA_APP', '/~VM-0017'); 
  */
-define('RUTA_APP', '/p1_g8');
+define('RUTA_APP', '/P1/p1_g8');
 
 ?>
 
