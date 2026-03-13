@@ -1,3 +1,8 @@
+<?php
+$tituloPagina = 'Título de la página';
+$rutaCSS = '../../CSS/estilo.css';
+ob_start();
+?>
 <!doctype html>
 <html lang="es">
 
@@ -65,3 +70,7 @@
 </body>
 
 </html>
+
+<?php
+$contenidoPrincipal = ob_get_clean();
+require __DIR__ . '/../../includes/plantilla.php';

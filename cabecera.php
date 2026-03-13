@@ -1,16 +1,22 @@
 <?php
+declare(strict_types=1);
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-function mostrarSaludo() {
-    if (isset($_SESSION['login']) && $_SESSION['login'] === true) {
-        $nombre = $_SESSION['nombre'] ?? 'Usuario';
-        return 'Bienvenido, ' . htmlspecialchars($nombre) .
-               ' <a href="/P1/p1_g8/vistas/usuarios/logout.php">(salir)</a>';
+require_once __DIR__ . '/includes/auth.php';
+
+function mostrarSaludo(): string {
+    $user = current_user();
+
+    if ($user) {
+        $nombre = $user['nombre'] ?? $user['username'] ?? 'Usuario';
+        return "Bienvenido, " . htmlspecialchars($nombre) .
+            " <a href='/P1/p1_g8/vistas/usuarios/logout.php'>(salir)</a>";
     }
 
-    return 'Usuario desconocido. <a href="/P1/p1_g8/vistas/usuarios/acceso.php#login">Login</a>';
+    return "Usuario desconocido. <a href='/P1/p1_g8/vistas/usuarios/acceso.php#login'>Login</a>";
 }
 ?>
 
@@ -30,7 +36,7 @@ function mostrarSaludo() {
             <li><a href="/P1/p1_g8/bocetos.html">Bocetos</a></li>
             <li><a href="/P1/p1_g8/miembros.html">Miembros</a></li>
             <li><a href="/P1/p1_g8/planificacion.html">Planificación</a></li>
-            <li><a href="/P1/p1_g8/contacto.html">Contacto</a></li>
+            <li><a href="/P1/p1_g8/contacto.php">Contacto</a></li>
         </ul>
     </nav>
 </div>

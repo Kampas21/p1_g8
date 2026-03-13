@@ -18,8 +18,3 @@ $rol = $_SESSION['rol'] ?? 'No autenticado';
     <li><a href="/P1/p1_g8/vistas/usuarios/acceso.php#login">Iniciar sesión</a></li>
     <li><a href="/P1/p1_g8/vistas/usuarios/acceso.php#registro">Registrarse</a></li>
 </ul>
-
-<hr>
-
-<h4>Ayuda</h4>
-<p>Desde esta aplicación puedes consultar productos, gestionar pedidos y acceder a las funcionalidades del Bistro FDI.</p>

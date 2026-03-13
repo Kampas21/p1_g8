@@ -218,7 +218,6 @@ body {
 #contenedor-web {
     width: 85%;
     max-width: 1400px;
-    min-height: 85vh;
     margin: 30px auto;
     border: 1px solid #8b7355;
     background-color: #f7f3ee;
@@ -284,13 +283,14 @@ body {
 #zona-central {
     display: grid;
     grid-template-columns: 220px 1fr 220px;
-    min-height: 600px;
 }
 
 #sidebar-izq,
 #sidebar-der {
     background-color: #e8dcc8;
     padding: 20px;
+    height: 100%;
+    box-sizing: border-box;
 }
 
 #sidebar-izq {
@@ -304,12 +304,19 @@ body {
 #contenido-web {
     padding: 30px;
     background-color: #fdfbf8;
+    min-width: 0;
 }
 
 #pie-web {
     border-top: 1px solid #b89f7a;
-    padding: 15px 25px;
+    padding: 14px 20px;
     background-color: #e8dcc8;
+    color: #333;
+    font-size: 14px;
+}
+
+#pie-web p {
+    margin: 4px 0;
 }
 
 .foto_centrada {
