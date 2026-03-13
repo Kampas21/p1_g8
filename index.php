@@ -1,6 +1,8 @@
 <?php
+require_once __DIR__ . '/includes/config.php';
+
 $tituloPagina = 'Inicio | Bistro FDI';
-$rutaCSS = 'CSS/estilo.css';
+$rutaCSS = RUTA_APP . '/CSS/estilo.css';
 
 ob_start();
 ?>
@@ -36,8 +38,8 @@ ob_start();
     <p>Entra o crea una cuenta para acceder.</p>
 
     <div class="botones-acceso">
-        <a href="vistas/usuarios/acceso.php#login" class="boton-enlace">Iniciar sesión</a>
-        <a href="vistas/usuarios/acceso.php#registro" class="boton-enlace">Registrarse</a>
+        <a href="<?= RUTA_APP ?>/vistas/usuarios/acceso.php#login" class="boton-enlace">Iniciar sesión</a>
+        <a href="<?= RUTA_APP ?>/vistas/usuarios/acceso.php#registro" class="boton-enlace">Registrarse</a>
     </div>
 </section>
 

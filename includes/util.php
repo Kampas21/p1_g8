@@ -67,14 +67,14 @@ function require_csrf(): void {
 
 function avatar_presets(): array {
     return [
-        'preset_chef' => ['label' => 'Opcion 1', 'path' => '/p1_g8/img/avatares/cocinero.png'],
-        'preset_waiter' => ['label' => 'Opcion 2', 'path' => '/p1_g8/img/avatares/camarero.png'],
-        'preset_manager' => ['label' => 'Opcion 3', 'path' => '/p1_g8/img/avatares/gerente.png'],
+        'preset_chef' => ['label' => 'Opcion 1', 'path' => RUTA_APP . '/img/avatares/cocinero.png'],
+        'preset_waiter' => ['label' => 'Opcion 2', 'path' => RUTA_APP . '/img/avatares/camarero.png'],
+        'preset_manager' => ['label' => 'Opcion 3', 'path' => RUTA_APP . '/img/avatares/gerente.png'],
     ];
 }
 
-function avatar_default_path(): string {
-    return '/p1_g8/img/avatares/default.png';
+function default_avatar(): string {
+    return RUTA_APP . '/img/avatares/default.png';
 }
 
 function valid_roles(): array {

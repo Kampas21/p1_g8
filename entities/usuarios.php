@@ -26,7 +26,7 @@ $includeInactive = (string)($_GET['ver'] ?? '') === 'todo';
 $users = user_list(['search' => $search, 'include_inactive' => $includeInactive]);
 
 $tituloPagina = 'Listado de usuarios | Bistro FDI';
-$rutaCSS = '/p1_g8/CSS/estilo.css';
+$rutaCSS = RUTA_APP . '/CSS/estilo.css';
 
 ob_start();
 ?>
@@ -80,11 +80,11 @@ ob_start();
                             <td><?= (int)$u['activo'] === 1 ? 'Activo' : 'Inactivo' ?></td>
                             <td>
                                 <div class="actions-inline">
-                                    <a class="btn small" href="/p1_g8/vistas/usuarios/usuario_ver.php?id=<?= (int)$u['id'] ?>">Ver</a>
-                                    <a class="btn small" href="/p1_g8/vistas/usuarios/usuario_form.php?id=<?= (int)$u['id'] ?>">Editar</a>
+                                    <a class="btn small" href="<?= RUTA_APP ?>/vistas/usuarios/usuario_ver.php?id=<?= (int)$u['id'] ?>">Ver</a>
+                                    <a class="btn small" href="<?= RUTA_APP ?>/vistas/usuarios/usuario_form.php?id=<?= (int)$u['id'] ?>">Editar</a>
 
                                     <?php if ((int)$u['activo'] === 1): ?>
-                                        <form method="post" action="/p1_g8/vistas/usuarios/usuario_eliminar.php" onsubmit="return confirm('¿Desactivar este usuario?');" style="display:inline;">
+                                        <form method="post" action="<?= RUTA_APP ?>/vistas/usuarios/usuario_eliminar.php" onsubmit="return confirm('¿Desactivar este usuario?');" style="display:inline;">
                                             <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
                                             <input type="hidden" name="id" value="<?= (int)$u['id'] ?>">
                                             <button class="btn small danger" type="submit" <?= (int)$u['id'] === (int)$admin['id'] ? 'disabled title="No puedes desactivarte a ti mismo/a"' : '' ?>>Borrar</button>

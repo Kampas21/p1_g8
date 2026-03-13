@@ -86,7 +86,7 @@ if (is_post()) {
 }
 
 $tituloPagina = $isCreate ? 'Crear usuario' : 'Editar usuario';
-$rutaCSS = '/p1_g8/CSS/estilo.css'; 
+$rutaCSS = RUTA_APP . '/CSS/estilo.css'; 
 
 ob_start();
 ?>
@@ -222,7 +222,7 @@ ob_start();
 
       <div class="actions-inline" style="margin-top:14px;">
         <button class="primary" type="submit"><?= $isCreate ? 'Crear usuario' : 'Guardar cambios' ?></button>
-        <a class="btn" href="<?= $isCreate ? '/p1_g8/entities/usuarios.php' : ('/p1_g8/vistas/usuarios/usuario_ver.php?id=' . (int)$user['id']) ?>">Cancelar</a>
+        <a class="btn" href="<?= $isCreate ? RUTA_APP . '/entities/usuarios.php' : (RUTA_APP . '/vistas/usuarios/usuario_ver.php?id=' . (int)$user['id']) ?>">Cancelar</a>
       </div>
     </form>
   </section>

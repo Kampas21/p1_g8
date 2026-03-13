@@ -14,11 +14,11 @@ $user = $id > 0 ? user_find_by_id($id) : null;
 
 if (!$user) {
     flash_set('error', 'Usuario no encontrado.');
-    redirect('/p1_g8/entities/usuarios.php');
+    redirect(RUTA_APP . '/entities/usuarios.php');
 }
 
 $tituloPagina = 'Ver usuario';
-$rutaCSS = '/p1_g8/CSS/estilo.css';
+$rutaCSS = RUTA_APP . '/CSS/estilo.css';
 
 ob_start();
 ?>
@@ -54,11 +54,11 @@ ob_start();
     </div>
 
     <div class="actions-inline" style="margin-top:14px;">
-      <a class="btn" href="/p1_g8/entities/usuarios.php">Volver al listado</a>
-      <a class="btn primary" href="/p1_g8/vistas/usuarios/usuario_form.php?id=<?= (int)$user['id'] ?>">Editar usuario</a>
+      <a class="btn" href="<?= RUTA_APP ?>/entities/usuarios.php">Volver al listado</a>
+      <a class="btn primary" href="<?= RUTA_APP ?>/vistas/usuarios/usuario_form.php?id=<?= (int)$user['id'] ?>">Editar usuario</a>
 
       <?php if ((int)$user['activo'] === 1): ?>
-        <form method="post" action="usuario_eliminar.php" onsubmit="return confirm('¿Desactivar este usuario?');" style="display:inline;">
+        <form method="post" action="<?= RUTA_APP ?>/vistas/usuarios/usuario_eliminar.php" onsubmit="return confirm('¿Desactivar este usuario?');" style="display:inline;">
           <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
           <input type="hidden" name="id" value="<?= (int)$user['id'] ?>">
           <button class="danger" type="submit" <?= (int)$user['id'] === (int)$admin['id'] ? 'disabled' : '' ?>>Borrar (desactivar)</button>

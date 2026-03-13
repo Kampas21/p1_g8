@@ -2,13 +2,15 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+// Asegurarnos de que RUTA_APP existe
+require_once __DIR__ . '/config.php';
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title><?= isset($tituloPagina) ? htmlspecialchars($tituloPagina) : 'Bistro FDI' ?></title>
-    <link rel="stylesheet" type="text/css" href="<?= $rutaCSS ?? 'CSS/estilo.css' ?>">
+    <link rel="stylesheet" type="text/css" href="<?= $rutaCSS ?? RUTA_APP . '/CSS/estilo.css' ?>">
 </head>
 <body>
 

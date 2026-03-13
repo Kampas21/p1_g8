@@ -4,12 +4,13 @@ $rutaCSS = '../../CSS/estilo.css';
 ob_start();
 
 require_once __DIR__ . '/../../entities/producto.php';
+require_once __DIR__ . '/../../includes/config.php';
 
 $id = $_GET['id'] ?? null;
 
 if (!$id || !is_numeric($id)) {
     echo '<p>ID de produto no válido.</p>';
-    echo '<a class="btn-volver" href="mostrarProductosCategoria.php?id=' . $categoria_id . '">Volver</a>';
+    echo '<a class="btn-volver" href="' . RUTA_APP . '/vistas/productos/mostrarProductosCategoria.php?id=' . $categoria_id . '">Volver</a>';
     exit();
 }
 
@@ -17,7 +18,7 @@ $producto = Producto::getProductoById((int)$id);
 
 if (!$producto) {
     echo '<p>El producto no existe.</p>';
-    echo '<a class="btn-volver" href="mostrarProductosCategoria.php?id=' . $categoria_id . '">Volver</a>';
+    echo '<a class="btn-volver" href="' . RUTA_APP . '/vistas/productos/mostrarProductosCategoria.php?id=' . $categoria_id . '">Volver</a>';
     exit();
 }
 
@@ -53,14 +54,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $destinoFinal = $carpetaDestino . $nombreUnico;
 
             if (move_uploaded_file($temporal, $destinoFinal)) {
-                $imagenPath = '/p1_g8/img/img_productos/' . $nombreUnico;
+                $imagenPath = RUTA_APP . '/img/img_productos/' . $nombreUnico;
             } else {
                 $error = "Error al subir la imagen.";
             }
         }
 
         Producto::editarProducto((int)$id, $nombre, $descripcion, $categoria, $precio_base, $iva, $disponible, $ofertado, $imagenPath);
-        header("Location: mostrarProductosCategoria.php?id=$categoria");
+        header("Location: " . RUTA_APP . "/vistas/productos/mostrarProductosCategoria.php?id=$categoria");
         exit();
     }
 

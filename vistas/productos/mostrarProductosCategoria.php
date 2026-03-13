@@ -62,7 +62,7 @@ ob_start();
                     : '<span style="color:red">Inactivo</span>' ?></td>
             <td>
                 <?php if (!empty($cat['imagen'])): ?>
-                    <img src=<?= htmlspecialchars($cat['imagen']) ?> alt="Imagen de <?= htmlspecialchars($cat['nombre']) ?>" width="120">
+                    <img src="<?= RUTA_APP . '/'  . htmlspecialchars($cat['imagen']) ?>" alt="Imagen de <?= htmlspecialchars($cat['nombre']) ?>" width="120">
                 <?php else: ?>
                     No hay imagen
                 <?php endif; ?>

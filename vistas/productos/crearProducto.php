@@ -9,6 +9,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require_once __DIR__ . '/../../entities/producto.php';
+require_once __DIR__ . '/../../includes/config.php';
 
 $categoria_id = $_GET['id'] ?? null;
 
@@ -47,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $destinoFinal = $carpetaDestino . $nombreUnico;
 
             if (move_uploaded_file($temporal, $destinoFinal)) {
-                $imagenPath = '/p1_g8/img/img_productos/' . $nombreUnico;
+                $imagenPath = RUTA_APP . '/img/img_productos/' . $nombreUnico;
             } else {
                 $error = "Error al subir la imagen.";
             }
@@ -57,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // if ($desdeCategoria) {
         //     header("Location: mostrarProductosCategoria.php?id=$categoria_id");
         // } else {
-        header("Location: mostrarProductosCategoria.php?id=$categoria_id");
+        header("Location: " . RUTA_APP . "/vistas/productos/mostrarProductosCategoria.php?id=$categoria_id");
         exit();
     }
 

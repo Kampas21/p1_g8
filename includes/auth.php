@@ -30,7 +30,7 @@ function require_login(): array {
     $user = current_user();
     if (!$user) {
         flash_set('error', 'Debes iniciar sesión para acceder a esa página.');
-        redirect('/p1_g8/vistas/usuarios/acceso.php#login');
+        redirect(RUTA_APP . '/vistas/usuarios/acceso.php#login');
     }
     return $user;
 }
@@ -45,14 +45,14 @@ function require_role(string $minRole): array {
         http_response_code(403);
         
         $tituloPagina = 'Acceso denegado | Bistro FDI';
-        $rutaCSS = '/p1_g8/CSS/estilo.css';
+        $rutaCSS = RUTA_APP . '/CSS/estilo.css';
         
         ob_start();
         ?>
         <div class="panel">
             <h2>Acceso denegado</h2>
             <p>No tienes permisos suficientes para esta acción.</p>
-            <p><a class="btn primary" href="/p1_g8/index.php">Volver al inicio</a></p>
+            <p><a class="btn primary" href="<?= RUTA_APP ?>/index.php">Volver al inicio</a></p>
         </div>
         <?php
         $contenidoPrincipal = ob_get_clean();

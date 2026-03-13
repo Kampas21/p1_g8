@@ -10,7 +10,7 @@ function user_row_to_avatar_url(array $row): string {
     $valor = (string)($row['avatar_valor'] ?? '');
 
     if ($tipo === 'custom' && $valor !== '') {
-        return '/p1_g8/' . ltrim($valor, '/');
+        return RUTA_APP . '/' . ltrim($valor, '/');
     }
 
     if ($tipo === 'preset') {

@@ -88,7 +88,7 @@ if (is_post()) {
 }
 
 $tituloPagina = 'Acceso | Bistro FDI';
-$rutaCSS = '/p1_g8/CSS/estilo.css';
+$rutaCSS = RUTA_APP . '/CSS/estilo.css';
 
 ob_start();
 ?>
