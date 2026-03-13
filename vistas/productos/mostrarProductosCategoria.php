@@ -28,6 +28,7 @@ ob_start();
 
 <p><a class="btn-nuevo" href="crearProducto.php?id=<?= $categoria_id ?>">Nuevo Producto</a></p>
 
+<div class="tabla-scroll">
 <table border="1">
     <tr>
         <th>ID</th>
@@ -83,7 +84,7 @@ ob_start();
         </tr>
     <?php endforeach; ?>
 </table>
-
+</div>
 <p>
     <a class="btn-volver" href="../categorias/categoriasList.php">Volver</a>
 </p>

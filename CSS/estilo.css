@@ -26,10 +26,6 @@ fieldset {
     margin-right: 70px;
 }
 
-table {
-    margin-left: 40px;
-    margin-right: 70px;
-}
 
 
 .foto_centrada {
@@ -112,10 +108,10 @@ table {
 /*estilo general del la tabla*/
 table {
     border-collapse: collapse;
-    width: 100%;
+    width: max-content;
+    min-width: 100%;
     margin: 20px 0;
     font-size: 0.9em;
-    min-width: 400px;
 }
 
 /* Para el encabezado de la tabla */
@@ -282,7 +278,7 @@ body {
 
 #zona-central {
     display: grid;
-    grid-template-columns: 220px 1fr 220px;
+    grid-template-columns: 220px minmax(0, 1fr) 220px;
 }
 
 #sidebar-izq,
@@ -305,8 +301,8 @@ body {
     padding: 30px;
     background-color: #fdfbf8;
     min-width: 0;
+    overflow-x: auto;
 }
-
 #pie-web {
     border-top: 1px solid #b89f7a;
     padding: 14px 20px;
@@ -405,4 +401,9 @@ body {
 
 .menu-izq a:hover{
     background-color:#7a553c;
+}
+
+.tabla-scroll {
+    width: 100%;
+    overflow-x: auto;
 }
