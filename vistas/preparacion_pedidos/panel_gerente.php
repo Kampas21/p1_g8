@@ -8,7 +8,7 @@ require_once __DIR__ . '/../entities/pedido.php';
 $user = require_role('gerente'); 
 $pedidos = Pedido::getPedidosPendientesGerente();
 
-layout_header('Panel Gerencia');
+//layout_header('Panel Gerencia');
 ?>
 <main>
     <div class="panel">

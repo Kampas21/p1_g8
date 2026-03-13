@@ -207,11 +207,11 @@ ob_start();
 
                     <div class="actions-inline" style="margin-bottom: 8px;">
                         <label><input type="radio" name="avatar_mode" value="default" checked> Por defecto</label>
-                        <label><input type="radio" name="avatar_mode" value="preset"> Seleccionar predefinido</label>
+                        <!-- <label><input type="radio" name="avatar_mode" value="preset"> Seleccionar predefinido</label> -->
                         <label><input type="radio" name="avatar_mode" value="upload"> Subir foto</label>
                     </div>
 
-                    <div id="avatar-preset-box" class="panel hidden avatar-panel-block" style="margin:0;">
+                    <!-- <div id="avatar-preset-box" class="panel hidden avatar-panel-block" style="margin:0;">
                         <p class="muted" style="margin-top:0;">Avatares predefinidos</p>
                         <div class="avatar-option-grid">
                             <?php foreach (avatar_presets() as $key => $preset): ?>
@@ -222,7 +222,7 @@ ob_start();
                                 </label>
                             <?php endforeach; ?>
                         </div>
-                    </div>
+                    </div> -->
 
                     <div id="avatar-upload-box" class="panel hidden avatar-panel-block" style="margin-top:12px;">
                         <label for="reg-avatar-upload">Subir imagen (JPG/PNG/WEBP/GIF, máx. 2MB)</label>

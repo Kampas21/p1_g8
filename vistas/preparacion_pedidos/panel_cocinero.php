@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $pedidosEnCola = Pedido::getPedidosPorEstado('en_preparacion'); 
 $misPedidos = Pedido::getPedidosCocinando($user['id']);
 
-layout_header('Panel Cocina');
+//layout_header('Panel Cocina');
 ?>
 <main>
     <div class="panel">

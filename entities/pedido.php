@@ -177,4 +177,64 @@ class Pedido
         return $stmt->execute();
     }
 
+    public static function getProductosPedido($pedido_id) {
+        global $conn;
+        // Obtenemos los productos y su estado individual para poder tacharlos
+        $stmt = $conn->prepare("SELECT pep.*, p.nombre FROM productos_en_pedido pep JOIN productos p ON p.id = pep.producto_id WHERE pep.pedido_id = ?");
+        $stmt->bind_param("i", $pedido_id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public static function marcarProductoPreparado($pedido_id, $producto_id) {
+        global $conn;
+        // Cambia el estado de una sola línea del pedido a 'preparado'
+        $stmt = $conn->prepare("UPDATE productos_en_pedido SET estado = 'preparado' WHERE pedido_id = ? AND producto_id = ?");
+        $stmt->bind_param("ii", $pedido_id, $producto_id);
+        return $stmt->execute();
+    }
+
+    // --- ESTADOS GLOBALES DEL PEDIDO (FUNCIONALIDAD 3) ---
+    public static function getPedidosPorEstado($estado) {
+        global $conn;
+        $stmt = $conn->prepare("SELECT * FROM pedidos WHERE estado = ? ORDER BY fecha_hora ASC");
+        $stmt->bind_param("s", $estado);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public static function getPedidosCocinando($cocinero_id) {
+        global $conn;
+        $stmt = $conn->prepare("SELECT * FROM pedidos WHERE cocinero_id = ? AND estado = 'cocinando' ORDER BY fecha_hora ASC");
+        $stmt->bind_param("i", $cocinero_id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public static function asignarCocineroYEstado($pedido_id, $cocinero_id, $estado) {
+        global $conn;
+        $stmt = $conn->prepare("UPDATE pedidos SET cocinero_id = ?, estado = ? WHERE id = ?");
+        $stmt->bind_param("isi", $cocinero_id, $estado, $pedido_id);
+        return $stmt->execute();
+    }
+
+    public static function actualizarEstadoPedido($pedido_id, $estado) {
+        global $conn;
+        $stmt = $conn->prepare("UPDATE pedidos SET estado = ? WHERE id = ?");
+        $stmt->bind_param("si", $estado, $pedido_id);
+        return $stmt->execute();
+    }
+
+    // --- PANEL DE GERENTE (FUNCIONALIDAD 3) ---
+public static function getPedidosPendientesGerente() {
+        global $conn;
+        // Cambiamos u.avatar por u.avatar_valor para evitar el error de columna desconocida
+        $query = "SELECT p.*, u.nombre AS cocinero_nombre, u.apellidos AS cocinero_apellidos, u.avatar_valor 
+                  FROM pedidos p LEFT JOIN usuarios u ON p.cocinero_id = u.id 
+                  WHERE p.estado IN ('recibido', 'en_preparacion', 'cocinando', 'listo_cocina', 'terminado')
+                  ORDER BY p.fecha_hora ASC";
+        $rs = $conn->query($query);
+        return $rs->fetch_all(MYSQLI_ASSOC);
+    }
+
 }
