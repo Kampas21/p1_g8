@@ -35,7 +35,7 @@ $terminados    = Pedido::getPedidosPorEstado('terminado');
 
 function renderTarjetas(array $pedidos, string $accion, string $btnLabel): void {
     if (empty($pedidos)): ?>
-        <p class="muted">No hay pedidos.</p>
+        <p style="color: #666; font-style: italic;">No hay pedidos.</p>
     <?php else: foreach ($pedidos as $p): ?>
         <div class="pedido-card">
             <div class="pedido-card-header">
@@ -50,80 +50,69 @@ function renderTarjetas(array $pedidos, string $accion, string $btnLabel): void 
             <form method="POST" action="gestionCamarero.php">
                 <input type="hidden" name="pedido_id" value="<?= (int)$p['id'] ?>">
                 <input type="hidden" name="accion"    value="<?= e($accion) ?>">
-                <button type="submit" class="btn primary"><?= e($btnLabel) ?></button>
+                <button type="submit" class="btn primary" style="width: 100%; margin-top: 10px;"><?= e($btnLabel) ?></button>
             </form>
         </div>
     <?php endforeach; endif;
 }
+
+// ---- EMPIEZA LA VISTA DEL PROYECTO ----
+$tituloPagina = 'Gestión Camarero | Bistro FDI';
+ob_start();
 ?>
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Gestión Camarero | Bistro FDI</title>
-  <!-- Asegúrate de cargar los estilos necesarios -->
-  <link rel="stylesheet" href="<?= RUTA_APP ?>/CSS/estilo.css">
-  <style>
-      /* Estilos específicos para la vista apaisada de la tablet si no los tienes en estilo.css */
-      .tablet-grid { display: flex; gap: 20px; padding: 20px; align-items: flex-start; }
-      .columna { flex: 1; background: #f9f9f9; border-radius: 8px; overflow: hidden; border: 1px solid #ddd; }
-      .columna-header { padding: 15px; font-weight: bold; font-size: 1.1em; color: white; display: flex; justify-content: space-between; }
-      .columna-header.recibido { background-color: #f44336; }
-      .columna-header.listo { background-color: #2196F3; }
-      .columna-header.terminado { background-color: #4CAF50; }
-      .columna-body { padding: 15px; display: flex; flex-direction: column; gap: 15px; }
-      .pedido-card { background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-      .pedido-card-header { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
-      .pedido-num { font-size: 1.2em; font-weight: bold; }
-      .btn.primary { width: 100%; margin-top: 10px; }
-      .badge { background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 12px; }
-  </style>
-</head>
-<body>
+<style>
+    /* Estilos adaptados para encajar dentro del panel central */
+    .tablet-grid { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px; }
+    .columna { flex: 1; min-width: 250px; background: #fff; border-radius: 8px; overflow: hidden; border: 1px solid #ddd; }
+    .columna-header { padding: 12px; font-weight: bold; font-size: 1.1em; color: white; display: flex; justify-content: space-between; align-items: center; }
+    .columna-header.recibido { background-color: #f44336; }
+    .columna-header.listo { background-color: #2196F3; }
+    .columna-header.terminado { background-color: #4CAF50; }
+    .columna-body { padding: 15px; display: flex; flex-direction: column; gap: 15px; background: #f9f9f9; min-height: 200px; }
+    .pedido-card { background: white; padding: 15px; border-radius: 6px; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .pedido-card-header { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
+    .pedido-card-body p { margin: 5px 0; }
+    .pedido-num { font-size: 1.2em; font-weight: bold; color: #333; }
+    .badge { background: rgba(0,0,0,0.2); padding: 3px 10px; border-radius: 20px; font-size: 0.9em; }
+</style>
 
-<header class="site-header" style="background:#333; color:white; padding:15px 20px; display:flex; justify-content:space-between; align-items:center;">
-    <div style="display:flex; align-items:center; gap:15px;">
-      <h1>Camarero — <?= e($user['nombre']) ?></h1>
-    </div>
-    <nav>
-      <a href="<?= RUTA_APP ?>/vistas/usuarios/logout.php" style="color:white; text-decoration:none; border:1px solid white; padding:5px 10px; border-radius:4px;">Salir</a>
-    </nav>
-</header>
+<div class="panel">
+    <h2>Panel de Camarero — <?= e($user['nombre']) ?></h2>
+    
+    <div class="tablet-grid">
+      <div class="columna">
+        <div class="columna-header recibido">
+          <span>💰 Pendiente cobro</span>
+          <span class="badge"><?= count($recibidos) ?></span>
+        </div>
+        <div class="columna-body">
+          <?php renderTarjetas($recibidos, 'cobrar', 'Cobrado → En preparación') ?>
+        </div>
+      </div>
 
-<div class="tablet-grid">
+      <div class="columna">
+        <div class="columna-header listo">
+          <span>✅ Listos en cocina</span>
+          <span class="badge"><?= count($listos_cocina) ?></span>
+        </div>
+        <div class="columna-body">
+          <?php renderTarjetas($listos_cocina, 'preparado', 'Revisado → Listo para entregar') ?>
+        </div>
+      </div>
 
-  <div class="columna">
-    <div class="columna-header recibido">
-      💰 Pendiente de cobro
-      <span class="badge"><?= count($recibidos) ?></span>
+      <div class="columna">
+        <div class="columna-header terminado">
+          <span>🛎️ Para entregar</span>
+          <span class="badge"><?= count($terminados) ?></span>
+        </div>
+        <div class="columna-body">
+          <?php renderTarjetas($terminados, 'entregar', 'Entregado al cliente') ?>
+        </div>
+      </div>
     </div>
-    <div class="columna-body">
-      <?php renderTarjetas($recibidos, 'cobrar', 'Cobrado → En preparación') ?>
-    </div>
-  </div>
-
-  <div class="columna">
-    <div class="columna-header listo">
-      ✅ Listos en cocina
-      <span class="badge"><?= count($listos_cocina) ?></span>
-    </div>
-    <div class="columna-body">
-      <?php renderTarjetas($listos_cocina, 'preparado', 'Revisado → Listo para entregar') ?>
-    </div>
-  </div>
-
-  <div class="columna">
-    <div class="columna-header terminado">
-      🛎️ Para entregar
-      <span class="badge"><?= count($terminados) ?></span>
-    </div>
-    <div class="columna-body">
-      <?php renderTarjetas($terminados, 'entregar', 'Entregado al cliente') ?>
-    </div>
-  </div>
-
 </div>
 
-</body>
-</html>
+<?php
+$contenidoPrincipal = ob_get_clean();
+require __DIR__ . '/../../includes/plantilla.php';
+?>
