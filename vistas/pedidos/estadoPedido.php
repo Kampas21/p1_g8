@@ -1,0 +1,149 @@
+<?php
+session_start();
+require_once __DIR__ . '/../../includes/config.php';
+require_once __DIR__ . '/../../includes/application.php';
+require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/util.php';
+require_once __DIR__ . '/../../entities/pedido.php';
+
+$user = require_login();
+$usuario_id = (int)$user['id'];
+
+$pedido_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+if (!$pedido_id) {
+    redirect('listarPedidosCliente.php');
+}
+
+$pedido = Pedido::getPedidoById($pedido_id);
+
+if (!$pedido || (int)$pedido['usuario_id'] !== $usuario_id) {
+    http_response_code(403);
+    
+    $tituloPagina = 'Acceso denegado | Bistro FDI';
+    $rutaCSS = RUTA_APP . '/CSS/estilo.css';
+    ob_start();
+    echo '<main><div class="panel"><p>Pedido no encontrado o no tienes permiso para verlo.</p><a href="listarPedidosCliente.php" class="btn">← Volver</a></div></main>';
+    $contenidoPrincipal = ob_get_clean();
+    require __DIR__ . '/../../includes/plantilla.php';
+    exit();
+}
+
+$lineas = Pedido::getProductosPedido($pedido_id);
+
+if (is_post() && ($_POST['accion'] ?? '') === 'cancelar') {
+    if ($pedido['estado'] === 'recibido') {
+        Pedido::cancelarPedido($pedido_id);
+    }
+    flash_set('success', 'Pedido cancelado correctamente.');
+    redirect('listarPedidosCliente.php');
+}
+
+$etiquetas = [
+    'recibido'       => 'Recibido — pendiente de pago',
+    'en_preparacion' => 'En preparación',
+    'cocinando'      => 'Cocinando',
+    'listo_cocina'   => 'Listo en cocina',
+    'terminado'      => 'Listo para recoger',
+    'entregado'      => 'Entregado',
+    'cancelado'      => 'Cancelado',
+];
+
+// ---- EMPIEZA LA VISTA DEL PROYECTO ----
+$tituloPagina = 'Pedido #' . $pedido['numero_pedido'] . ' | Bistro FDI';
+$rutaCSS = RUTA_APP . '/CSS/estilo.css';
+ob_start();
+?>
+
+<main>
+  <?php 
+  // Mostrar mensajes flash
+  foreach (flash_get_all() as $f): ?>
+      <div class="mensaje-<?= e($f['type']) ?>"><?= e($f['message']) ?></div>
+  <?php endforeach; ?>
+
+  <div class="panel">
+    <div class="actions-inline" style="margin-bottom:12px;">
+      <a href="listarPedidosCliente.php" class="btn">← Mis pedidos</a>
+    </div>
+
+    <h2>Pedido #<?= e($pedido['numero_pedido']) ?></h2>
+
+    <table>
+      <tbody>
+        <tr>
+          <th>Estado</th>
+          <td><strong><?= e($etiquetas[$pedido['estado']] ?? $pedido['estado']) ?></strong></td>
+        </tr>
+        <tr>
+          <th>Tipo</th>
+          <td><?= $pedido['tipo'] === 'local' ? '🍽️ En local' : '🥡 Para llevar' ?></td>
+        </tr>
+        <tr>
+          <th>Pago</th>
+          <td><?= $pedido['metodo_pago'] === 'tarjeta' ? '💳 Tarjeta' : ($pedido['metodo_pago'] === 'camarero' ? '💵 Al camarero' : '—') ?></td>
+        </tr>
+        <tr>
+          <th>Fecha</th>
+          <td><?= e($pedido['fecha_hora']) ?></td>
+        </tr>
+        <tr>
+          <th>Total</th>
+          <td><?= e($pedido['total']) ?> €</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h3>Productos</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Precio ud.</th>
+            <th>Cantidad</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($lineas as $linea): ?>
+          <tr>
+            <td><?= e($linea['nombre']) ?></td>
+            <td><?= e($linea['precio_unitario']) ?> €</td>
+            <td><?= (int)$linea['cantidad'] ?></td>
+            <td><?= round($linea['precio_unitario'] * $linea['cantidad'], 2) ?> €</td>
+          </tr>
+        <?php endforeach; ?>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3"><strong>Total</strong></td>
+            <td><strong><?= e($pedido['total']) ?> €</strong></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+  <?php if ($pedido['estado'] === 'recibido'): ?>
+  <div class="panel" style="margin-top:20px; border-left: 4px solid #f44336;">
+    <div class="mensaje-info" style="margin-bottom: 10px;">
+      Este pedido aún no ha sido pagado. Puedes cancelarlo si ya no lo necesitas.
+    </div>
+    <form method="POST" action="estadoPedido.php?id=<?= (int)$pedido_id ?>" style="margin-top:10px;">
+      <input type="hidden" name="accion" value="cancelar">
+      <button type="submit" class="btn danger"
+        onclick="return confirm('¿Seguro que quieres cancelar este pedido?')">
+        Cancelar pedido
+      </button>
+    </form>
+  </div>
+  <?php endif; ?>
+
+</main>
+
+<?php
+$contenidoPrincipal = ob_get_clean();
+require __DIR__ . '/../../includes/plantilla.php';
+?>

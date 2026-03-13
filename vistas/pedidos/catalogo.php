@@ -1,20 +1,25 @@
 <?php
+session_start();
+require_once __DIR__ . '/../../includes/config.php';
+require_once __DIR__ . '/../../includes/application.php';
+require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/util.php';
+require_once __DIR__ . '/../../entities/pedido.php';
 require_once __DIR__ . '/../../entities/producto.php';
 require_once __DIR__ . '/../../entities/categoria.php';
-require_once __DIR__ . '/../../entities/pedido.php';
 
+$user = require_login();
+$usuario_id = (int)$user['id'];
 
-// Verificar que hay un pedido activo, si no redirigir a elegir tipo
 $pedido = Pedido::getPedidoNuevo($usuario_id);
 if (!$pedido) {
-    header('Location: elegirTipo.php');
-    exit();
+    redirect('elegirTipo.php');
 }
 $pedido_id = $pedido['id'];
 
 // Procesar "Añadir al carrito"
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $producto_id = (int)($_POST['producto_id'] ?? 0);
+if (is_post()) {
+    $producto_id  = (int)($_POST['producto_id']  ?? 0);
     $categoria_id = (int)($_POST['categoria_id'] ?? 0);
 
     if ($producto_id > 0) {
@@ -22,12 +27,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($producto) {
             $precio = Producto::getPrecioFinal($producto['precio_base'], $producto['iva']);
             Pedido::addProducto($pedido_id, $producto_id, $precio);
+            flash_set('success', 'Producto añadido al carrito.');
         }
     }
 
-    // Redirigir de vuelta al catálogo de la misma categoría
-    header('Location: catalogo.php' . ($categoria_id ? "?categoria=$categoria_id" : ''));
-    exit();
+    $url = 'catalogo.php' . ($categoria_id ? "?categoria=$categoria_id" : '');
+    redirect($url);
 }
 
 // Mostrar categorías o productos según parámetro GET
@@ -41,55 +46,90 @@ if ($categoria_id) {
 } else {
     $categorias = Categoria::getCategorias();
 }
+
+$titulo = $categoria_id && isset($categoria)
+    ? 'Catálogo — ' . e($categoria['nombre'])
+    : 'Catálogo';
+
+// ---- EMPIEZA LA VISTA DEL PROYECTO ----
+$tituloPagina = $titulo . ' | Bistro FDI';
+$rutaCSS = RUTA_APP . '/CSS/estilo.css';
+ob_start();
 ?>
 
-<h1>Catálogo</h1>
+<main>
+  <?php 
+  // Mostrar mensajes flash
+  foreach (flash_get_all() as $f): ?>
+      <div class="mensaje-<?= e($f['type']) ?>"><?= e($f['message']) ?></div>
+  <?php endforeach; ?>
 
-<?php if ($categoria_id): ?>
+  <div class="panel">
 
-    <h2><?= htmlspecialchars($categoria['nombre']) ?></h2>
-    <p><a href="catalogo.php">← Volver a categorías</a></p>
+    <?php if ($categoria_id): ?>
 
-    <?php if (empty($productos)): ?>
+      <div class="actions-inline" style="margin-bottom:12px;">
+        <a href="catalogo.php" class="btn">← Categorías</a>
+        <a href="carrito.php" class="btn primary">🛒 Ver carrito</a>
+      </div>
+
+      <h2><?= e($categoria['nombre']) ?></h2>
+
+      <?php if (empty($productos)): ?>
         <p>No hay productos disponibles en esta categoría.</p>
-    <?php else: ?>
-        <table border="1">
-            <tr>
+      <?php else: ?>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
                 <th>Nombre</th>
                 <th>Descripción</th>
                 <th>Precio</th>
                 <th></th>
-            </tr>
+              </tr>
+            </thead>
+            <tbody>
             <?php foreach ($productos as $p): ?>
-                <tr>
-                    <td><?= htmlspecialchars($p['nombre']) ?></td>
-                    <td><?= htmlspecialchars($p['descripcion']) ?></td>
-                    <td><?= Producto::getPrecioFinal($p['precio_base'], $p['iva']) ?> €</td>
-                    <td>
-                        <form method="POST" action="catalogo.php">
-                            <input type="hidden" name="producto_id" value="<?= $p['id'] ?>">
-                            <input type="hidden" name="categoria_id" value="<?= $categoria_id ?>">
-                            <button type="submit">+ Añadir</button>
-                        </form>
-                    </td>
-                </tr>
+              <tr>
+                <td><?= e($p['nombre']) ?></td>
+                <td><?= e($p['descripcion']) ?></td>
+                <td><?= Producto::getPrecioFinal($p['precio_base'], $p['iva']) ?> €</td>
+                <td>
+                  <form method="POST" action="catalogo.php">
+                    <input type="hidden" name="producto_id" value="<?= (int)$p['id'] ?>">
+                    <input type="hidden" name="categoria_id" value="<?= $categoria_id ?>">
+                    <button type="submit" class="btn primary small">+ Añadir</button>
+                  </form>
+                </td>
+              </tr>
             <?php endforeach; ?>
-        </table>
+            </tbody>
+          </table>
+        </div>
+      <?php endif; ?>
+
+    <?php else: ?>
+
+      <div class="actions-inline" style="margin-bottom:12px;justify-content:flex-end;">
+        <a href="carrito.php" class="btn primary">🛒 Ver carrito</a>
+      </div>
+
+      <h2>Elige una categoría</h2>
+
+      <div style="display:flex; flex-wrap:wrap; gap:12px; margin-top:8px;">
+        <?php foreach ($categorias as $cat): ?>
+          <a href="catalogo.php?categoria=<?= (int)$cat['id'] ?>" class="btn" style="font-size:15px; padding:12px 20px;">
+            <?= e($cat['nombre']) ?>
+          </a>
+        <?php endforeach; ?>
+      </div>
+
     <?php endif; ?>
 
-<?php else: ?>
+  </div>
+</main>
 
-    <h2>Categorías</h2>
-    <ul>
-        <?php foreach ($categorias as $cat): ?>
-            <li>
-                <a href="catalogo.php?categoria=<?= $cat['id'] ?>">
-                    <?= htmlspecialchars($cat['nombre']) ?>
-                </a>
-            </li>
-        <?php endforeach; ?>
-    </ul>
-
-<?php endif; ?>
-
-<p><a href="carrito.php">🛒 Ver carrito</a></p>
+<?php
+$contenidoPrincipal = ob_get_clean();
+require __DIR__ . '/../../includes/plantilla.php';
+?>

@@ -9,5 +9,5 @@ if (session_status() === PHP_SESSION_NONE) {
     <li><a href="<?= RUTA_APP ?>/index.php">Inicio</a></li>
     <li><a href="<?= RUTA_APP ?>/vistas/categorias/categoriasList.php">Categorías</a></li>
     <li><a href="<?= RUTA_APP ?>/vistas/pedidos/elegirTipo.php">Nuevo pedido</a></li>
-    <li><a href="<?= RUTA_APP ?>/vistas/pedidos/pedidosList.php">Pedidos</a></li>
+    <li><a href="<?= RUTA_APP ?>/vistas/pedidos/listarPedidosCliente.php">Pedidos</a></li>
 </ul>
