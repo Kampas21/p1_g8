@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         Pedido::marcarProductoPreparado($_POST['pedido_id'], $_POST['producto_id']);
     } elseif (isset($_POST['finalizar_pedido'])) {
         // Pasa de "Cocinando" a "Listo cocina"
-        Pedido::actualizarEstadoPedido($_POST['pedido_id'], 'listo_cocina');
+        Pedido::cambiarEstado($_POST['pedido_id'], 'listo_cocina');
     }
 }
 

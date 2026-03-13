@@ -44,23 +44,7 @@ class Pedido
         return $stmt->execute();
     }
 
-    /**
-     * Devuelve los productos de un pedido con nombre e iva del producto.
-     */
-    public static function getProductosPedido($pedido_id)
-    {
-        global $conn;
-        $stmt = $conn->prepare(
-            "SELECT pep.*, p.nombre, p.iva
-         FROM productos_en_pedido pep
-         JOIN productos p ON p.id = pep.producto_id
-         WHERE pep.pedido_id = ?"
-        );
-        $stmt->bind_param("i", $pedido_id);
-        $stmt->execute();
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    }
-
+    
     /**
      * Actualiza la cantidad de un producto en el carrito.
      */
@@ -154,20 +138,7 @@ class Pedido
     }
 
 
-    public static function getPedidosPorEstado(string $estado): array
-    {
-        global $conn;
-        $stmt = $conn->prepare(
-            "SELECT p.*, u.nombre AS cliente_nombre, u.username
-         FROM pedidos p
-         JOIN usuarios u ON p.usuario_id = u.id
-         WHERE p.estado = ?
-         ORDER BY p.fecha_hora ASC"
-        );
-        $stmt->bind_param("s", $estado);
-        $stmt->execute();
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    }
+
 
     public static function cambiarEstado(int $pedido_id, string $estado_nuevo): bool
     {
@@ -177,14 +148,41 @@ class Pedido
         return $stmt->execute();
     }
 
-    public static function getProductosPedido($pedido_id) {
+    /**
+     * Devuelve los productos de un pedido con nombre, iva y estado (útil para cocina).
+     */
+    public static function getProductosPedido($pedido_id)
+    {
         global $conn;
-        // Obtenemos los productos y su estado individual para poder tacharlos
-        $stmt = $conn->prepare("SELECT pep.*, p.nombre FROM productos_en_pedido pep JOIN productos p ON p.id = pep.producto_id WHERE pep.pedido_id = ?");
+        $stmt = $conn->prepare(
+            "SELECT pep.*, p.nombre, p.iva
+             FROM productos_en_pedido pep
+             JOIN productos p ON p.id = pep.producto_id
+             WHERE pep.pedido_id = ?"
+        );
         $stmt->bind_param("i", $pedido_id);
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
+
+    /**
+     * Devuelve los pedidos por estado con los datos del cliente.
+     */
+    public static function getPedidosPorEstado(string $estado): array
+    {
+        global $conn;
+        $stmt = $conn->prepare(
+            "SELECT p.*, u.nombre AS cliente_nombre, u.username
+             FROM pedidos p
+             LEFT JOIN usuarios u ON p.usuario_id = u.id
+             WHERE p.estado = ?
+             ORDER BY p.fecha_hora ASC"
+        );
+        $stmt->bind_param("s", $estado);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+    
 
     public static function marcarProductoPreparado($pedido_id, $producto_id) {
         global $conn;
@@ -194,15 +192,11 @@ class Pedido
         return $stmt->execute();
     }
 
-    // --- ESTADOS GLOBALES DEL PEDIDO (FUNCIONALIDAD 3) ---
-    public static function getPedidosPorEstado($estado) {
-        global $conn;
-        $stmt = $conn->prepare("SELECT * FROM pedidos WHERE estado = ? ORDER BY fecha_hora ASC");
-        $stmt->bind_param("s", $estado);
-        $stmt->execute();
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    }
 
+
+
+    // --- ESTADOS GLOBALES DEL PEDIDO (FUNCIONALIDAD 3) ---
+   
     public static function getPedidosCocinando($cocinero_id) {
         global $conn;
         $stmt = $conn->prepare("SELECT * FROM pedidos WHERE cocinero_id = ? AND estado = 'cocinando' ORDER BY fecha_hora ASC");
@@ -215,13 +209,6 @@ class Pedido
         global $conn;
         $stmt = $conn->prepare("UPDATE pedidos SET cocinero_id = ?, estado = ? WHERE id = ?");
         $stmt->bind_param("isi", $cocinero_id, $estado, $pedido_id);
-        return $stmt->execute();
-    }
-
-    public static function actualizarEstadoPedido($pedido_id, $estado) {
-        global $conn;
-        $stmt = $conn->prepare("UPDATE pedidos SET estado = ? WHERE id = ?");
-        $stmt->bind_param("si", $estado, $pedido_id);
         return $stmt->execute();
     }
 
