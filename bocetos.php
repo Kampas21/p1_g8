@@ -1,3 +1,8 @@
+
+<?php 
+$tituloPagina = 'Bocetos';
+$rutaCSS = '../../CSS/estilo.css';
+ob_start(); ?>
 <!doctype html>
 <html lang="es">
 
@@ -12,8 +17,7 @@
 
 <body>
   
-  <header id="main-header"></header>
-  <script src="JS/header-loader.js"></script>
+ 
 
   <main>
     <h2 id="top">Bocetos de la aplicación</h2>
@@ -311,4 +315,6 @@
 
 </html>
 
-
+<?php
+$contenidoPrincipal = ob_get_clean();
+require __DIR__ . '/includes/plantilla.php';

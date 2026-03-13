@@ -32,10 +32,10 @@ function mostrarSaludo(): string {
     <nav class="menu-principal">
         <ul>
             <li><a href="/P1/p1_g8/index.php">Inicio</a></li>
-            <li><a href="/P1/p1_g8/detalles.html">Detalles</a></li>
-            <li><a href="/P1/p1_g8/bocetos.html">Bocetos</a></li>
-            <li><a href="/P1/p1_g8/miembros.html">Miembros</a></li>
-            <li><a href="/P1/p1_g8/planificacion.html">Planificación</a></li>
+            <li><a href="/P1/p1_g8/detalles.php">Detalles</a></li>
+            <li><a href="/P1/p1_g8/bocetos.php">Bocetos</a></li>
+            <li><a href="/P1/p1_g8/miembros.php">Miembros</a></li>
+            <li><a href="/P1/p1_g8/planificacion.php">Planificación</a></li>
             <li><a href="/P1/p1_g8/contacto.php">Contacto</a></li>
         </ul>
     </nav>

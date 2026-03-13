@@ -1,4 +1,12 @@
+
+<?php
+$tituloPagina = 'Planifiacion';
+$rutaCSS = '../../CSS/estilo.css';
+ob_start();?>
+
 <!DOCTYPE html>
+
+
 <html lang="es">
 
 <head>
@@ -16,9 +24,7 @@
 <body>
 
 
-    <header id="main-header"></header>
-    <script src="JS/header-loader.js"></script>
-
+    
 
     <section id="desglose-tareas">
 
@@ -115,3 +121,7 @@
 </body>
 
 </html>
+
+<?php
+$contenidoPrincipal = ob_get_clean();
+require __DIR__ . '/includes/plantilla.php';

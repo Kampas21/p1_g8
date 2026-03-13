@@ -1,3 +1,9 @@
+
+<?php
+$tituloPagina = 'Detalles';
+$rutaCSS = '../../CSS/estilo.css';
+ob_start();?>
+
 <!doctype html>
 <html lang="es">
 
@@ -11,9 +17,7 @@
 </head>
 
 <body>
-    <header id="main-header"></header>
-    <script src="JS/header-loader.js"></script>
-
+   
     <main>
         <h1>Detalles de la página web</h1>
         <h2>Introducción</h2>
@@ -155,3 +159,7 @@
 </body>
 
 </html>
+
+<?php
+$contenidoPrincipal = ob_get_clean();
+require __DIR__ . '/includes/plantilla.php';

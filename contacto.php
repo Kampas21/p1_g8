@@ -16,9 +16,7 @@ ob_start();
 <body>
  
 
-  <header id="main-header"></header>
-  <script src="JS/header-loader.js"></script> 
-
+  
   <main>
     <h2>Formulario de contacto</h2>
     <p>Si quieres más información sobre el proyecto, rellena el formulario:</p>
@@ -73,4 +71,4 @@ ob_start();
 
 <?php
 $contenidoPrincipal = ob_get_clean();
-require __DIR__ . '/../../includes/plantilla.php';
+require __DIR__ . '/includes/plantilla.php';
