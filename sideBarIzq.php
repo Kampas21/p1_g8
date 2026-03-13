@@ -18,7 +18,6 @@ if (function_exists('current_user')) {
     
     <!-- Enlaces solo para usuarios logueados -->
     <?php if ($user): ?>
-        <li><a href="<?= RUTA_APP ?>/vistas/pedidos/listarPedidosCliente.php">Mis Pedidos</a></li>
         
         <!-- Categorías: Solo Administrador / Gerente -->
         <?php if ($user['rol'] === 'gerente'): ?>

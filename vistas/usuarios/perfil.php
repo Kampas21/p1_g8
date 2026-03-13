@@ -80,7 +80,7 @@ if ($pedidosDisponibles) {
         SELECT numero_pedido, estado, fecha_hora, total
         FROM pedidos
         WHERE usuario_id = ?
-          AND estado IN ('En preparación', 'Cocinando', 'Listo cocina', 'Terminado')
+           AND estado IN ('en_preparacion', 'cocinando', 'listo_cocina', 'terminado')
         ORDER BY fecha_hora DESC
     ";
     $stmtAct = $conn->prepare($sqlActivos);
