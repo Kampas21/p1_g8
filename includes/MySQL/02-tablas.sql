@@ -1,6 +1,5 @@
-
-
 /* Deshabilitar la revisión de las claves foráneas en phpMyAdmin */
+SET FOREIGN_KEY_CHECKS=0;
 
 USE `BistroFDI_G8`;
 
@@ -8,24 +7,8 @@ CREATE TABLE IF NOT EXISTS `categorias` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     `nombre` VARCHAR(100),
     `descripcion` TEXT,
-    `imagen` VARCHAR(255), 
+    `imagen` VARCHAR(255) DEFAULT NULL,
     `activa` TINYINT(1) NOT NULL DEFAULT 1
-);
-
-CREATE TABLE IF NOT EXISTS `usuarios` (
-    `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `username` VARCHAR(100) NOT NULL UNIQUE,
-    `email` VARCHAR(150) NOT NULL UNIQUE,
-    `nombre` VARCHAR(100) NOT NULL,
-    `apellidos` VARCHAR(150) NOT NULL,
-    `password_hash` VARCHAR(255) NOT NULL,
-    `rol` ENUM('cliente', 'camarero', 'cocinero', 'gerente') NOT NULL DEFAULT 'cliente',
-    `avatar_tipo` ENUM('default', 'preset', 'custom') NOT NULL DEFAULT 'default',
-    `avatar_valor` TEXT NULL,
-    `activo` TINYINT(1) NOT NULL DEFAULT 1,
-    `deleted_at` DATETIME NULL,
-    `created_at` DATETIME NOT NULL,
-    `updated_at` DATETIME NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS `productos` (
@@ -37,8 +20,24 @@ CREATE TABLE IF NOT EXISTS `productos` (
     `iva` INT,
     `disponible` BOOLEAN,
     `ofertado` BOOLEAN,
-    `imagen` VARCHAR(250),
+    `imagen` VARCHAR(255) DEFAULT NULL,
     FOREIGN KEY (`categoria_id`) REFERENCES `categorias`(`id`)
+);
+
+CREATE TABLE IF NOT EXISTS `usuarios` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `username` VARCHAR(100) NOT NULL UNIQUE,
+    `email` VARCHAR(150) NOT NULL UNIQUE,
+    `nombre` VARCHAR(100) NOT NULL,
+    `apellidos` VARCHAR(100) NOT NULL,
+    `password_hash` VARCHAR(255) NOT NULL,
+    `rol` ENUM('cliente', 'camarero', 'cocinero', 'gerente') NOT NULL DEFAULT 'cliente',
+    `avatar_tipo` ENUM('default', 'preset', 'custom') NOT NULL DEFAULT 'default',
+    `avatar_valor` VARCHAR(255) DEFAULT NULL,
+    `activo` TINYINT(1) NOT NULL DEFAULT 1,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS `pedidos`(
@@ -46,6 +45,7 @@ CREATE TABLE IF NOT EXISTS `pedidos`(
 
     `numero_pedido` INT DEFAULT NULL,
     `fecha_hora` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `fecha` DATE GENERATED ALWAYS AS (DATE(`fecha_hora`)) STORED, 
 
     `estado` ENUM('nuevo', 'recibido', 'en_preparacion', 'cocinando', 'listo_cocina', 'terminado', 'entregado', 'cancelado'),
     `tipo` ENUM('local', 'llevar'), 
@@ -54,13 +54,9 @@ CREATE TABLE IF NOT EXISTS `pedidos`(
     `total` DECIMAL(10,2),
     `cocinero_id` INT DEFAULT NULL,
 
-    -- Clave foránea hacia la tabla de usuarios para el cliente que hizo el pedido
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
-
     -- El número de pedido es único para un día concreto
-    UNIQUE (DATE(fecha_hora), numero_pedido),
-
-    -- Clave foránea hacia la tabla de usuarios para el cocinero asignado (se rellena cuando pasa a cocinando)
+    UNIQUE (`fecha`, `numero_pedido`),      
     FOREIGN KEY (cocinero_id) REFERENCES usuarios(id)
 );
 
@@ -76,26 +72,15 @@ CREATE TABLE IF NOT EXISTS `productos_en_pedido` (
 
     `estado` ENUM('pendiente', 'preparado') DEFAULT 'pendiente',
 
-    -- para que si se borra un pedido o un producto, se borren también de esta tabla
-    FOREIGN KEY (`pedido_id`) REFERENCES `pedidos`(`id`),
-    FOREIGN KEY (`producto_id`) REFERENCES `productos`(`id`),
+    -- ON DELETE CASCADE para que si se borra un pedido o un producto, se borren también de esta tabla
+    FOREIGN KEY (`pedido_id`) REFERENCES `pedidos`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`producto_id`) REFERENCES `productos`(`id`) ON DELETE CASCADE,
 
-    -- para que no se inserte el mismo producto dos veces en el mismo pedido, sino que incrementamos su cantidad
+    -- Para que no se inserte el mismo producto dos veces en el mismo pedido
     UNIQUE (pedido_id, producto_id)
 );
 
-CREATE TABLE IF NOT EXISTS usuarios (
-    id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    username TEXT NOT NULL UNIQUE,
-    email TEXT NOT NULL UNIQUE,
-    nombre TEXT NOT NULL,
-    apellidos TEXT NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    rol TEXT NOT NULL CHECK (rol IN ('cliente', 'camarero', 'cocinero', 'gerente')),
-    avatar_tipo TEXT NOT NULL DEFAULT 'default' CHECK (avatar_tipo IN ('default', 'preset', 'custom')),
-    avatar_valor TEXT NULL,
-    activo INTEGER NOT NULL DEFAULT 1 CHECK (activo IN (0,1)),
-    deleted_at TEXT NULL,
-    created_at TEXT NOT NULL,
-    updated_at TEXT NOT NULL
-);
+CREATE INDEX idx_usuarios_rol ON usuarios(rol);
+CREATE INDEX idx_usuarios_activo ON usuarios(activo);
+
+SET FOREIGN_KEY_CHECKS=1;
