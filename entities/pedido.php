@@ -94,14 +94,87 @@ class Pedido
     public static function cancelarPedido($pedido_id)
     {
         global $conn;
+
         $stmt = $conn->prepare("DELETE FROM productos_en_pedido WHERE pedido_id = ?");
         $stmt->bind_param("i", $pedido_id);
         $stmt->execute();
 
         $stmt = $conn->prepare("DELETE FROM pedidos WHERE id = ?");
         $stmt->bind_param("i", $pedido_id);
+        $stmt->execute();
+    }
+
+    /**
+     * Confirma el pedido: asigna numero_pedido del día, cambia estado a 'recibido' y guarda el total.
+     */
+    public static function confirmarPedido($pedido_id, $metodo_pago, $total)
+    {
+        global $conn;
+
+        // Calcular el siguiente número de pedido del día
+        $rs = $conn->query(
+            "SELECT COALESCE(MAX(numero_pedido), 0) + 1 AS siguiente 
+            FROM pedidos 
+            WHERE DATE(fecha_hora) = CURDATE() AND estado != 'nuevo'"
+        );
+        $numero = $rs->fetch_assoc()['siguiente'];
+
+        $estado = ($metodo_pago === 'tarjeta') ? 'en_preparacion' : 'recibido';
+
+        $stmt = $conn->prepare(
+            "UPDATE pedidos
+            SET estado = ?, numero_pedido = ?, metodo_pago = ?, total = ?, fecha_hora = CURRENT_TIMESTAMP 
+            WHERE id = ?"
+        );
+        $stmt->bind_param("sisdi", $estado, $numero, $metodo_pago, $total, $pedido_id);
         return $stmt->execute();
     }
 
+    public static function getPedidoById($id)
+    {
+        global $conn;
+        $stmt = $conn->prepare("SELECT * FROM pedidos WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+
+    public static function getPedidosDeUsuario(int $usuario_id): array
+    {
+        global $conn;
+        $stmt = $conn->prepare(
+            "SELECT * FROM pedidos
+         WHERE usuario_id = ? AND estado != 'nuevo'
+         ORDER BY fecha_hora DESC"
+        );
+        $stmt->bind_param("i", $usuario_id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+
+    public static function getPedidosPorEstado(string $estado): array
+    {
+        global $conn;
+        $stmt = $conn->prepare(
+            "SELECT p.*, u.nombre AS cliente_nombre, u.username
+         FROM pedidos p
+         JOIN usuarios u ON p.usuario_id = u.id
+         WHERE p.estado = ?
+         ORDER BY p.fecha_hora ASC"
+        );
+        $stmt->bind_param("s", $estado);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public static function cambiarEstado(int $pedido_id, string $estado_nuevo): bool
+    {
+        global $conn;
+        $stmt = $conn->prepare("UPDATE pedidos SET estado = ? WHERE id = ?");
+        $stmt->bind_param("si", $estado_nuevo, $pedido_id);
+        return $stmt->execute();
+    }
 
 }
