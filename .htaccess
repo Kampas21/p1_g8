@@ -6,5 +6,5 @@ Options -Indexes
     Require all denied
 </FilesMatch>
 
-# Opcional pero recomendado: forzar UTF-8 por defecto
+# forzar UTF-8 por defecto
 AddDefaultCharset UTF-8
