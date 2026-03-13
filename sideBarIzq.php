@@ -10,6 +10,6 @@ if (session_status() === PHP_SESSION_NONE) {
     <li><a href="<?= RUTA_APP ?>/vistas/categorias/categoriasList.php">Categorías</a></li>
     <li><a href="<?= RUTA_APP ?>/vistas/pedidos/elegirTipo.php">Nuevo pedido</a></li>
     <li><a href="<?= RUTA_APP ?>/vistas/pedidos/listarPedidosCliente.php">Pedidos</a></li>
-    <li><a href="vistas/panel_cocinero.php">Panel Cocinero</a></li>
-    <li><a href="vistas/panel_gerente.php">Panel Gerente</a></li>
+    <li><a href="vistas/preparacion_pedidos/panel_cocinero.php">Panel Cocinero</a></li>
+    <li><a href="vistas/preparacion_pedidos/panel_gerente.php">Panel Gerente</a></li>
 </ul>
