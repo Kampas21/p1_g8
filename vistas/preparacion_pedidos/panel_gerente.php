@@ -1,9 +1,9 @@
 <?php
 if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
-require_once __DIR__ . '/../includes/application.php';
-require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/layout.php';
-require_once __DIR__ . '/../entities/pedido.php';
+require_once __DIR__ . '/../../includes/application.php';
+require_once __DIR__ . '/../../includes/auth.php';
+// require_once __DIR__ . '/../../includes/layout.php';
+require_once __DIR__ . '/../../entities/pedido.php';
 
 $user = require_role('gerente'); 
 $pedidos = Pedido::getPedidosPendientesGerente();
@@ -21,7 +21,7 @@ $pedidos = Pedido::getPedidosPendientesGerente();
         <div class="table-wrap">
             <table style="width: 100%; border-collapse: collapse;">
                 <thead>
-                    <tr style="background-color: #f1f1f1; text-align: left;">
+                    <tr style="background-color: #6996aa; text-align: left;">
                         <th style="padding: 10px; border-bottom: 2px solid #ddd;">ID</th>
                         <th style="padding: 10px; border-bottom: 2px solid #ddd;">Estado</th>
                         <th style="padding: 10px; border-bottom: 2px solid #ddd;">Cocinero Asignado</th>
@@ -88,3 +88,8 @@ $pedidos = Pedido::getPedidosPendientesGerente();
 </main>
 </body>
 </html>
+
+<?php
+$contenidoPrincipal = ob_get_clean();
+require __DIR__ . '/../../includes/plantilla.php';
+?>

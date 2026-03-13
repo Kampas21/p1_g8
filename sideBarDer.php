@@ -24,6 +24,6 @@ $rol = $user['rol'] ?? 'No autenticado';
         <li><a href="<?= RUTA_APP ?>/vistas/usuarios/logout.php">Cerrar sesión</a></li>
     <?php else: ?>
         <li><a href="<?= RUTA_APP ?>/vistas/usuarios/acceso.php#login">Iniciar sesión</a></li>
-        <li><a href="<?= RUTA_APP ?>/vistas/usuarios/acceso.php#registro">Registrarse</a></li>
+        <li><a href="<?= RUTA_APP ?>/vistas/usuarios/registro.php">Registrarse</a></li>
     <?php endif; ?>
 </ul>

@@ -39,7 +39,7 @@ ob_start();
 
     <div class="botones-acceso">
         <a href="<?= RUTA_APP ?>/vistas/usuarios/acceso.php#login" class="boton-enlace">Iniciar sesión</a>
-        <a href="<?= RUTA_APP ?>/vistas/usuarios/acceso.php#registro" class="boton-enlace">Registrarse</a>
+        <a href="<?= RUTA_APP ?>/vistas/usuarios/registro.php" class="boton-enlace">Registrarse</a>
     </div>
 </section>
 
