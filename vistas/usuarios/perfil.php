@@ -7,7 +7,6 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
 require_once __DIR__ . '/../../includes/user_repo.php';
 require_once __DIR__ . '/../../includes/auth.php';
-require_once __DIR__ . '/../../includes/layout.php';
 
 $user = require_login();
 
@@ -63,23 +62,17 @@ if (is_post()) {
 
 $user = current_user() ?? $user;
 
-/* =========================
-   PEDIDOS DEL USUARIO
-   ========================= */
-
 $pedidosActivos = [];
 $pedidosHistorico = [];
 $pedidosDisponibles = false;
 
 $conn = crearConexion();
 
-/* Comprobar si existe la tabla pedidos */
 $checkTable = $conn->query("SHOW TABLES LIKE 'pedidos'");
 if ($checkTable && $checkTable->num_rows > 0) {
     $pedidosDisponibles = true;
 }
 
-/* Cargar pedidos si la tabla existe */
 if ($pedidosDisponibles) {
     $uid = (int)$user['id'];
 
@@ -127,14 +120,19 @@ if ($pedidosDisponibles) {
 $conn->close();
 
 $tituloPagina = 'Perfil | Bistro FDI';
-$rutaCSS = '../../CSS/estilo.css';
+$rutaCSS = '/p1_g8/CSS/estilo.css';
 
 ob_start();
 ?>
 
 <div class="panel">
     <h2>Perfil y pedidos</h2>
-    <?php layout_flash_messages(); ?>
+    <?php
+    foreach (flash_get_all() as $item) {
+        $type = in_array($item['type'], ['error', 'success', 'info'], true) ? $item['type'] : 'info';
+        echo '<div class="notice ' . e($type) . '">' . e($item['message']) . '</div>';
+    }
+    ?>
 </div>
 
 <div class="profile-layout">

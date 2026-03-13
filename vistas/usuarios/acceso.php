@@ -7,7 +7,6 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
 require_once __DIR__ . '/../../includes/user_repo.php';
 require_once __DIR__ . '/../../includes/auth.php';
-require_once __DIR__ . '/../../includes/layout.php';
 
 if (current_user()) {
     redirect('perfil.php');
@@ -89,14 +88,19 @@ if (is_post()) {
 }
 
 $tituloPagina = 'Acceso | Bistro FDI';
-$rutaCSS = '../../CSS/estilo.css';
+$rutaCSS = '/p1_g8/CSS/estilo.css';
 
 ob_start();
 ?>
 
 <div class="panel">
     <h2>Login / Registro</h2>
-    <?php layout_flash_messages(); ?>
+    <?php
+    foreach (flash_get_all() as $item) {
+        $type = in_array($item['type'], ['error', 'success', 'info'], true) ? $item['type'] : 'info';
+        echo '<div class="notice ' . e($type) . '">' . e($item['message']) . '</div>';
+    }
+    ?>
 </div>
 
 <div class="auth-layout">

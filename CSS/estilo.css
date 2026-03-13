@@ -26,8 +26,6 @@ fieldset {
     margin-right: 70px;
 }
 
-
-
 .foto_centrada {
     display: block;
     margin-left: auto;
@@ -35,7 +33,6 @@ fieldset {
     max-width: 100%;
     max-height: 500px;
 }
-
 
 .foto_boceto {
     max-width: 70%;
@@ -53,7 +50,6 @@ fieldset {
     border: 1px solid #ddd;
     margin-left: 40px;
     margin-right: 5px;
-
 }
 
 .boceto {
@@ -198,10 +194,9 @@ tbody tr {
 }
 
 td.descripcion {
-    max-width: 300px;   /* ancho máximo */
-    /*white-space: nowrap;*/ /* evita salto de línea dentro de la celda */
-    overflow: hidden;    /* corta el texto si es muy largo */
-    text-overflow: ellipsis; /* agrega "..." al final */
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 body {
@@ -303,6 +298,7 @@ body {
     min-width: 0;
     overflow-x: auto;
 }
+
 #pie-web {
     border-top: 1px solid #b89f7a;
     padding: 14px 20px;
@@ -329,14 +325,16 @@ body {
     padding:25px;
     max-width:350px;
     margin:30px auto;
-    text-align:center;   /* esto centra Acceso y el texto */
+    text-align:center;
 }
+
 .botones-acceso{
     display: flex;
     justify-content: center;
     gap: 15px;
     margin-top: 15px;
 }
+
 .boton-enlace {
     display: inline-block;
     padding: 10px 14px;
@@ -367,17 +365,6 @@ body {
     margin-bottom:15px;
 }
 
-.caja-acceso{
-    background:#f5f1ea;
-    border:1px solid #d8cbb8;
-    border-radius:10px;
-    padding:25px;
-    max-width:350px;
-    margin:30px auto;
-    text-align:center;
-}
-
-
 .menu-izq{
     list-style:none;
     padding:0;
@@ -390,7 +377,7 @@ body {
 .menu-izq a{
     display:block;
     padding:8px 10px;
-    background-color:#5a3e2b;   /* marrón oscuro restaurante */
+    background-color:#5a3e2b;
     color:white;
     text-decoration:none;
     border-radius:6px;
@@ -406,4 +393,279 @@ body {
 .tabla-scroll {
     width: 100%;
     overflow-x: auto;
+}
+
+/* =========================================
+   ESTILOS COMPLEMENTARIOS PARA FORMS Y PERFIL 
+   (Extraídos de style.css y adaptados)
+   ========================================= */
+
+.panel {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fff;
+  padding: 16px;
+  margin-bottom: 18px;
+}
+
+.panel h2, .panel h3 {
+  margin-top: 0;
+}
+
+.notice {
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin: 12px 0;
+  border: 1px solid;
+}
+.notice.error {
+  background: #fff0f0;
+  border-color: #f0b4b4;
+  color: #a70000;
+}
+.notice.success {
+  background: #f0fff2;
+  border-color: #b7ebc0;
+  color: #0a6b2e;
+}
+.notice.info {
+  background: #f6f8ff;
+  border-color: #c9d2ff;
+  color: #33408f;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 16px;
+}
+.form-grid .full { grid-column: 1 / -1; }
+
+label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+input[type="file"] {
+  width: 100%;
+  font-size: 14px;
+}
+
+button, input[type="submit"] {
+  display: inline-block;
+  border: 1px solid #999;
+  background: #f6f6f6;
+  padding: 8px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #222;
+  cursor: pointer;
+  font-size: 14px;
+}
+button:hover, input[type="submit"]:hover {
+  background: #ececec;
+}
+.btn.primary, button.primary {
+  background: #fff4d4;
+  border-color: #e1be53;
+  color: #222;
+}
+.btn.danger, button.danger {
+  background: #fff0f0;
+  border-color: #d8a1a1;
+  color: #a70000;
+}
+.btn.small, button.small {
+  padding: 5px 9px;
+  font-size: 12px;
+}
+
+.actions-inline {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid #ddd;
+  background: #fff;
+}
+.avatar.lg {
+  width: 150px;
+  height: 150px;
+}
+.avatar.sm {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+}
+
+.avatar-option-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.avatar-option {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 8px;
+  width: 120px;
+  text-align: center;
+  display: inline-block;
+  vertical-align: top;
+  margin: 10px 14px 10px 0;
+}
+.avatar-option input[type="radio"] {
+  margin-bottom: 6px;
+}
+.avatar-option img {
+  width: 72px;
+  height: 72px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid #ddd;
+  background: #fff;
+  display: block;
+  margin: 0 auto 8px;
+}
+
+.two-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.auth-card {
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 16px;
+  background: #fff;
+}
+.auth-card h2 {
+  margin-top: 0;
+  font-size: 22px;
+}
+.auth-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 22px;
+}
+.auth-card .form-grid {
+  grid-template-columns: 1fr;
+}
+.auth-actions {
+  margin-top: 10px;
+}
+.auth-help {
+  font-size: 13px;
+  color: #555;
+}
+
+.profile-layout {
+  display: grid;
+  grid-template-columns: 430px 1fr;
+  gap: 18px;
+  align-items: start;
+}
+.profile-card .profile-top {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.profile-card dl {
+  margin: 0;
+}
+.profile-card dt {
+  font-weight: bold;
+  margin-top: 8px;
+}
+.profile-card dd {
+  margin: 2px 0 0 0;
+}
+.progress-card .pedido-linea {
+  border: 1px solid #ddd;
+  border-radius: 18px;
+  padding: 14px;
+  margin-top: 10px;
+}
+.progress-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+.progress-step {
+  text-align: center;
+  font-size: 13px;
+}
+.progress-step .dot {
+  width: 20px;
+  height: 20px;
+  margin: 0 auto 6px;
+  border-radius: 999px;
+  border: 2px solid #999;
+  background: #fff;
+}
+.progress-step.done .dot {
+  background: #dff3e5;
+  border-color: #2c8a4b;
+}
+.progress-step.active .dot {
+  background: #fff6cf;
+  border-color: #d0a311;
+}
+
+.muted { color: #666; font-size: 14px; }
+
+@media (max-width: 900px) {
+  .two-columns { grid-template-columns: 1fr; }
+  .profile-layout { grid-template-columns: 1fr; }
+}
+
+.user-detail-list {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 10px 16px;
+  margin: 0;
+}
+.user-detail-list dt,
+.user-detail-list dd {
+  margin: 0;
+}
+.user-detail-list dt {
+  font-weight: 700;
+}
+.user-detail-list dd {
+  color: #333;
+}
+
+.hidden {
+  display: none;
+}
+
+.avatar-panel-box {
+  margin-top: 16px;
 }

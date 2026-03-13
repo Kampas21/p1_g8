@@ -7,7 +7,6 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
 require_once __DIR__ . '/../../includes/user_repo.php';
 require_once __DIR__ . '/../../includes/auth.php';
-require_once __DIR__ . '/../../includes/layout.php';
 
 $admin = require_role('gerente');
 $id = (int)($_GET['id'] ?? 0);
@@ -18,12 +17,22 @@ if (!$user) {
     redirect('/p1_g8/entities/usuarios.php');
 }
 
-layout_header('Ver usuario', '/p1_g8/entities/usuarios.php');
+$tituloPagina = 'Ver usuario';
+$rutaCSS = '/p1_g8/CSS/estilo.css';
+
+ob_start();
 ?>
-<main>
   <div class="panel">
     <h2>Visualización de usuario</h2>
-    <?php layout_flash_messages(); ?>
+    
+    <?php
+    
+    foreach (flash_get_all() as $item) {
+        $type = in_array($item['type'], ['error', 'success', 'info'], true) ? $item['type'] : 'info';
+        echo '<div class="notice ' . e($type) . '">' . e($item['message']) . '</div>';
+    }
+    ?>
+
     <p class="muted">Vista de detalle (listar / visualizar)</p>
   </div>
 
@@ -57,4 +66,7 @@ layout_header('Ver usuario', '/p1_g8/entities/usuarios.php');
       <?php endif; ?>
     </div>
   </section>
-</main>
+<?php
+$contenidoPrincipal = ob_get_clean();
+require __DIR__ . '/../../includes/plantilla.php';
+?>

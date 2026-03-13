@@ -7,7 +7,6 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
 require_once __DIR__ . '/../../includes/user_repo.php';
 require_once __DIR__ . '/../../includes/auth.php';
-require_once __DIR__ . '/../../includes/layout.php';
 
 $admin = require_role('gerente');
 $modo = (string)($_GET['modo'] ?? '');
@@ -86,12 +85,19 @@ if (is_post()) {
     }
 }
 
-layout_header($isCreate ? 'Crear usuario' : 'Editar usuario', 'usuarios.php');
+$tituloPagina = $isCreate ? 'Crear usuario' : 'Editar usuario';
+$rutaCSS = '/p1_g8/CSS/estilo.css'; 
+
+ob_start();
 ?>
-<main>
   <div class="panel">
     <h2><?= $isCreate ? 'Creación de usuario' : 'Actualización de usuario' ?></h2>
-    <?php layout_flash_messages(); ?>
+    <?php
+    foreach (flash_get_all() as $item) {
+        $type = in_array($item['type'], ['error', 'success', 'info'], true) ? $item['type'] : 'info';
+        echo '<div class="notice ' . e($type) . '">' . e($item['message']) . '</div>';
+    }
+    ?>
     <p class="muted">
       <?= $isCreate ? 'Formulario para gerente: creación de usuarios del sistema.' : 'Formulario para gerente: edición de datos, rol y avatar.' ?>
     </p>
@@ -220,7 +226,7 @@ layout_header($isCreate ? 'Crear usuario' : 'Editar usuario', 'usuarios.php');
       </div>
     </form>
   </section>
-</main>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const modeInputs = document.querySelectorAll('input[name="avatar_mode"]');
@@ -256,3 +262,8 @@ document.addEventListener('DOMContentLoaded', function () {
     updateAvatarAdminUI();
 });
 </script>
+
+<?php
+$contenidoPrincipal = ob_get_clean();
+require __DIR__ . '/../../includes/plantilla.php';
+?>

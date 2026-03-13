@@ -7,7 +7,8 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
 require_once __DIR__ . '/../../includes/user_repo.php';
 require_once __DIR__ . '/../../includes/auth.php';
-require_once __DIR__ . '/../../includes/layout.php';
+
+
 
 $admin = require_role('gerente');
 

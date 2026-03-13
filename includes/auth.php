@@ -43,9 +43,21 @@ function require_role(string $minRole): array {
     $user = require_login();
     if (!user_has_role($user, $minRole)) {
         http_response_code(403);
-        layout_header('Acceso denegado');
-        echo '<main><div class="panel"><h2>Acceso denegado</h2><p>No tienes permisos suficientes para esta acción.</p>';
-        echo '<p><a class="btn" href="../index.php">Volver al inicio</a></p></div></main>';
+        
+        $tituloPagina = 'Acceso denegado | Bistro FDI';
+        $rutaCSS = '/p1_g8/CSS/estilo.css';
+        
+        ob_start();
+        ?>
+        <div class="panel">
+            <h2>Acceso denegado</h2>
+            <p>No tienes permisos suficientes para esta acción.</p>
+            <p><a class="btn primary" href="/p1_g8/index.php">Volver al inicio</a></p>
+        </div>
+        <?php
+        $contenidoPrincipal = ob_get_clean();
+        require __DIR__ . '/plantilla.php';
+        
         exit;
     }
     return $user;
