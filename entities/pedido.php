@@ -237,4 +237,5 @@ public static function getPedidosPendientesGerente() {
         return $rs->fetch_all(MYSQLI_ASSOC);
     }
 
+
 }
