@@ -20,7 +20,22 @@ function redirect_back(string $fallback): never {
 }
 
 function flash_set(string $type, string $message): void {
-    $_SESSION['flash'][] = ['type' => $type, 'message' => $message];
+    if (!isset($_SESSION['flash'])) {
+        $_SESSION['flash'] = [];
+    }
+    
+    // Evitar meter el mensaje 10 veces si ya está en la cola
+    $existe = false;
+    foreach ($_SESSION['flash'] as $f) {
+        if ($f['type'] === $type && $f['message'] === $message) {
+            $existe = true;
+            break;
+        }
+    }
+    
+    if (!$existe) {
+        $_SESSION['flash'][] = ['type' => $type, 'message' => $message];
+    }
 }
 
 function flash_get_all(): array {
