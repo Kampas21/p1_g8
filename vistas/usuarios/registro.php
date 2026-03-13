@@ -8,6 +8,18 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 require_once __DIR__ . '/../../includes/user_repo.php';
 require_once __DIR__ . '/../../includes/auth.php';
 
+$currentUser = current_user();
+if ($currentUser) {
+    if ($currentUser['rol'] === 'gerente') {
+        // Si entra un gerente, lo mandamos al creador avanzado de trabajadores
+        redirect('usuario_form.php?modo=crear');
+    } else {
+        // Si entra un cliente normal que ya está logueado, lo mandamos a su perfil
+        redirect('perfil.php');
+    }
+}
+
+
 $registerInput = [
 'username' => '',
 'email' => '',

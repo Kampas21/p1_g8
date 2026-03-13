@@ -19,11 +19,21 @@ $rol = $user['rol'] ?? 'No autenticado';
 
 <h4>Accesos rápidos</h4>
 <ul class="menu-izq">
-    <?php if ($user): ?>
+    <?php if ($user && $user['rol'] === 'gerente'): ?>
+        
+        <li><a href="<?= RUTA_APP ?>/vistas/usuarios/usuario_form.php?modo=crear">Registrar trabajador</a></li>
         <li><a href="<?= RUTA_APP ?>/vistas/usuarios/perfil.php">Mi perfil</a></li>
         <li><a href="<?= RUTA_APP ?>/vistas/usuarios/logout.php">Cerrar sesión</a></li>
+        
+    <?php elseif ($user): ?>
+        
+        <li><a href="<?= RUTA_APP ?>/vistas/usuarios/perfil.php">Mi perfil</a></li>
+        <li><a href="<?= RUTA_APP ?>/vistas/usuarios/logout.php">Cerrar sesión</a></li>
+        
     <?php else: ?>
+        
         <li><a href="<?= RUTA_APP ?>/vistas/usuarios/acceso.php#login">Iniciar sesión</a></li>
         <li><a href="<?= RUTA_APP ?>/vistas/usuarios/registro.php">Registrarse</a></li>
+        
     <?php endif; ?>
 </ul>
