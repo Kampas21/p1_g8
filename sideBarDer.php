@@ -20,10 +20,10 @@ $rol = $user['rol'] ?? 'No autenticado';
 <h4>Accesos rápidos</h4>
 <ul>
     <?php if ($user): ?>
-        <li><a href="/P1/p1_g8/vistas/usuarios/perfil.php">Mi perfil</a></li>
-        <li><a href="/P1/p1_g8/vistas/usuarios/logout.php">Cerrar sesión</a></li>
+        <li><a href="<?= RUTA_APP ?>/vistas/usuarios/perfil.php">Mi perfil</a></li>
+        <li><a href="<?= RUTA_APP ?>/vistas/usuarios/logout.php">Cerrar sesión</a></li>
     <?php else: ?>
-        <li><a href="/P1/p1_g8/vistas/usuarios/acceso.php#login">Iniciar sesión</a></li>
-        <li><a href="/P1/p1_g8/vistas/usuarios/acceso.php#registro">Registrarse</a></li>
+        <li><a href="<?= RUTA_APP ?>/vistas/usuarios/acceso.php#login">Iniciar sesión</a></li>
+        <li><a href="<?= RUTA_APP ?>/vistas/usuarios/acceso.php#registro">Registrarse</a></li>
     <?php endif; ?>
 </ul>
