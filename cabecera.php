@@ -31,11 +31,7 @@ function mostrarSaludo(): string {
 
     <nav class="menu-principal">
         <ul>
-            <li><a href="<?= RUTA_APP ?>/index.php">Inicio</a></li>
-            <li><a href="<?= RUTA_APP ?>/detalles.php">Detalles</a></li>
-            <li><a href="<?= RUTA_APP ?>/bocetos.php">Bocetos</a></li>
             <li><a href="<?= RUTA_APP ?>/miembros.php">Miembros</a></li>
-            <li><a href="<?= RUTA_APP ?>/planificacion.php">Planificación</a></li>
             <li><a href="<?= RUTA_APP ?>/contacto.php">Contacto</a></li>
         </ul>
     </nav>
