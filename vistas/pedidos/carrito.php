@@ -83,9 +83,10 @@ ob_start();
 
     <?php else: ?>
       <div class="table-wrap">
-        <table>
+                <table>
           <thead>
             <tr>
+              <th>Imagen</th> <!-- NUEVA CABECERA -->
               <th>Producto</th>
               <th>Precio ud.</th>
               <th>Cantidad</th>
@@ -96,6 +97,15 @@ ob_start();
           <tbody>
           <?php foreach ($lineas as $linea): ?>
             <tr>
+              <!-- NUEVA COLUMNA DE IMAGEN -->
+              <td style="text-align: center;">
+                <?php if (!empty($linea['imagen'])): ?>
+                  <img src="<?= RUTA_APP . '/' . e($linea['imagen']) ?>" alt="<?= e($linea['nombre']) ?>" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                <?php else: ?>
+                  <span style="font-size: 12px; color: #888;">(Sin imagen)</span>
+                <?php endif; ?>
+              </td>
+              
               <td><?= e($linea['nombre']) ?></td>
               <td><?= e($linea['precio_unitario']) ?> €</td>
               <td>
@@ -119,7 +129,8 @@ ob_start();
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="3"><strong>Total</strong></td>
+              <!-- Aumentamos el colspan a 4 porque hemos añadido una columna de imagen -->
+              <td colspan="4" style="text-align: right; padding-right: 15px;"><strong>Total:</strong></td>
               <td colspan="2"><strong><?= $total ?> €</strong></td>
             </tr>
           </tfoot>

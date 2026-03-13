@@ -148,14 +148,14 @@ class Pedido
         return $stmt->execute();
     }
 
-    /**
-     * Devuelve los productos de un pedido con nombre, iva y estado (útil para cocina).
+     /**
+     * Devuelve los productos de un pedido con nombre, imagen, iva y estado.
      */
     public static function getProductosPedido($pedido_id)
     {
         global $conn;
         $stmt = $conn->prepare(
-            "SELECT pep.*, p.nombre, p.iva
+            "SELECT pep.*, p.nombre, p.imagen, p.iva
              FROM productos_en_pedido pep
              JOIN productos p ON p.id = pep.producto_id
              WHERE pep.pedido_id = ?"
