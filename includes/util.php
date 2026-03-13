@@ -150,7 +150,7 @@ function upload_avatar_from_request(string $fieldName = 'avatar_upload'): ?array
 }
 
 
-function resolve_avatar_choice_from_request(array $currentUser = null, bool $isCreate = false): array {
+function resolve_avatar_choice_from_request(?array $currentUser = null, bool $isCreate = false): array {
     $mode = (string)($_POST['avatar_mode'] ?? ($isCreate ? 'default' : 'keep'));
 
     if (!$isCreate && $mode === 'keep') {

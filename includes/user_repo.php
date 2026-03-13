@@ -20,7 +20,7 @@ function user_row_to_avatar_url(array $row): string {
         }
     }
 
-    return avatar_default_path();
+    return default_avatar();
 }
 
 function user_find_by_id(int $id, bool $includeInactive = true): ?array {
