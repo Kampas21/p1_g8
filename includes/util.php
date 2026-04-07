@@ -160,7 +160,7 @@ function upload_avatar_from_request(string $fieldName = 'avatar_upload'): ?array
 
     return [
         'type' => 'custom',
-        'value' => $filename,
+        'value' => 'img/avatares/' . $filename,
     ];
 }
 
