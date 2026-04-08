@@ -25,9 +25,10 @@ if (!$user || !user_has_role($user, 'gerente')) {
     exit;
 }
 
-require_once __DIR__ . '/../../entities/categoria.php';
+// IMPORTANTE: usar rutas con __DIR__
+require_once __DIR__ . '/../../includes/categoriaService.php';
 
-$categorias = Categoria::getCategorias();
+$categorias = CategoriaService::getAll();
 
 $tituloPagina = 'Lista de Categorías';
 $rutaCSS = '../../CSS/estilo.css';
@@ -52,34 +53,47 @@ ob_start();
 
     <?php foreach ($categorias as $cat): ?>
     <tr>
-        <td><?= $cat['id'] ?></td>
-        <td><?= htmlspecialchars($cat['nombre']) ?></td>
-        <td class="descripcion"><?= htmlspecialchars($cat['descripcion']) ?></td>
+        <td><?= $cat->getId() ?></td>
+
+        <td><?= htmlspecialchars($cat->getNombre()) ?></td>
+
+        <td class="descripcion">
+            <?= htmlspecialchars($cat->getDescripcion()) ?>
+        </td>
+
         <td>
-            <?= $cat['activa']
+            <?= $cat->isActiva()
                 ? '<span style="color:green">Activa</span>'
                 : '<span style="color:red">Inactiva</span>' ?>
         </td>
-        <td>
-            <a class="btn editar" href="editarCategoria.php?id=<?= $cat['id'] ?>">Editar</a>
 
-            <a class="btn prod" href="../productos/mostrarProductosCategoria.php?id=<?= $cat['id'] ?>">
+        <td>
+            <a class="btn editar"
+               href="editarCategoria.php?id=<?= $cat->getId() ?>">
+                Editar
+            </a>
+
+            <a class="btn prod"
+               href="../productos/mostrarProductosCategoria.php?id=<?= $cat->getId() ?>">
                 Productos
             </a>
 
-            <?php if ($cat['activa']): ?>
-                <a class="btn activar" href="borrarCategoria.php?id=<?= $cat['id'] ?>"
+            <?php if ($cat->isActiva()): ?>
+                <a class="btn activar"
+                   href="borrarCategoria.php?id=<?= $cat->getId() ?>"
                    onclick="return confirm('¿Seguro que quieres desactivar esta categoría?')">
                     Desactivar
                 </a>
             <?php else: ?>
-                <a class="btn borrar" href="activarCategoria.php?id=<?= $cat['id'] ?>">
+                <a class="btn borrar"
+                   href="activarCategoria.php?id=<?= $cat->getId() ?>">
                     Activar
                 </a>
             <?php endif; ?>
         </td>
     </tr>
     <?php endforeach; ?>
+
 </table>
 
 <p>

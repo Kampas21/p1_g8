@@ -1,0 +1,119 @@
+<?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once __DIR__ . '/../../includes/auth.php';
+
+$user = current_user();
+
+if (!$user || !user_has_role($user, 'gerente')) {
+    $tituloPagina = 'Acceso bloqueado';
+    $rutaCSS = '../../CSS/estilo.css';
+
+    ob_start();
+?>
+    <div class="panel">
+        <h1>Acceso bloqueado</h1>
+        <p>Necesitas ser gerente para acceder a ofertas.</p>
+        <p><a class="btn-volver" href="../../index.php">Volver al inicio</a></p>
+    </div>
+<?php
+    $contenidoPrincipal = ob_get_clean();
+    require __DIR__ . '/../../includes/plantilla.php';
+    exit;
+}
+
+require_once __DIR__ . '/../../entities/oferta.php';
+require_once __DIR__ . '/../../entities/producto.php';
+
+
+$ofertas = Oferta::getOfertas();
+
+$tituloPagina = 'Lista de ofertas';
+$rutaCSS = '../../CSS/estilo.css';
+ob_start();
+?>
+
+<link href="../../CSS/estilo.css" rel="stylesheet" type="text/css">
+
+<h1>Lista de ofertas</h1>
+
+<p><a class="btn-nuevo" href="crearOferta.php">Nueva Oferta</a></p>
+
+<div class="tabla-scroll">
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Fecha Inicio</th>
+            <th>Fecha Fin</th>
+            <th>Productos</th>
+            <th>Precio total</th>
+            <th>Descuento</th>
+            <th>Precio final</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+
+        <?php foreach ($ofertas as $oferta): ?>
+            <tr>
+                <td><?= $oferta['id'] ?></td>
+                <td><?= htmlspecialchars($oferta['nombre']) ?></td>
+                <td class="descripcion"><?= htmlspecialchars($oferta['descripcion']) ?></td>
+                <td><?= htmlspecialchars($oferta['fecha_inicio']) ?></td>
+                <td><?= htmlspecialchars($oferta['fecha_fin']) ?></td>
+
+                <?php
+                $precio_total = 0;
+                $productos = Oferta::getProductosDeOferta($oferta['id']); // devuelve un array de productos con cantidad
+                $lista = array_map(function ($p) use (&$precio_total) {
+                    $precio = Producto::getPrecioFinal($p['precio_base'], $p['iva']);
+                    $precio_cant = $precio * $p['cantidad'];
+                    $precio_total += $precio_cant;
+                    return $p['nombre'] . ' (' . $p['cantidad'] . ') ' . round($precio_cant, 2) . '€';
+                }, $productos);
+                ?>
+
+                <td><?php
+                    foreach (array_chunk($lista, 2) as $grupo) {
+                        echo htmlspecialchars(implode(', ', $grupo)) . "<br>";
+                    }
+                    ?>
+                </td>
+
+                <td><?= htmlspecialchars($precio_total) . '€' ?></td>
+                <td><?= htmlspecialchars($oferta['descuento']) . '%' ?></td>
+                <?php
+                $precio_des = round($precio_total * (1 - $oferta['descuento'] / 100), 2);
+                ?>
+
+                <td><?= htmlspecialchars($precio_des) . '€' ?></td>
+
+                <td>
+                    <?= (strtotime($oferta['fecha_fin']) <= time())
+                        ? '<span style="color:red">Caducada</span>'
+                        : '<span style="color:green">Activa</span>' ?>
+                </td>
+                <td>
+                    <a class="btn editar" href="editarOferta.php?id=<?= $oferta['id'] ?>">Editar</a>
+                    <a class="btn borrar" href="borrarOferta.php?id=<?= $oferta['id'] ?>">Borrar</a>
+
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+</div>
+
+<p>
+    <a class="btn-volver" href="../categorias/listarOfertas.php">Volver</a>
+</p>
+
+<?php
+$contenidoPrincipal = ob_get_clean();
+require __DIR__ . '/../../includes/plantilla.php';

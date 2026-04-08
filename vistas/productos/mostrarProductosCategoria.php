@@ -1,94 +1,48 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+require_once '../../includes/productoService.php';
 
-require_once __DIR__ . '/../../entities/producto.php';
-require_once __DIR__ . '/../../entities/categoria.php';
-
-$categoria_id = $_GET['id'] ?? null;
-
-if (!$categoria_id || !is_numeric($categoria_id)) {
-    echo '<p>No se especificó la categoría correctamente.</p>';
-    echo '<a class="btn-volver" href="mostrarProductosCategoria.php?id=' . $categoria_id . '">Volver</a>';
-    exit();
-}
-
-$productos = Producto::getProductosPorCategoria($categoria_id);
-$nombreCategoria = Categoria::getCategoriaById($categoria_id);
-
-$tituloPagina = 'Lista de productos';
-$rutaCSS = '../../CSS/estilo.css';
-ob_start();
+$categoria_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+$productos = ProductoService::getAllByCategoria($categoria_id);
 ?>
 
-<link href="../../CSS/estilo.css" rel="stylesheet" type="text/css">
+<h2>Productos</h2>
 
-<h1>Lista de <?= htmlspecialchars($nombreCategoria['nombre']) ?> </h1>
+<?php foreach ($productos as $p): ?>
+    <div style="border:1px solid #ccc; margin:10px; padding:10px;">
 
-<p><a class="btn-nuevo" href="crearProducto.php?id=<?= $categoria_id ?>">Nuevo Producto</a></p>
+        <h3><?= $p->getNombre() ?></h3>
+        <p><?= $p->getDescripcion() ?></p>
+        <p><?= $p->getPrecio() ?> €</p>
 
-<div class="tabla-scroll">
-<table border="1">
-    <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Descripción</th>
-        <th>Categoria</th>
-        <th>Precio base</th>
-        <th>IVA</th>
-        <th>Precio final</th>
-        <th>Disponible</th>
-        <th>Ofertado</th>
-        <th>Imagen</th>
-        <th>Acciones</th>
-    </tr>
+        <?php if ($p->isOfertado()): ?>
+            <span style="color:green;">Disponible</span>
+        <?php else: ?>
+            <span style="color:red;">No ofertado</span>
+        <?php endif; ?>
 
-    <?php foreach ($productos as $cat): ?>
-        <tr>
-            <td><?= $cat['id'] ?></td>
-            <td><?= htmlspecialchars($cat['nombre']) ?></td>
-            <td class="descripcion"><?= htmlspecialchars($cat['descripcion']) ?></td>
-            <td><?= htmlspecialchars($cat['categoria_nombre']) ?></td>
-            <td><?= htmlspecialchars($cat['precio_base']) ?></td>
-            <td><?= htmlspecialchars($cat['iva']) ?></td>
-            <td><?= Producto::getPrecioFinal($cat['precio_base'], $cat['iva']); ?></td>
-            <td><?= $cat['disponible'] > 0
-                    ? '<span style="color:green">Disponible (' . $cat['disponible'] . ')</span>'
-                    : '<span style="color:red">No disponible</span>' ?>
-            </td>
-            <td><?= $cat['ofertado']
-                    ? '<span style="color:green">Activo</span>'
-                    : '<span style="color:red">Inactivo</span>' ?></td>
-            <td>
-                <?php if (!empty($cat['imagen'])): ?>
-                    <img src="<?= htmlspecialchars($cat['imagen']) ?>" alt="Imagen de <?= htmlspecialchars($cat['nombre']) ?>" width="120">
-                <?php else: ?>
-                    No hay imagen
-                <?php endif; ?>
-            </td>
-            <td>
-                <a class="btn editar" href="editarProducto.php?id=<?= $cat['id'] ?>">Editar</a>
+        <br><br>
 
-                <?php if ($cat['ofertado']): ?>
+        <!-- EDITAR -->
+        <a href="editarProducto.php?id=<?= $p->getId() ?>">Editar</a>
 
-                    <a class="btn borrar" href="borrarProducto.php?id=<?= $cat['id'] ?>&categoria_id=<?= $categoria_id ?>">Borrar</a>
+        <!-- BORRAR (DESACTIVAR) -->
+        <?php if ($p->isOfertado()): ?>
+            <form method="POST" action="borrarProducto.php">
+                <input type="hidden" name="id" value="<?= $p->getId() ?>">
+                <button>Eliminar</button>
+            </form>
+        <?php endif; ?>
 
-                <?php else: ?>
+        <!-- ACTIVAR -->
+        <?php if (!$p->isOfertado()): ?>
+            <form method="POST" action="activarProducto.php">
+                <input type="hidden" name="id" value="<?= $p->getId() ?>">
+                <button>Activar</button>
+            </form>
+        <?php endif; ?>
 
-                    <a class="btn activar" href="activarProducto.php?id=<?= $cat['id'] ?>&categoria_id=<?= $categoria_id ?>">Activar</a>
+    </div>
+<?php endforeach; ?>
 
-                <?php endif; ?>
-
-            </td>
-        </tr>
-    <?php endforeach; ?>
-</table>
-</div>
-<p>
-    <a class="btn-volver" href="../categorias/categoriasList.php">Volver</a>
-</p>
-
-  <?php
-$contenidoPrincipal = ob_get_clean();
-require __DIR__ . '/../../includes/plantilla.php';
+<br>
+<a href="crearProducto.php"> Crear producto</a>

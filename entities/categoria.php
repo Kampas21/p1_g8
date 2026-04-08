@@ -1,105 +1,47 @@
-<?php 
-require_once __DIR__ . '/../includes/application.php';
-require_once __DIR__ . '/producto.php';
+<?php
 
-class Categoria
-{
-    public static function getCategorias()
-    {
-        global $conn;
+class Categoria {
 
-        $query = "SELECT * FROM categorias";
-        $rs = $conn->query($query);
+    private $id;
+    private $nombre;
+    private $descripcion;
+    private $activa;
 
-        $categorias = [];
-
-        while ($fila = $rs->fetch_assoc()) {
-            $categorias[] = $fila;
-        }
-
-        return $categorias;
+    public function __construct($id, $nombre, $descripcion, $activa) {
+        $this->id = $id;
+        $this->nombre = $nombre;
+        $this->descripcion = $descripcion;
+        $this->activa = $activa;
     }
 
-    public static function getCategoriaById($id)
-    {
-        global $conn;
+    // GETTERS
 
-        $stmt = $conn->prepare("SELECT * FROM categorias WHERE id = ?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-
-        $resultado = $stmt->get_result();
-        return $resultado->fetch_assoc();
+    public function getId() {
+        return $this->id;
     }
 
-    public static function crearCategoria($nombre, $descripcion)
-    {
-        global $conn;
-
-        $stmt = $conn->prepare(
-            "INSERT INTO categorias (nombre, descripcion) VALUES (?, ?)"
-        );
-
-        $stmt->bind_param("ss", $nombre, $descripcion);
-        return $stmt->execute();
+    public function getNombre() {
+        return $this->nombre;
     }
 
-    public static function editarCategoria($id, $nombre, $descripcion)
-    {
-        global $conn;
-
-        $stmt = $conn->prepare(
-            "UPDATE categorias SET nombre = ?, descripcion = ? WHERE id = ?"
-        );
-
-        $stmt->bind_param("ssi", $nombre, $descripcion, $id);
-        return $stmt->execute();
+    public function getDescripcion() {
+        return $this->descripcion;
     }
 
-    public static function borrarCategoria($id)
-{
-    global $conn;
-
-    $conn->begin_transaction();
-
-    try {
-        Producto::desactivarProductosPorCategoria($id);
-
-        $stmt = $conn->prepare(
-            "UPDATE categorias SET activa = 0 WHERE id = ?"
-        );
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-
-        $conn->commit();
-        return true;
-    } catch (Throwable $e) {
-        $conn->rollback();
-        return false;
+    public function isActiva() {
+        return $this->activa;
     }
-}
 
-public static function activarCategoria($id)
-{
-    global $conn;
 
-    $conn->begin_transaction();
-
-    try {
-        Producto::activarProductosPorCategoria($id);
-
-        $stmt = $conn->prepare(
-            "UPDATE categorias SET activa = 1 WHERE id = ?"
-        );
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-
-        $conn->commit();
-        return true;
-
-    } catch (Throwable $e) {
-        $conn->rollback();
-        return false;
+    public function setNombre($nombre) {
+        $this->nombre = $nombre;
     }
-}
+
+    public function setDescripcion($descripcion) {
+        $this->descripcion = $descripcion;
+    }
+
+    public function setActiva($activa) {
+        $this->activa = $activa;
+    }
 }

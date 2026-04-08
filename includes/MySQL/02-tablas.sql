@@ -51,7 +51,11 @@ CREATE TABLE IF NOT EXISTS `pedidos`(
     `tipo` ENUM('local', 'llevar'), 
     `metodo_pago` ENUM('tarjeta', 'camarero') DEFAULT NULL,
     `usuario_id` INT NOT NULL,
-    `total` DECIMAL(10,2),
+
+    --`total` DECIMAL(10,2),
+    `total_sin_descuentos` DECIMAL(10,2) DEFAULT 0,
+    `total_descuento` DECIMAL(10,2) DEFAULT 0;
+
     `cocinero_id` INT DEFAULT NULL,
 
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
@@ -79,6 +83,53 @@ CREATE TABLE IF NOT EXISTS `productos_en_pedido` (
     -- Para que no se inserte el mismo producto dos veces en el mismo pedido
     UNIQUE (pedido_id, producto_id)
 );
+
+/* =========================
+   TABLAS DE OFERTAS
+   ========================= */
+
+CREATE TABLE IF NOT EXISTS `ofertas` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `nombre` VARCHAR(100) NOT NULL,
+    `descripcion` TEXT,
+    
+    `fecha_inicio` DATETIME NOT NULL,
+    `fecha_fin` DATETIME NOT NULL,
+
+    `descuento` DECIMAL(5,2) NOT NULL, -- ej: 21.50
+
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS `oferta_productos` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+
+    `oferta_id` INT NOT NULL,
+    `producto_id` INT NOT NULL,
+
+    `cantidad` INT NOT NULL DEFAULT 1,
+
+    FOREIGN KEY (`oferta_id`) REFERENCES `ofertas`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`producto_id`) REFERENCES `productos`(`id`) ON DELETE CASCADE,
+
+    UNIQUE (`oferta_id`, `producto_id`)
+);
+
+CREATE TABLE IF NOT EXISTS `ofertas_en_pedido` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+
+    `pedido_id` INT NOT NULL,
+    `oferta_id` INT NOT NULL,
+
+    `veces_aplicada` INT NOT NULL DEFAULT 1,
+
+    `descuento_total` DECIMAL(10,2) NOT NULL,
+
+    FOREIGN KEY (`pedido_id`) REFERENCES `pedidos`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`oferta_id`) REFERENCES `ofertas`(`id`)
+);
+
 
 CREATE INDEX idx_usuarios_rol ON usuarios(rol);
 CREATE INDEX idx_usuarios_activo ON usuarios(activo);
