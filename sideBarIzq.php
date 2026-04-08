@@ -23,6 +23,10 @@ if (function_exists('current_user')) {
         <?php if ($user['rol'] === 'gerente'): ?>
             <li><a href="<?= RUTA_APP ?>/vistas/categorias/categoriasList.php">Categorías</a></li>
         <?php endif; ?>
+
+        <?php if ($user['rol'] === 'gerente'): ?>
+            <li><a href="<?= RUTA_APP ?>/vistas/ofertas/listarOfertas.php">Ofertas</a></li>
+        <?php endif; ?>
         
         <!-- Panel Camarero: Solo Camareros y Gerentes -->
         <?php if ($user['rol'] === 'camarero' || $user['rol'] === 'gerente'): ?>

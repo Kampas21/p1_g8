@@ -7,7 +7,7 @@ class Producto
     {
         global $conn;
 
-        $query = "SELECT * FROM productos";
+        $query = "SELECT * FROM productos WHERE  disponible = 1";
         $rs = $conn->query($query);
 
         $productos = [];
