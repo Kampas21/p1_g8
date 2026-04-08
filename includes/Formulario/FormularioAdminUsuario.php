@@ -120,11 +120,27 @@ class FormularioAdminUsuario extends Formulario
         $this->errores = [];
 
         // Forzar avatar upload mode si seleccionan fichero
-        if (isset($_FILES['avatar_pers']) && $_FILES['avatar_pers']['error'] !== UPLOAD_ERR_NO_FILE) {
+                if (isset($_FILES['avatar_pers']) && $_FILES['avatar_pers']['error'] !== UPLOAD_ERR_NO_FILE) {
             $_POST['avatar_mode'] = 'upload';
             $_FILES['avatar_upload'] = $_FILES['avatar_pers'];
         } else {
-            $_POST['avatar_mode'] = $this->isCreate ? 'default' : 'keep';
+            // Si el gerente cambia el rol y no sube foto, forzamos un Avatar Predefinido automático
+            $rolSeleccionado = $_POST['rol'] ?? 'cliente';
+            $rolActual = $this->userToEdit['rol'] ?? 'cliente';
+            
+            if ($rolSeleccionado !== $rolActual || $this->isCreate) {
+                $_POST['avatar_mode'] = 'preset';
+                
+                
+                if ($rolSeleccionado === 'gerente') $_POST['avatar_preset'] = 'preset_manager';
+                elseif ($rolSeleccionado === 'cocinero') $_POST['avatar_preset'] = 'preset_chef';
+                elseif ($rolSeleccionado === 'camarero') $_POST['avatar_preset'] = 'preset_waiter';
+                else {
+                    $_POST['avatar_mode'] = 'default';
+                }
+            } else {
+                $_POST['avatar_mode'] = 'keep'; // Si no hay cambio de rol y no sube foto, se mantiene igual
+            }
         }
 
         $ignoreId = $this->isCreate ? null : (int)$this->userToEdit['id'];

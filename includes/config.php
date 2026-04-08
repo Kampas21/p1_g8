@@ -5,6 +5,7 @@ define("DB_USER", "root");
 define("DB_PASS", "");
 define("DB_NAME", "BistroFDI_G8");
 
+
 define('RUTA_APP', '/P1/p1_g8');
 
 // ---- PARA EL VPS ----
