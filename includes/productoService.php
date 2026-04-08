@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../entities/Producto.php';
-require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/application.php';
 
 class ProductoService {
 

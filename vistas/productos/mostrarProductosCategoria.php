@@ -89,7 +89,7 @@ ob_start();
 <?php endforeach; ?>
 
 <p>
-    <a href="../categorias/categoriasList.php">
+    <a class="btn-volver" href="../categorias/categoriasList.php">
         ← Volver a categorías
     </a>
 </p>
