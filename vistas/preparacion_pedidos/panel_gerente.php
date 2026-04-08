@@ -20,53 +20,48 @@ ob_start();
 <div class="panel">
     <h3>📊 Todos los Pedidos Pendientes</h3>
     <div class="table-wrap">
-        <table style="width: 100%; border-collapse: collapse;">
+        <table class="tabla-panel">
             <thead>
-                <tr style="background-color: #8b7355; color: white; text-align: left;">
-                    <th style="padding: 10px; border-bottom: 2px solid #ddd;">ID</th>
-                    <th style="padding: 10px; border-bottom: 2px solid #ddd;">Estado</th>
-                    <th style="padding: 10px; border-bottom: 2px solid #ddd;">Cocinero Asignado</th>
+                <tr class="tabla-panel-cabecera">
+                    <th>ID</th>
+                    <th>Estado</th>
+                    <th>Cocinero Asignado</th>
                 </tr>
             </thead>
             <tbody>
             <?php if (empty($pedidos)): ?>
-                <tr><td colspan="3" style="text-align: center; padding: 20px;">No hay pedidos pendientes en este momento.</td></tr>
+                <tr>
+                    <td colspan="3" class="tabla-panel-vacia">No hay pedidos pendientes en este momento.</td>
+                </tr>
             <?php else: ?>
                 <?php foreach ($pedidos as $p): ?>
-                    <tr style="border-bottom: 1px solid #ddd;">
-                        <td style="padding: 10px;"><strong>#<?= (int)$p['id'] ?></strong></td>
-                        <td style="padding: 10px;">
-                            <?php
-                                $colores = [
-                                    'recibido' => '#ffc107', 'en_preparacion' => '#17a2b8',
-                                    'cocinando' => '#fd7e14', 'listo_cocina' => '#28a745', 'terminado' => '#6c757d'
-                                ];
-                                $color = $colores[$p['estado']] ?? '#333';
-                            ?>
-                            <span style="background: <?= $color ?>; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.85em; font-weight: bold;">
+                    <tr class="tabla-panel-fila">
+                        <td><strong>#<?= (int)$p['id'] ?></strong></td>
+                        <td>
+                            <span class="badge-estado estado-<?= e($p['estado']) ?>">
                                 <?= strtoupper(str_replace('_', ' ', $p['estado'])) ?>
                             </span>
                         </td>
-                        <td style="padding: 10px; display: flex; align-items: center; gap: 12px;">
+                        <td class="celda-flex">
                             <?php if ($p['cocinero_nombre']): ?>
                                 <?php 
                                     $nombreCompleto = trim($p['cocinero_nombre'] . ' ' . $p['cocinero_apellidos']);
                                     $avatarEmergencia = 'https://ui-avatars.com/api/?name=' . urlencode($nombreCompleto) . '&background=random&color=fff&rounded=true&size=100';
 
                                     $avatarImg = (!empty($p['avatar_valor'])) 
-                                        ? (strpos($p['avatar_valor'], '/') === 0 || strpos($p['avatar_valor'], 'http') === 0 ? $p['avatar_valor'] : '/p1_g8/' . $p['avatar_valor']) 
+                                        ? (strpos($p['avatar_valor'], '/') === 0 || strpos($p['avatar_valor'], 'http') === 0 ? $p['avatar_valor'] : RUTA_APP.'/' . $p['avatar_valor']) 
                                         : $avatarEmergencia;
                                 ?>
-                                <img src="<?= htmlspecialchars($avatarImg) ?>" 
+                                <img src="<?= e($avatarImg) ?>" 
                                      alt="Avatar" 
-                                     onerror="this.onerror=null; this.src='<?= $avatarEmergencia ?>';" 
-                                     style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                                <span style="font-weight: 500;"><?= htmlspecialchars($nombreCompleto) ?></span>
+                                     onerror="this.onerror=null; this.src='<?= e($avatarEmergencia) ?>';" 
+                                     class="avatar-empleado">
+                                <span class="texto-destacado"><?= e($nombreCompleto) ?></span>
                             <?php else: ?>
-                                <div style="width: 35px; height: 35px; border-radius: 50%; background-color: #eee; display: flex; justify-content: center; align-items: center; border: 1px dashed #ccc;">
+                                <div class="avatar-placeholder">
                                     🕒
                                 </div>
-                                <span style="color: gray; font-style: italic;">Sin asignar</span>
+                                <span class="texto-gris-cursiva">Sin asignar</span>
                             <?php endif; ?>
                         </td>
                     </tr>
