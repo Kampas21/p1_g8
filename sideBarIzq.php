@@ -21,7 +21,7 @@ $user = function_exists('current_user') ? current_user() : null;
         <?php endif; ?>
 
         <?php if ($user['rol'] === 'gerente'): ?>
-            <li><a href="<?= RUTA_APP ?>/vistas/categorias/listarOfertas.php">Ofertas</a></li>
+            <li><a href="<?= RUTA_APP ?>/vistas/ofertas/listarOfertas.php">Ofertas</a></li>
         <?php endif; ?>
         
         <!-- Panel Camarero: Solo Camareros y Gerentes -->
