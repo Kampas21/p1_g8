@@ -15,8 +15,20 @@ class ProductoService {
         $productos = [];
 
         while ($fila = $result->fetch_assoc()) {
-            $productos[] = $fila;
-        }
+      $productos[] = new Producto(
+        $fila['id'],
+        $fila['nombre'],
+        $fila['descripcion'],
+        $fila['categoria_id'],
+        $fila['precio_base'],
+        $fila['iva'],
+        $fila['disponible'],
+        $fila['ofertado']
+    );
+      }
+
+    $result->free();
+    $stmt->close();
 
         return $productos;
     }

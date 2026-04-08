@@ -53,20 +53,20 @@ ob_start();
 <?php else: ?>
     <?php foreach ($productos as $p): ?>
         <div class="panel" style="margin-bottom:15px;">
-            <h3><?= htmlspecialchars($p['nombre']) ?></h3>
+            <h3><?= htmlspecialchars($p->getNombre()) ?></h3>
 
             <p><?= htmlspecialchars($p['descripcion']) ?></p>
 
 <?php
-$precioBase = (float)$p['precio_base'];
-$iva = (float)$p['iva'];
-$precioFinal = Producto::getPrecioFinal($precioBase, $iva);
+$precioBase = $p->getPrecioBase();
+$iva = $p->getIva();
+$precioFinal = $p->getPrecioFinal();
 ?>
 
 <p><strong>Precio base:</strong> <?= number_format($precioBase, 2) ?> €</p>
 <p><strong>IVA:</strong> <?= number_format($iva, 0) ?> %</p>
 <p><strong>Precio final:</strong> <?= number_format($precioFinal, 2) ?> €</p>
-            <?php if ((int)$p['ofertado'] === 1): ?>
+            <?php if ($p->getOfertado() == 1): ?>
                 <p style="color:green;">Ofertado</p>
             <?php else: ?>
                 <p style="color:red;">No ofertado</p>
