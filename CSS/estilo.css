@@ -695,3 +695,153 @@ button:hover, input[type="submit"]:hover {
 .input-archivo::file-selector-button:hover {
     background-color: #725e44;
 }
+
+
+/* =========================================
+   ESTILOS PARA TABLAS DE PANELES (GERENTE Y COCINERO)
+   ========================================= */
+.tabla-panel {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabla-panel-cabecera {
+    background-color: #8b7355;
+    color: white;
+    text-align: left;
+}
+
+.tabla-panel th {
+    padding: 10px;
+    border-bottom: 2px solid #ddd;
+}
+
+.tabla-panel td {
+    padding: 10px;
+}
+
+.tabla-panel-fila {
+    border-bottom: 1px solid #ddd;
+}
+
+.tabla-panel-vacia {
+    text-align: center;
+    padding: 20px;
+}
+
+.celda-flex {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* --- Badges (Píldoras) de Estados --- */
+.badge-estado {
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    font-weight: bold;
+    display: inline-block;
+}
+
+/* Colores para cada estado del pedido */
+.estado-recibido { background-color: #ffc107; color: #000; }
+.estado-en_preparacion { background-color: #17a2b8; }
+.estado-cocinando { background-color: #fd7e14; }
+.estado-listo_cocina { background-color: #28a745; }
+.estado-terminado { background-color: #6c757d; }
+
+/* --- Avatares y textos en tablas --- */
+.avatar-empleado {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.avatar-placeholder {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px dashed #ccc;
+}
+
+.texto-destacado {
+    font-weight: 500;
+}
+
+.texto-gris-cursiva {
+    color: gray;
+    font-style: italic;
+}
+
+
+/* =========================================
+   ESTILOS PARA EL PANEL DEL COCINERO
+   ========================================= */
+.panel-cocinando {
+    border-top: 4px solid #fd7e14;
+}
+
+.panel-esperando {
+    margin-top: 20px;
+    border-top: 4px solid #17a2b8;
+}
+
+.fila-pedido-cocinando {
+    background-color: #f9f9f9;
+    border-bottom: 2px solid #ddd;
+}
+
+.celda-pedido-cocinando {
+    padding: 15px;
+}
+
+.titulo-pedido-cocinando {
+    margin: 0 0 10px 0;
+    color: #d35400;
+}
+
+.lista-platos {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 15px;
+}
+
+.item-plato {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px dashed #ccc;
+}
+
+.estado-plato-listo {
+    color: green;
+    font-weight: bold;
+}
+
+.form-inline {
+    margin: 0;
+}
+
+.btn-bloque {
+    width: 100%;
+    font-size: 1.1em;
+    padding: 10px;
+}
+
+.btn-bloque-disabled {
+    width: 100%;
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+    padding: 10px;
+    border: none;
+}
