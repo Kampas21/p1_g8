@@ -1,34 +1,26 @@
 <?php
-require_once 'db.php';
-require_once '../entities/Producto.php';
+require_once __DIR__ . '/../entities/Producto.php';
+require_once __DIR__ . '/db.php';
 
 class ProductoService {
 
-    public static function getAllByCategoria($categoria_id) {
-        global $conn;
+  public static function getAllByCategoria($categoria_id) {
+    global $conn;
 
-        $stmt = $conn->prepare("SELECT * FROM productos WHERE categoria_id = ?");
-        $stmt->bind_param("i", $categoria_id);
-        $stmt->execute();
+    $stmt = $conn->prepare("SELECT * FROM productos WHERE categoria_id = ?");
+    $stmt->bind_param("i", $categoria_id);
+    $stmt->execute();
 
-        $result = $stmt->get_result();
-        $productos = [];
+    $result = $stmt->get_result();
 
-        while ($row = $result->fetch_assoc()) {
-            $productos[] = new Producto(
-                $row['id'],
-                $row['nombre'],
-                $row['descripcion'],
-                $row['categoria_id'],
-                $row['precio'],
-                $row['iva'],
-                $row['disponible'],
-                $row['ofertado']
-            );
-        }
+    $productos = [];
 
-        return $productos;
+    while ($fila = $result->fetch_assoc()) {
+        $productos[] = $fila;
     }
+
+    return $productos;
+}
 
     public static function getById($id) {
         global $conn;
@@ -81,5 +73,18 @@ class ProductoService {
         $stmt = $conn->prepare("UPDATE productos SET ofertado = 1 WHERE id=?");
         $stmt->bind_param("i", $id);
         $stmt->execute();
+
     }
+
+    public static function create($nombre, $descripcion, $categoria_id, $precio, $iva) {
+    global $conn;
+
+    $stmt = $conn->prepare("
+        INSERT INTO productos (nombre, descripcion, categoria_id, precio_base, iva, disponible, ofertado)
+        VALUES (?, ?, ?, ?, ?, 1, 0)
+    ");
+
+    $stmt->bind_param("ssidi", $nombre, $descripcion, $categoria_id, $precio, $iva);
+    $stmt->execute();
+}
 }

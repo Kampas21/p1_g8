@@ -5,11 +5,7 @@ define("DB_USER", "root");
 define("DB_PASS", "");
 define("DB_NAME", "BistroFDI_G8");
 
-<<<<<<< Updated upstream
-define('RUTA_APP', '/p1_g8');
-=======
- define('RUTA_APP', '/P1/p1_g8');
->>>>>>> Stashed changes
+define('RUTA_APP', '/P1/p1_g8');
 
 // ---- PARA EL VPS ----
 // define("DB_HOST", "vm017.db.swarm.test");

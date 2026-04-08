@@ -1,48 +1,99 @@
 <?php
-require_once '../../includes/productoService.php';
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/productoService.php';
+
+$user = current_user();
+
+// 🔒 Control acceso (solo gerente)
+if (!$user || !user_has_role($user, 'gerente')) {
+    $tituloPagina = 'Acceso bloqueado';
+    $rutaCSS = '../../CSS/estilo.css';
+
+    ob_start();
+    ?>
+    <div class="panel">
+        <h1>Acceso bloqueado</h1>
+        <p>No tienes permisos.</p>
+        <a href="../../index.php">Volver</a>
+    </div>
+    <?php
+    $contenidoPrincipal = ob_get_clean();
+    require __DIR__ . '/../../includes/plantilla.php';
+    exit;
+}
+
+// 📥 recoger id categoría
 $categoria_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+
+if (!$categoria_id) {
+    die("Categoría inválida");
+}
+
+// 📦 obtener productos
 $productos = ProductoService::getAllByCategoria($categoria_id);
+
+// 🎨 plantilla
+$tituloPagina = 'Productos';
+$rutaCSS = '../../CSS/estilo.css';
+
+ob_start();
 ?>
 
-<h2>Productos</h2>
+<h1>Productos</h1>
+
+<p>
+    <a href="crearProducto.php?categoria_id=<?= $categoria_id ?>">
+        ➕ Crear producto
+    </a>
+</p>
 
 <?php foreach ($productos as $p): ?>
-    <div style="border:1px solid #ccc; margin:10px; padding:10px;">
 
-        <h3><?= $p->getNombre() ?></h3>
-        <p><?= $p->getDescripcion() ?></p>
-        <p><?= $p->getPrecio() ?> €</p>
+    <div class="panel">
 
-        <?php if ($p->isOfertado()): ?>
-            <span style="color:green;">Disponible</span>
+        <h3><?= htmlspecialchars($p['nombre']) ?></h3>
+
+        <p><?= htmlspecialchars($p['descripcion']) ?></p>
+
+        <p><strong><?= $p['precio_base'] ?> €</strong></p>
+
+        <!-- Estado -->
+        <?php if ($p['ofertado']): ?>
+            <p style="color:green;">Disponible</p>
         <?php else: ?>
-            <span style="color:red;">No ofertado</span>
+            <p style="color:red;">No ofertado</p>
         <?php endif; ?>
 
-        <br><br>
+        <!-- Acciones -->
+        <a href="editarProducto.php?id=<?= $p['id'] ?>&categoria_id=<?= $categoria_id ?>">
+            Editar
+        </a>
 
-        <!-- EDITAR -->
-        <a href="editarProducto.php?id=<?= $p->getId() ?>">Editar</a>
-
-        <!-- BORRAR (DESACTIVAR) -->
-        <?php if ($p->isOfertado()): ?>
-            <form method="POST" action="borrarProducto.php">
-                <input type="hidden" name="id" value="<?= $p->getId() ?>">
-                <button>Eliminar</button>
-            </form>
-        <?php endif; ?>
-
-        <!-- ACTIVAR -->
-        <?php if (!$p->isOfertado()): ?>
-            <form method="POST" action="activarProducto.php">
-                <input type="hidden" name="id" value="<?= $p->getId() ?>">
-                <button>Activar</button>
-            </form>
+        <?php if (!$p['ofertado']): ?>
+            <a href="activarProducto.php?id=<?= $p['id'] ?>&categoria_id=<?= $categoria_id ?>">
+                Activar
+            </a>
+        <?php else: ?>
+            <a href="eliminarProducto.php?id=<?= $p['id'] ?>&categoria_id=<?= $categoria_id ?>">
+                Eliminar
+            </a>
         <?php endif; ?>
 
     </div>
+
 <?php endforeach; ?>
 
-<br>
-<a href="crearProducto.php"> Crear producto</a>
+<p>
+    <a href="../categorias/categoriasList.php">
+        ← Volver a categorías
+    </a>
+</p>
+
+<?php
+$contenidoPrincipal = ob_get_clean();
+require __DIR__ . '/../../includes/plantilla.php';
