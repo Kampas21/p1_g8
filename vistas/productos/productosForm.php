@@ -103,9 +103,3 @@ $categorias = Categoria::getCategorias();
     <p><button type="submit" class="btn-aceptar">Guardar</button></p>
 
 </form>
-
-<p>
-    <a class="btn-volver" href="mostrarProductosCategoria.php?id=<?= $categoria ?>">
-        Volver al listado
-    </a>
-</p>
