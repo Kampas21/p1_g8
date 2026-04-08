@@ -19,23 +19,23 @@ class Oferta
         return $ofertas;
     }
 
-    // public static function getOfertasActivas()
-    // {
-    //     global $conn;
+    public static function getOfertasActivas()
+    {
+        global $conn;
 
-    //     $query = "SELECT * FROM ofertas 
-    //               WHERE NOW() BETWEEN fecha_inicio AND fecha_fin 
-    //               AND activa = 1";
+        $query = "SELECT * FROM ofertas 
+                  WHERE NOW() BETWEEN fecha_inicio AND fecha_fin 
+                  AND activa = 1";
 
-    //     $rs = $conn->query($query);
+        $rs = $conn->query($query);
 
-    //     $ofertas = [];
-    //     while ($fila = $rs->fetch_assoc()) {
-    //         $ofertas[] = $fila;
-    //     }
+        $ofertas = [];
+        while ($fila = $rs->fetch_assoc()) {
+            $ofertas[] = $fila;
+        }
 
-    //     return $ofertas;
-    // }
+        return $ofertas;
+    }
 
     public static function getOfertaById($id)
     {

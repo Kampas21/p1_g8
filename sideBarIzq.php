@@ -11,6 +11,7 @@ $user = function_exists('current_user') ? current_user() : null;
     <!-- Enlaces públicos para todos (logueados o no) -->
     <li><a href="<?= RUTA_APP ?>/index.php">Inicio</a></li>
     <li><a href="<?= RUTA_APP ?>/vistas/pedidos/elegirTipo.php">Nuevo pedido</a></li>
+    <li><a href="<?= RUTA_APP ?>/vistas/ofertas/ofertaCliente.php">Nuestras ofertas</a></li>
     
     <!-- Enlaces solo para usuarios logueados -->
     <?php if ($user): ?>
