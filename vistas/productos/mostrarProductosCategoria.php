@@ -9,7 +9,6 @@ require_once __DIR__ . '/../../includes/productoService.php';
 
 $user = current_user();
 
-// 🔒 Control acceso (solo gerente)
 if (!$user || !user_has_role($user, 'gerente')) {
     $tituloPagina = 'Acceso bloqueado';
     $rutaCSS = '../../CSS/estilo.css';
@@ -18,8 +17,8 @@ if (!$user || !user_has_role($user, 'gerente')) {
     ?>
     <div class="panel">
         <h1>Acceso bloqueado</h1>
-        <p>No tienes permisos.</p>
-        <a href="../../index.php">Volver</a>
+        <p>No tienes permisos para acceder a productos.</p>
+        <p><a class="btn-volver" href="../../index.php">Volver al inicio</a></p>
     </div>
     <?php
     $contenidoPrincipal = ob_get_clean();
@@ -27,17 +26,14 @@ if (!$user || !user_has_role($user, 'gerente')) {
     exit;
 }
 
-// 📥 recoger id categoría
 $categoria_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
 if (!$categoria_id) {
-    die("Categoría inválida");
+    die('Categoría inválida');
 }
 
-// 📦 obtener productos
 $productos = ProductoService::getAllByCategoria($categoria_id);
 
-// 🎨 plantilla
 $tituloPagina = 'Productos';
 $rutaCSS = '../../CSS/estilo.css';
 
@@ -47,51 +43,58 @@ ob_start();
 <h1>Productos</h1>
 
 <p>
-    <a href="crearProducto.php?categoria_id=<?= $categoria_id ?>">
-        ➕ Crear producto
+    <a class="btn-nuevo" href="crearProducto.php?categoria_id=<?= $categoria_id ?>">
+        + Crear producto
     </a>
 </p>
 
-<?php foreach ($productos as $p): ?>
+<?php if (empty($productos)): ?>
+    <p>No hay productos en esta categoría.</p>
+<?php else: ?>
+    <?php foreach ($productos as $p): ?>
+        <div class="panel" style="margin-bottom:15px;">
+            <h3><?= htmlspecialchars($p['nombre']) ?></h3>
 
-    <div class="panel">
+            <p><?= htmlspecialchars($p['descripcion']) ?></p>
 
-        <h3><?= htmlspecialchars($p['nombre']) ?></h3>
+<?php
+$precioBase = (float)$p['precio_base'];
+$iva = (float)$p['iva'];
+$precioFinal = Producto::getPrecioFinal($precioBase, $iva);
+?>
 
-        <p><?= htmlspecialchars($p['descripcion']) ?></p>
+<p><strong>Precio base:</strong> <?= number_format($precioBase, 2) ?> €</p>
+<p><strong>IVA:</strong> <?= number_format($iva, 0) ?> %</p>
+<p><strong>Precio final:</strong> <?= number_format($precioFinal, 2) ?> €</p>
+            <?php if ((int)$p['ofertado'] === 1): ?>
+                <p style="color:green;">Ofertado</p>
+            <?php else: ?>
+                <p style="color:red;">No ofertado</p>
+            <?php endif; ?>
 
-        <p><strong><?= $p['precio_base'] ?> €</strong></p>
-
-        <!-- Estado -->
-        <?php if ($p['ofertado']): ?>
-            <p style="color:green;">Disponible</p>
-        <?php else: ?>
-            <p style="color:red;">No ofertado</p>
-        <?php endif; ?>
-
-        <!-- Acciones -->
-        <a href="editarProducto.php?id=<?= $p['id'] ?>&categoria_id=<?= $categoria_id ?>">
-            Editar
-        </a>
-
-        <?php if (!$p['ofertado']): ?>
-            <a href="activarProducto.php?id=<?= $p['id'] ?>&categoria_id=<?= $categoria_id ?>">
-                Activar
+            <a class="btn editar"
+               href="editarProducto.php?id=<?= $p['id'] ?>&categoria_id=<?= $categoria_id ?>">
+                Editar
             </a>
-        <?php else: ?>
-            <a href="eliminarProducto.php?id=<?= $p['id'] ?>&categoria_id=<?= $categoria_id ?>">
-                Eliminar
-            </a>
-        <?php endif; ?>
 
-    </div>
-
-<?php endforeach; ?>
+            <?php if ((int)$p['ofertado'] === 1): ?>
+                <a class="btn borrar"
+                   href="borrarProducto.php?id=<?= $p['id'] ?>&categoria_id=<?= $categoria_id ?>"
+                   onclick="return confirm('¿Seguro que quieres desactivar este producto?')">
+                    Eliminar
+                </a>
+            <?php else: ?>
+                <a class="btn activar"
+                   href="activarProducto.php?id=<?= $p['id'] ?>&categoria_id=<?= $categoria_id ?>">
+                    Activar
+                </a>
+            <?php endif; ?>
+        </div>
+    <?php endforeach; ?>
+<?php endif; ?>
 
 <p>
-    <a href="../categorias/categoriasList.php">
-        ← Volver a categorías
-    </a>
+    <a class="btn-volver" href="../categorias/categoriasList.php">← Volver a categorías</a>
 </p>
 
 <?php

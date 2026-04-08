@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../entities/Categoria.php';
-require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/application.php';
 class CategoriaService {
 
     public static function getAll() {
