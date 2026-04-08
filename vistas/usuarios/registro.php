@@ -5,100 +5,35 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
-require_once __DIR__ . '/../../includes/user_repo.php';
+require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/Formulario/FormularioRegistro.php';
+
+use es\ucm\fdi\aw\Formulario\FormularioRegistro;
 
 $currentUser = current_user();
 if ($currentUser) {
     if ($currentUser['rol'] === 'gerente') {
-        // Si entra un gerente, lo mandamos al creador avanzado de trabajadores
-        redirect('usuario_form.php?modo=crear');
+        header("Location: ".RUTA_APP."/vistas/usuarios/usuario_form.php?modo=crear");
     } else {
-        // Si entra un cliente normal que ya está logueado, lo mandamos a su perfil
-        redirect('perfil.php');
+        header("Location: ".RUTA_APP."/vistas/usuarios/perfil.php");
     }
+    exit();
 }
 
-
-$registerInput = [
-'username' => '',
-'email' => '',
-'nombre' => '',
-'apellidos' => '',
-];
-
-$registerErrors = [];
-
-if (is_post()) {
-
-require_csrf();
-
-[$clean, $registerErrors] = user_validate_data($_POST, true, null, false);
-
-$registerInput = [
-'username' => $clean['username'],
-'email' => $clean['email'],
-'nombre' => $clean['nombre'],
-'apellidos' => $clean['apellidos'],
-];
-
-if (!$registerErrors) {
-
-$clean['rol'] = 'cliente';
-
-$newId = user_create($clean, ['type' => 'default']);
-
-$user = user_find_by_id($newId);
-
-login_user($user);
-
-redirect('perfil.php');
-
-}
-
-}
+$form = new FormularioRegistro();
+$htmlFormRegistro = $form->gestiona();
 
 $tituloPagina = 'Registro | Bistro FDI';
-
 ob_start();
 ?>
 
 <div class="panel">
-<h2>Registro</h2>
-
-<form method="post">
-
-<input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
-
-<label>Usuario</label>
-<input type="text" name="username" value="<?= e($registerInput['username']) ?>">
-
-<label>Email</label>
-<input type="email" name="email" value="<?= e($registerInput['email']) ?>">
-
-<label>Nombre</label>
-<input type="text" name="nombre" value="<?= e($registerInput['nombre']) ?>">
-
-<label>Apellidos</label>
-<input type="text" name="apellidos" value="<?= e($registerInput['apellidos']) ?>">
-
-<label>Contraseña</label>
-<input type="password" name="password">
-
-<label>Repetir contraseña</label>
-<input type="password" name="password_confirm">
-
-<button type="submit">Registrarse</button>
-
-</form>
-
-<p>
-¿Ya tienes cuenta?
-<a href="acceso.php">Iniciar sesión</a>
-</p>
-
+    <h2>Registro de nuevos clientes</h2>
+    <?= $htmlFormRegistro ?>
 </div>
 
-<?php
+<?php 
 $contenidoPrincipal = ob_get_clean();
-require __DIR__ . '/../../includes/plantilla.php';
+require __DIR__ . '/../../includes/plantilla.php'; 
+?>

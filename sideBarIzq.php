@@ -3,11 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Obtenemos el usuario actual si la sesión está iniciada
-$user = null;
-if (function_exists('current_user')) {
-    $user = current_user();
-}
+$user = function_exists('current_user') ? current_user() : null;
 ?>
 
 <h3>Menú</h3>
@@ -25,7 +21,7 @@ if (function_exists('current_user')) {
         <?php endif; ?>
 
         <?php if ($user['rol'] === 'gerente'): ?>
-            <li><a href="<?= RUTA_APP ?>/vistas/ofertas/listarOfertas.php">Ofertas</a></li>
+            <li><a href="<?= RUTA_APP ?>/vistas/categorias/listarOfertas.php">Ofertas</a></li>
         <?php endif; ?>
         
         <!-- Panel Camarero: Solo Camareros y Gerentes -->
@@ -33,15 +29,14 @@ if (function_exists('current_user')) {
             <li><a href="<?= RUTA_APP ?>/vistas/pedidos/gestionCamarero.php">Panel Camarero</a></li>
         <?php endif; ?>
 
-        <!-- Panel Cocinero: Solo Cocineros y Gerentes -->
-        <?php if ($user['rol'] === 'cocinero' || $user['rol'] === 'gerente'): ?>
-            <li><a href="<?= RUTA_APP ?>/vistas/preparacion_pedidos/panel_cocinero.php">Panel Cocinero</a></li>
-        <?php endif; ?>
+            <?php if ($user['rol'] === 'cocinero' || $user['rol'] === 'gerente'): ?>
+                <li><a href="<?= RUTA_APP ?>/vistas/preparacion_pedidos/panel_cocinero.php">Panel Cocinero</a></li>
+            <?php endif; ?>
 
-        <!-- Panel Gerente: Solo Gerentes -->
-        <?php if ($user['rol'] === 'gerente'): ?>
-            <li><a href="<?= RUTA_APP ?>/vistas/preparacion_pedidos/panel_gerente.php">Panel Gerente</a></li>
+            <?php if ($user['rol'] === 'gerente'): ?>
+                <li><a href="<?= RUTA_APP ?>/vistas/preparacion_pedidos/panel_gerente.php">Panel Gerente</a></li>
+            <?php endif; ?>
+            
         <?php endif; ?>
-        
-    <?php endif; ?>
-</ul>
+    </ul>
+</nav>

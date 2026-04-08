@@ -5,62 +5,26 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
-require_once __DIR__ . '/../../includes/user_repo.php';
+require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/user_repo.php';
+require_once __DIR__ . '/../../includes/Formulario/FormularioPerfil.php';
+
+use es\ucm\fdi\aw\Formulario\FormularioPerfil;
 
 $user = require_login();
 
-$errors = [];
-$formValues = [
-    'username' => $user['username'],
-    'email' => $user['email'],
-    'nombre' => $user['nombre'],
-    'apellidos' => $user['apellidos'],
-];
-
-if (is_post()) {
+// Si piden quitar el avatar, que es un simple botón POST fuera del form, lo gestionamos aquí
+if (is_post() && ($_POST['accion'] ?? '') === 'quitar_avatar_personalizado') {
     require_csrf();
-    $accion = (string)($_POST['accion'] ?? '');
-
-    if ($accion === 'quitar_avatar_personalizado') {
-        user_remove_custom_avatar((int)$user['id']);
-        flash_set('success', 'Avatar personalizado eliminado. Se ha restaurado el avatar por defecto.');
-        redirect('perfil.php');
-    }
-
-    if ($accion === 'guardar_perfil') {
-        [$clean, $errors] = user_validate_data($_POST, false, (int)$user['id'], false);
-
-        $formValues = [
-            'username' => $clean['username'],
-            'email' => $clean['email'],
-            'nombre' => $clean['nombre'],
-            'apellidos' => $clean['apellidos'],
-        ];
-
-        $avatarChoice = null;
-
-        if (!$errors) {
-            try {
-                $avatarChoice = resolve_avatar_choice_from_request($user, false);
-            } catch (RuntimeException $ex) {
-                $errors['avatar'] = $ex->getMessage();
-            }
-        }
-
-        if (!$errors) {
-            user_update((int)$user['id'], $clean, [
-                'avatar_choice' => $avatarChoice,
-                'allow_role' => false
-            ]);
-
-            flash_set('success', 'Perfil actualizado correctamente.');
-            redirect('perfil.php');
-        }
-    }
+    user_remove_custom_avatar((int)$user['id']);
+    flash_set('success', 'Avatar personalizado eliminado.');
+    header("Location: perfil.php");
+    exit();
 }
 
-$user = current_user() ?? $user;
+$form = new FormularioPerfil();
+$htmlFormPerfil = $form->gestiona();
 
 $pedidosActivos = [];
 $pedidosHistorico = [];
@@ -152,116 +116,18 @@ ob_start();
         <details style="margin-top:16px;" open>
             <summary><strong>Editar perfil</strong></summary>
 
-            <?php if ($errors): ?>
-                <div class="notice error">Revisa los errores del formulario.</div>
+            <?= $htmlFormPerfil ?>
+
+            <!-- Botón para quitar el avatar personalizado, si tiene uno -->
+            <?php if (($user['avatar_tipo'] ?? '') === 'custom'): ?>
+                <form method="post" onsubmit="return confirm('¿Quitar avatar personalizado?');" style="margin-top: 15px;">
+                    <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
+                    <button type="submit" name="accion" value="quitar_avatar_personalizado" class="btn danger">
+                        Volver al avatar por defecto
+                    </button>
+                </form>
             <?php endif; ?>
 
-            <form method="post" enctype="multipart/form-data" novalidate>
-                <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
-                <input type="hidden" name="accion" value="guardar_perfil">
-
-                <div class="form-grid" style="margin-top:12px;">
-                    <div>
-                        <label for="pf-username">Usuario</label>
-                        <input id="pf-username" type="text" name="username" value="<?= e($formValues['username']) ?>">
-                        <?php if (isset($errors['username'])): ?>
-                            <div class="notice error"><?= e($errors['username']) ?></div>
-                        <?php endif; ?>
-                    </div>
-
-                    <div>
-                        <label for="pf-email">Email</label>
-                        <input id="pf-email" type="email" name="email" value="<?= e($formValues['email']) ?>">
-                        <?php if (isset($errors['email'])): ?>
-                            <div class="notice error"><?= e($errors['email']) ?></div>
-                        <?php endif; ?>
-                    </div>
-
-                    <div>
-                        <label for="pf-nombre">Nombre</label>
-                        <input id="pf-nombre" type="text" name="nombre" value="<?= e($formValues['nombre']) ?>">
-                        <?php if (isset($errors['nombre'])): ?>
-                            <div class="notice error"><?= e($errors['nombre']) ?></div>
-                        <?php endif; ?>
-                    </div>
-
-                    <div>
-                        <label for="pf-apellidos">Apellidos</label>
-                        <input id="pf-apellidos" type="text" name="apellidos" value="<?= e($formValues['apellidos']) ?>">
-                        <?php if (isset($errors['apellidos'])): ?>
-                            <div class="notice error"><?= e($errors['apellidos']) ?></div>
-                        <?php endif; ?>
-                    </div>
-
-                    <div>
-                        <label for="pf-password">Nueva contraseña (opcional)</label>
-                        <input id="pf-password" type="password" name="password">
-                        <?php if (isset($errors['password'])): ?>
-                            <div class="notice error"><?= e($errors['password']) ?></div>
-                        <?php endif; ?>
-                    </div>
-
-                    <div>
-                        <label for="pf-password-confirm">Repetir nueva contraseña</label>
-                        <input id="pf-password-confirm" type="password" name="password_confirm">
-                        <?php if (isset($errors['password_confirm'])): ?>
-                            <div class="notice error"><?= e($errors['password_confirm']) ?></div>
-                        <?php endif; ?>
-                    </div>
-
-                    <div class="full">
-                        <label>Avatar</label>
-
-                        <div class="actions-inline">
-                            <label><input type="radio" name="avatar_mode" value="keep" checked> Mantener actual</label>
-                            <label><input type="radio" name="avatar_mode" value="default"> Usar por defecto</label>
-                            <label><input type="radio" name="avatar_mode" value="preset"> Usar predefinido</label>
-                            <label><input type="radio" name="avatar_mode" value="upload"> Subir foto</label>
-                        </div>
-
-                        <div id="avatar-current-box" class="panel avatar-panel-block" style="margin-top:10px;">
-                            <div class="muted">Avatar actual:</div>
-                            <img class="avatar" src="<?= e($user['avatar_url']) ?>" alt="Avatar actual">
-
-                            <?php if (($user['avatar_tipo'] ?? '') === 'custom'): ?>
-                                <div style="margin-top:10px;">
-                                    <button class="btn small" type="submit" name="accion" value="quitar_avatar_personalizado">
-                                        Eliminar avatar personalizado (volver a por defecto)
-                                    </button>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-
-                        <div id="avatar-preset-box" class="panel hidden avatar-panel-block" style="margin-top:10px;">
-                            <div class="avatar-option-grid" style="margin-top:12px;">
-                                <?php foreach (avatar_presets() as $key => $preset): ?>
-                                    <label class="avatar-option">
-                                        <input type="radio" name="avatar_preset" value="<?= e($key) ?>">
-                                        <img src="<?= e($preset['path']) ?>" alt="<?= e($preset['label']) ?>">
-                                        <div><?= e($preset['label']) ?></div>
-                                    </label>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
-
-                        <div id="avatar-upload-box" class="panel hidden avatar-panel-block" style="margin-top:10px;">
-                            <label for="pf-avatar-upload">Subir nueva imagen</label>
-                            <input id="pf-avatar-upload" type="file" name="avatar_upload" accept=".jpg,.jpeg,.png,.webp,.gif,image/*">
-                        </div>
-
-                        <?php if (isset($errors['avatar'])): ?>
-                            <div class="notice error"><?= e($errors['avatar']) ?></div>
-                        <?php endif; ?>
-                    </div>
-                </div>
-
-                <div class="actions-inline" style="margin-top:12px;">
-                    <button class="primary" type="submit">Guardar cambios</button>
-                    <?php if (user_has_role($user, 'gerente')): ?>
-                        <a class="btn" href="../../entities/usuarios.php">Ir a gestión de usuarios</a>
-                    <?php endif; ?>
-                </div>
-            </form>
         </details>
     </section>
 
@@ -344,41 +210,7 @@ ob_start();
     <?php endif; ?>
 </section>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const modeInputs = document.querySelectorAll('input[name="avatar_mode"]');
-    const currentBox = document.getElementById('avatar-current-box');
-    const presetBox = document.getElementById('avatar-preset-box');
-    const uploadBox = document.getElementById('avatar-upload-box');
 
-    function updateAvatarProfileUI() {
-        const selected = document.querySelector('input[name="avatar_mode"]:checked');
-        const mode = selected ? selected.value : 'keep';
-
-        if (currentBox) currentBox.classList.add('hidden');
-        if (presetBox) presetBox.classList.add('hidden');
-        if (uploadBox) uploadBox.classList.add('hidden');
-
-        if (mode === 'keep' && currentBox) {
-            currentBox.classList.remove('hidden');
-        }
-
-        if (mode === 'preset' && presetBox) {
-            presetBox.classList.remove('hidden');
-        }
-
-        if (mode === 'upload' && uploadBox) {
-            uploadBox.classList.remove('hidden');
-        }
-    }
-
-    modeInputs.forEach(function (input) {
-        input.addEventListener('change', updateAvatarProfileUI);
-    });
-
-    updateAvatarProfileUI();
-});
-</script>
 
 <?php
 $contenidoPrincipal = ob_get_clean();
