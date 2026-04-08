@@ -30,7 +30,6 @@ class Producto {
     public function getIVA() { return $this->iva; }
     public function isDisponible() { return $this->disponible; }
     public function isOfertado() { return $this->ofertado; }
-<<<<<<< HEAD
     public static function getPrecioFinal($precio_base, $iva)
     {
         $precio_base = (float) $precio_base;
@@ -41,7 +40,3 @@ class Producto {
         return round($precio_final, 2);
     }
 }
-=======
-}
-?>
->>>>>>> b148d9c2eff087680fd78c3f03beb1397a2bf812
