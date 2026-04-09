@@ -7,7 +7,10 @@ class CategoriaService {
     public static function getAll() {
         global $conn;
 
-        $result = $conn->query("SELECT * FROM categorias");
+        $stmt = $conn->prepare("SELECT * FROM categorias");
+        $stmt->execute();
+
+        $result = $stmt->get_result();
 
         $categorias = [];
 
@@ -21,6 +24,7 @@ class CategoriaService {
         }
 
         $result->free();
+        $stmt->close();
 
         return $categorias;
     }
@@ -38,9 +42,7 @@ class CategoriaService {
         $result->free();
         $stmt->close();
 
-        if (!$row) {
-            return null;
-        }
+        if (!$row) return null;
 
         return new Categoria(
             $row['id'],
@@ -77,36 +79,54 @@ class CategoriaService {
     public static function desactivar($id) {
         global $conn;
 
-        // 🔹 Desactivar categoría
-        $stmt = $conn->prepare("UPDATE categorias SET activa = 0 WHERE id = ?");
-        $stmt->bind_param("i", $id);
-        $ok1 = $stmt->execute();
-        $stmt->close();
+        $conn->begin_transaction();
 
-        // 🔹 Desactivar productos de esa categoría
-        $stmt2 = $conn->prepare("UPDATE productos SET ofertado = 0 WHERE categoria_id = ?");
-        $stmt2->bind_param("i", $id);
-        $ok2 = $stmt2->execute();
-        $stmt2->close();
+        try {
+            // Desactivar categoría
+            $stmt = $conn->prepare("UPDATE categorias SET activa = 0 WHERE id = ?");
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            $stmt->close();
 
-        return $ok1 && $ok2;
+            // Desactivar productos de la categoría
+            $stmt2 = $conn->prepare("UPDATE productos SET ofertado = 0 WHERE categoria_id = ?");
+            $stmt2->bind_param("i", $id);
+            $stmt2->execute();
+            $stmt2->close();
+
+            $conn->commit();
+            return true;
+
+        } catch (Exception $e) {
+            $conn->rollback();
+            return false;
+        }
     }
 
     public static function activar($id) {
         global $conn;
 
-        // 🔹 Activar categoría
-        $stmt = $conn->prepare("UPDATE categorias SET activa = 1 WHERE id = ?");
-        $stmt->bind_param("i", $id);
-        $ok1 = $stmt->execute();
-        $stmt->close();
+        $conn->begin_transaction();
 
-        // 🔹 Activar productos de esa categoría
-        $stmt2 = $conn->prepare("UPDATE productos SET ofertado = 1 WHERE categoria_id = ?");
-        $stmt2->bind_param("i", $id);
-        $ok2 = $stmt2->execute();
-        $stmt2->close();
+        try {
+            // Activar categoría
+            $stmt = $conn->prepare("UPDATE categorias SET activa = 1 WHERE id = ?");
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            $stmt->close();
 
-        return $ok1 && $ok2;
+            // Activar productos de la categoría
+            $stmt2 = $conn->prepare("UPDATE productos SET ofertado = 1 WHERE categoria_id = ?");
+            $stmt2->bind_param("i", $id);
+            $stmt2->execute();
+            $stmt2->close();
+
+            $conn->commit();
+            return true;
+
+        } catch (Exception $e) {
+            $conn->rollback();
+            return false;
+        }
     }
 }

@@ -74,9 +74,7 @@ class ProductoService {
         $result->free();
         $stmt->close();
 
-        if (!$row) {
-            return null;
-        }
+        if (!$row) return null;
 
         return new Producto(
             $row['id'],
@@ -166,38 +164,39 @@ class ProductoService {
         return $ok;
     }
 
-    public static function getProductosDeOferta($oferta_id)
-    {
+    public static function getProductosDeOferta($oferta_id) {
         global $conn;
-        
-        $stmt = $conn->prepare("SELECT p.*, op.cantidad FROM productos p
-        JOIN oferta_productos op ON p.id = op.producto_id WHERE op.oferta_id = ?");
+
+        $stmt = $conn->prepare("
+            SELECT p.*, op.cantidad 
+            FROM productos p
+            JOIN oferta_productos op ON p.id = op.producto_id
+            WHERE op.oferta_id = ?
+        ");
         $stmt->bind_param("i", $oferta_id);
         $stmt->execute();
 
         $result = $stmt->get_result();
         $productos = [];
 
-       while ($fila = $result->fetch_assoc()) {
+        while ($fila = $result->fetch_assoc()) {
+            $producto = new Producto(
+                $fila['id'],
+                $fila['nombre'],
+                $fila['descripcion'],
+                $fila['categoria_id'],
+                $fila['precio_base'],
+                $fila['iva'],
+                $fila['disponible'],
+                $fila['ofertado']
+            );
 
-    $producto = new Producto(
-        $fila['id'],
-        $fila['nombre'],
-        $fila['descripcion'],
-        $fila['categoria_id'],
-        $fila['precio_base'],
-        $fila['iva'],
-        $fila['disponible'],
-        $fila['ofertado']
-    );
+            $producto->cantidad = $fila['cantidad'];
+            $productos[] = $producto;
+        }
 
-    $producto->cantidad = $fila['cantidad'];
-
-    $productos[] = $producto;
-}
-
-    $result->free();
-    $stmt->close();
+        $result->free();
+        $stmt->close();
 
         return $productos;
     }

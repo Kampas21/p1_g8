@@ -30,7 +30,6 @@ class OfertaService
         return $ofertas;
     }
 
-    // Obtener solo ofertas activas
     public static function getAllActivas()
     {
         global $conn;
