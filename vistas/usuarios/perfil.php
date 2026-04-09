@@ -10,6 +10,7 @@ require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/user_repo.php';
 require_once __DIR__ . '/../../entities/pedido.php'; // Incluimos la Entidad Pedido
 require_once __DIR__ . '/../../includes/Formulario/FormularioPerfil.php';
+require_once __DIR__ . '/../../includes/pedidoService.php';
 
 use es\ucm\fdi\aw\Formulario\FormularioPerfil;
 
@@ -40,9 +41,8 @@ if ($checkTable && $checkTable->num_rows > 0) {
     $pedidosDisponibles = true;
     $uid = $user->getId();
     
-    // Llamadas OOP limpias
-    $pedidosActivos = Pedido::getPedidosActivosByUsuario($uid);
-    $pedidosHistorico = Pedido::getPedidosHistoricoByUsuario($uid);
+    $pedidosActivos = PedidoService::getPedidosActivosByUsuario($uid);
+    $pedidosHistorico = PedidoService::getPedidosHistoricoByUsuario($uid);
 }
 $conn->close();
 
