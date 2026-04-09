@@ -10,47 +10,34 @@ require_once __DIR__ . '/../../includes/categoriaService.php';
 
 $user = current_user();
 
-// 🔒 Solo gerente
 if (!$user || !user_has_role($user, 'gerente')) {
     die("Acceso denegado");
 }
 
-// 📌 Obtener ID producto
+// 📌 ID producto
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
 if (!$id) {
     die("Producto inválido");
 }
 
-// 📦 Obtener producto
 $producto = ProductoService::getById($id);
 
 if (!$producto) {
     die("Producto no encontrado");
 }
 
-// 📌 Categorías
-$categorias = CategoriaService::getAll();
-
-// 📌 Valores iniciales
-$nombre = $producto->getNombre();
-$descripcion = $producto->getDescripcion();
 $categoria_id = $producto->getCategoriaId();
-$precio = $producto->getPrecio();
-$iva = $producto->getIVA();
 
 $errores = [];
 
-// 🔥 PROCESAR FORMULARIO
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $nombre = filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $descripcion = filter_input(INPUT_POST, 'descripcion', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $categoria_id = filter_input(INPUT_POST, 'categoria_id', FILTER_VALIDATE_INT);
+    $nombre = trim(filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_STRING));
+    $descripcion = trim(filter_input(INPUT_POST, 'descripcion', FILTER_SANITIZE_STRING));
     $precio = filter_input(INPUT_POST, 'precio', FILTER_VALIDATE_FLOAT);
-    $iva = filter_input(INPUT_POST, 'iva', FILTER_VALIDATE_FLOAT);
+    $iva = filter_input(INPUT_POST, 'iva', FILTER_VALIDATE_INT);
 
-    // Validación
     if (!$nombre || strlen($nombre) < 3) {
         $errores[] = "Nombre inválido";
     }
@@ -59,29 +46,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errores[] = "Descripción obligatoria";
     }
 
-    if (!$categoria_id) {
-        $errores[] = "Categoría inválida";
-    }
-
-    if ($precio === false || $precio <= 0) {
+    if ($precio === false || $precio < 0) {
         $errores[] = "Precio inválido";
     }
 
-    if (!in_array($iva, [10, 21])) {
+    if (!in_array($iva, [4, 10, 21])) {
         $errores[] = "IVA inválido";
     }
 
-    // ✅ actualizar
     if (empty($errores)) {
 
-        ProductoService::update($id, $nombre, $descripcion, $categoria_id, $precio, $iva);
+        ProductoService::update(
+            $id,
+            $nombre,
+            $descripcion,
+            $categoria_id,
+            $precio,
+            $iva
+        );
 
         header("Location: mostrarProductosCategoria.php?id=" . $categoria_id);
         exit;
     }
 }
 
-// 🎨 Vista
 $tituloPagina = 'Editar Producto';
 $rutaCSS = '../../CSS/estilo.css';
 
@@ -91,59 +79,61 @@ ob_start();
 <h1>Editar producto</h1>
 
 <?php if (!empty($errores)): ?>
-    <div style="color:red;">
+    <ul style="color:red;">
         <?php foreach ($errores as $e): ?>
-            <p><?= $e ?></p>
+            <li><?= htmlspecialchars($e) ?></li>
         <?php endforeach; ?>
-    </div>
+    </ul>
 <?php endif; ?>
 
 <form method="POST">
 
-    <p>
-        <label>Nombre:</label><br>
-        <input type="text" name="nombre" value="<?= htmlspecialchars($nombre) ?>" required>
-    </p>
+    <label>Nombre:</label><br>
+    <input type="text" name="nombre" required minlength="3"
+           value="<?= htmlspecialchars($producto->getNombre()) ?>"><br><br>
 
-    <p>
-        <label>Descripción:</label><br>
-        <textarea name="descripcion" required><?= htmlspecialchars($descripcion) ?></textarea>
-    </p>
+    <label>Descripción:</label><br>
+    <textarea name="descripcion" required><?= htmlspecialchars($producto->getDescripcion()) ?></textarea><br><br>
 
-    <p>
-        <label>Categoría:</label><br>
-        <select name="categoria_id" required>
-            <option value="">-- Seleccionar --</option>
-            <?php foreach ($categorias as $c): ?>
-                <option value="<?= $c->getId() ?>" <?= ($categoria_id == $c->getId()) ? 'selected' : '' ?>>
-                    <?= htmlspecialchars($c->getNombre()) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-    </p>
+    <label>Precio base (€):</label><br>
+    <input type="number" step="0.01" name="precio" required
+           value="<?= htmlspecialchars($producto->getPrecio()) ?>"><br><br>
 
-    <p>
-        <label>Precio (€):</label><br>
-        <input type="number" step="0.01" name="precio" value="<?= $precio ?>" required>
-    </p>
+    <label>IVA:</label><br>
+    <select name="iva" required>
+        <option value="4" <?= $producto->getIva() == 4 ? 'selected' : '' ?>>4%</option>
+        <option value="10" <?= $producto->getIva() == 10 ? 'selected' : '' ?>>10%</option>
+        <option value="21" <?= $producto->getIva() == 21 ? 'selected' : '' ?>>21%</option>
+    </select><br><br>
 
-    <p>
-        <label>IVA:</label><br>
-        <select name="iva" required>
-            <option value="10" <?= ($iva == 10) ? 'selected' : '' ?>>10%</option>
-            <option value="21" <?= ($iva == 21) ? 'selected' : '' ?>>21%</option>
-        </select>
-    </p>
+    <p id="precioFinal"></p>
 
-    <p>
-        <button type="submit">Guardar cambios</button>
-    </p>
+    <button type="submit">Actualizar</button>
 
 </form>
 
-<p>
-    <a href="mostrarProductosCategoria.php?id=<?= $categoria_id ?>">← Volver</a>
-</p>
+<script>
+const precioInput = document.querySelector('input[name="precio"]');
+const ivaSelect = document.querySelector('select[name="iva"]');
+const salida = document.getElementById('precioFinal');
+
+function calcular() {
+    const precio = parseFloat(precioInput.value);
+    const iva = parseFloat(ivaSelect.value);
+
+    if (!isNaN(precio) && !isNaN(iva)) {
+        const total = precio * (1 + iva / 100);
+        salida.textContent = "Precio final: " + total.toFixed(2) + " €";
+    }
+}
+
+calcular();
+precioInput.addEventListener('input', calcular);
+ivaSelect.addEventListener('change', calcular);
+</script>
+
+<br>
+<a href="mostrarProductosCategoria.php?id=<?= $categoria_id ?>">← Volver</a>
 
 <?php
 $contenidoPrincipal = ob_get_clean();

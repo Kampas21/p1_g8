@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../entities/Producto.php';
+require_once __DIR__ . '/../entities/producto.php';
 require_once __DIR__ . '/application.php';
 
 class ProductoService {
@@ -35,7 +35,7 @@ class ProductoService {
 
     public static function getAllActivos() {
         global $conn;
-        
+
         $stmt = $conn->prepare("SELECT * FROM productos WHERE ofertado = 1");
         $stmt->execute();
 
@@ -43,20 +43,20 @@ class ProductoService {
         $productos = [];
 
         while ($fila = $result->fetch_assoc()) {
-      $productos[] = new Producto(
-        $fila['id'],
-        $fila['nombre'],
-        $fila['descripcion'],
-        $fila['categoria_id'],
-        $fila['precio_base'],
-        $fila['iva'],
-        $fila['disponible'],
-        $fila['ofertado']
-    );
-      }
+            $productos[] = new Producto(
+                $fila['id'],
+                $fila['nombre'],
+                $fila['descripcion'],
+                $fila['categoria_id'],
+                $fila['precio_base'],
+                $fila['iva'],
+                $fila['disponible'],
+                $fila['ofertado']
+            );
+        }
 
-    $result->free();
-    $stmt->close();
+        $result->free();
+        $stmt->close();
 
         return $productos;
     }
@@ -91,77 +91,78 @@ class ProductoService {
     }
 
     public static function create($nombre, $descripcion, $categoria_id, $precio, $iva) {
-    global $conn;
+        global $conn;
 
-    $stmt = $conn->prepare("INSERT INTO productos (nombre, descripcion, categoria_id, precio_base, iva, ofertado) VALUES (?, ?, ?, ?, ?, 1)");
-    $stmt->bind_param("ssidd", $nombre, $descripcion, $categoria_id, $precio, $iva);
+        $disponible = 1;
+        $ofertado = 1;
 
-    return $stmt->execute();
-}
+        $stmt = $conn->prepare("
+            INSERT INTO productos
+            (nombre, descripcion, categoria_id, precio_base, iva, disponible, ofertado)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ");
 
-   public static function update($id, $nombre, $descripcion, $categoria_id, $precio, $iva) {
-    global $conn;
+        $stmt->bind_param(
+            "ssidiii",
+            $nombre,
+            $descripcion,
+            $categoria_id,
+            $precio,
+            $iva,
+            $disponible,
+            $ofertado
+        );
 
-    $stmt = $conn->prepare("
-        UPDATE productos 
-        SET nombre = ?, descripcion = ?, categoria_id = ?, precio_base = ?, iva = ?
-        WHERE id = ?
-    ");
+        $ok = $stmt->execute();
+        $stmt->close();
 
-    $stmt->bind_param("ssiddi", $nombre, $descripcion, $categoria_id, $precio, $iva, $id);
+        return $ok;
+    }
 
-    return $stmt->execute();
-}
+    public static function update($id, $nombre, $descripcion, $categoria_id, $precio, $iva) {
+        global $conn;
+
+        $stmt = $conn->prepare("
+            UPDATE productos
+            SET nombre = ?, descripcion = ?, categoria_id = ?, precio_base = ?, iva = ?
+            WHERE id = ?
+        ");
+
+        $stmt->bind_param(
+            "ssidii",
+            $nombre,
+            $descripcion,
+            $categoria_id,
+            $precio,
+            $iva,
+            $id
+        );
+
+        $ok = $stmt->execute();
+        $stmt->close();
+
+        return $ok;
+    }
 
     public static function activar($id) {
-    global $conn;
-
-    $stmt = $conn->prepare("UPDATE productos SET ofertado = 1 WHERE id = ?");
-    $stmt->bind_param("i", $id);
-    return $stmt->execute();
-}
-
-public static function desactivar($id) {
-    global $conn;
-
-    $stmt = $conn->prepare("UPDATE productos SET ofertado = 0 WHERE id = ?");
-    $stmt->bind_param("i", $id);
-    return $stmt->execute();
-}
-
-    public static function getProductosDeOferta($oferta_id)
-    {
         global $conn;
-        
-        $stmt = $conn->prepare("SELECT p.*, op.cantidad FROM productos p
-        JOIN oferta_productos op ON p.id = op.producto_id WHERE op.oferta_id = ?");
-        $stmt->bind_param("i", $oferta_id);
-        $stmt->execute();
 
-        $result = $stmt->get_result();
-        $productos = [];
+        $stmt = $conn->prepare("UPDATE productos SET ofertado = 1 WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $ok = $stmt->execute();
+        $stmt->close();
 
-       while ($fila = $result->fetch_assoc()) {
+        return $ok;
+    }
 
-    $producto = new Producto(
-        $fila['id'],
-        $fila['nombre'],
-        $fila['descripcion'],
-        $fila['categoria_id'],
-        $fila['precio_base'],
-        $fila['iva'],
-        $fila['disponible'],
-        $fila['ofertado']
-    );
+    public static function desactivar($id) {
+        global $conn;
 
-    $producto->cantidad = $fila['cantidad'];
+        $stmt = $conn->prepare("UPDATE productos SET ofertado = 0 WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $ok = $stmt->execute();
+        $stmt->close();
 
-    $productos[] = $producto;
-}
-
-    $result->free();
-    $stmt->close();
-
-        return $productos;
+        return $ok;
     }
 }

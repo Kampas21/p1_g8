@@ -41,8 +41,8 @@ ob_start();
 <h1>Productos de la categoría: <?= htmlspecialchars($categoria->getNombre()) ?></h1>
 
 <p>
-    <a class="btn-nuevo" href="producto_form.php?modo=crear&categoria_id=<?= $categoria_id ?>">
-        + Crear producto
+    <a class="btn-nuevo" href="crearProducto.php?categoria_id=<?= $categoria_id ?>">
+        + Nuevo producto
     </a>
 </p>
 
@@ -62,7 +62,7 @@ ob_start();
 
         <p><strong>Precio base:</strong> <?= number_format($p->getPrecio(), 2) ?> €</p>
 
-        <p><strong>IVA:</strong> <?= $p->getIVA() ?>%</p>
+        <p><strong>IVA:</strong> <?= htmlspecialchars($p->getIVA()) ?>%</p>
 
         <p><strong>Precio final:</strong> <?= number_format($p->getPrecioFinal(), 2) ?> €</p>
 
@@ -71,7 +71,7 @@ ob_start();
             <?php if ($p->isOfertado()): ?>
                 <span style="color:green;">Activo</span>
             <?php else: ?>
-                <span style="color:gray;">Inactivo</span>
+                <span style="color:gray;">No ofertado</span>
             <?php endif; ?>
         </p>
 
@@ -82,25 +82,21 @@ ob_start();
             </a>
 
             <?php if ($p->isOfertado()): ?>
-                
-                <form method="POST" action="../../scripts/productos/desactivarProducto.php" style="display:inline;">
+                <form method="POST" action="borrarProducto.php" style="display:inline;">
                     <input type="hidden" name="id" value="<?= $p->getId() ?>">
                     <input type="hidden" name="categoria_id" value="<?= $categoria_id ?>">
                     <button type="submit" onclick="return confirm('¿Desactivar producto?')">
                         Desactivar
                     </button>
                 </form>
-
             <?php else: ?>
-
-                <form method="POST" action="../../scripts/productos/activarProducto.php" style="display:inline;">
+                <form method="POST" action="activarProducto.php" style="display:inline;">
                     <input type="hidden" name="id" value="<?= $p->getId() ?>">
                     <input type="hidden" name="categoria_id" value="<?= $categoria_id ?>">
                     <button type="submit">
                         Activar
                     </button>
                 </form>
-
             <?php endif; ?>
 
         </div>

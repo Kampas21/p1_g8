@@ -1,15 +1,20 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 
 require_once __DIR__ . '/../../includes/productoService.php';
 
-$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+$id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+$categoria_id = filter_input(INPUT_POST, 'categoria_id', FILTER_VALIDATE_INT);
 
-if ($id) {
-    ProductoService::activar($id);
+if (!$id) {
+    die("ID inválido");
 }
 
-header("Location: " . $_SERVER['HTTP_REFERER']);
-exit();
+ProductoService::activar($id);
+
+if ($categoria_id) {
+    header("Location: mostrarProductosCategoria.php?id=" . $categoria_id);
+    exit;
+}
+
+header("Location: ../categorias/categoriasList.php");
+exit;
