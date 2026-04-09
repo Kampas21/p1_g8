@@ -5,6 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/categoriaService.php';
 
 $user = current_user();
 
@@ -17,7 +18,7 @@ if (!$user || !user_has_role($user, 'gerente')) {
     <div class="panel">
         <h1>Acceso bloqueado</h1>
         <p>Necesitas ser gerente para acceder a categorías.</p>
-        <p><a class="btn-volver" href="../../index.php">Volver al inicio</a></p>
+        <a class="btn-volver" href="../../index.php">Volver</a>
     </div>
     <?php
     $contenidoPrincipal = ob_get_clean();
@@ -25,22 +26,26 @@ if (!$user || !user_has_role($user, 'gerente')) {
     exit;
 }
 
-// IMPORTANTE: usar rutas con __DIR__
-require_once __DIR__ . '/../../includes/categoriaService.php';
-
+// 🔥 IMPORTANTE
 $categorias = CategoriaService::getAll();
 
-$tituloPagina = 'Lista de Categorías';
+$tituloPagina = 'Categorías';
 $rutaCSS = '../../CSS/estilo.css';
 
 ob_start();
 ?>
 
-<h1>Lista de Categorías</h1>
+<h1>Lista de categorías</h1>
 
 <p>
-    <a href="categoria_form.php?modo=crear" class="btn primary">Nueva categoría</a>
+    <a href="categoria_form.php?modo=crear" class="btn-nuevo">
+        + Nueva categoría
+    </a>
 </p>
+
+<?php if (empty($categorias)): ?>
+    <p>No hay categorías.</p>
+<?php else: ?>
 
 <table border="1">
     <tr>
@@ -52,13 +57,57 @@ ob_start();
     </tr>
 
     <?php foreach ($categorias as $cat): ?>
-        <?php include __DIR__ . '/_fila_categoria.php'; ?>
+
+    <tr>
+        <td><?= $cat->getId() ?></td>
+
+        <td><?= htmlspecialchars($cat->getNombre()) ?></td>
+
+        <td><?= htmlspecialchars($cat->getDescripcion()) ?></td>
+
+        <td>
+            <?= $cat->isActiva()
+                ? '<span style="color:green;">Activa</span>'
+                : '<span style="color:red;">Inactiva</span>' ?>
+        </td>
+
+        <td>
+
+            <a href="categoria_form.php?id=<?= $cat->getId() ?>">
+                Editar
+            </a>
+
+            <a href="../productos/mostrarProductosCategoria.php?id=<?= $cat->getId() ?>">
+                Productos
+            </a>
+
+            <?php if ($cat->isActiva()): ?>
+                <form method="POST" action="borrarCategoria.php" style="display:inline;">
+                    <input type="hidden" name="id" value="<?= $cat->getId() ?>">
+                    <button type="submit" onclick="return confirm('¿Desactivar?')">
+                        Desactivar
+                    </button>
+                </form>
+            <?php else: ?>
+                <form method="POST" action="activarCategoria.php" style="display:inline;">
+                    <input type="hidden" name="id" value="<?= $cat->getId() ?>">
+                    <button type="submit">
+                        Activar
+                    </button>
+                </form>
+            <?php endif; ?>
+
+        </td>
+    </tr>
+
     <?php endforeach; ?>
 
 </table>
 
+<?php endif; ?>
+
 <p>
-    <a class="btn-volver" href="../../index.php">Volver al inicio</a>
+    <a href="../../index.php" class="btn-volver">Volver</a>
 </p>
 
 <?php
