@@ -55,8 +55,11 @@ class CategoriaService {
 
         $stmt = $conn->prepare("INSERT INTO categorias (nombre, descripcion, activa) VALUES (?, ?, 1)");
         $stmt->bind_param("ss", $nombre, $descripcion);
-        $stmt->execute();
+
+        $ok = $stmt->execute();
         $stmt->close();
+
+        return $ok;
     }
 
     public static function update($id, $nombre, $descripcion) {
@@ -64,35 +67,46 @@ class CategoriaService {
 
         $stmt = $conn->prepare("UPDATE categorias SET nombre = ?, descripcion = ? WHERE id = ?");
         $stmt->bind_param("ssi", $nombre, $descripcion, $id);
-        $stmt->execute();
+
+        $ok = $stmt->execute();
         $stmt->close();
+
+        return $ok;
     }
 
     public static function desactivar($id) {
         global $conn;
 
+        // 🔹 Desactivar categoría
         $stmt = $conn->prepare("UPDATE categorias SET activa = 0 WHERE id = ?");
         $stmt->bind_param("i", $id);
-        $stmt->execute();
+        $ok1 = $stmt->execute();
         $stmt->close();
 
+        // 🔹 Desactivar productos de esa categoría
         $stmt2 = $conn->prepare("UPDATE productos SET ofertado = 0 WHERE categoria_id = ?");
         $stmt2->bind_param("i", $id);
-        $stmt2->execute();
+        $ok2 = $stmt2->execute();
         $stmt2->close();
+
+        return $ok1 && $ok2;
     }
 
     public static function activar($id) {
         global $conn;
 
+        // 🔹 Activar categoría
         $stmt = $conn->prepare("UPDATE categorias SET activa = 1 WHERE id = ?");
         $stmt->bind_param("i", $id);
-        $stmt->execute();
+        $ok1 = $stmt->execute();
         $stmt->close();
 
+        // 🔹 Activar productos de esa categoría
         $stmt2 = $conn->prepare("UPDATE productos SET ofertado = 1 WHERE categoria_id = ?");
         $stmt2->bind_param("i", $id);
-        $stmt2->execute();
+        $ok2 = $stmt2->execute();
         $stmt2->close();
+
+        return $ok1 && $ok2;
     }
 }

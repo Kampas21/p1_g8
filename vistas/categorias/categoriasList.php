@@ -26,8 +26,7 @@ if (!$user || !user_has_role($user, 'gerente')) {
     exit;
 }
 
-$categorias = CategoriaService::getAll();
-
+require_once __DIR__ . '/../../scripts/categorias/cargarCategorias.php';
 $tituloPagina = 'Categorías';
 $rutaCSS = '../../CSS/estilo.css';
 
