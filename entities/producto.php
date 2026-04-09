@@ -11,6 +11,8 @@ class Producto {
     private $disponible;
     private $ofertado;
 
+    public $cantidad = 0;
+
     public function __construct($id, $nombre, $descripcion, $categoria_id, $precio, $iva, $disponible, $ofertado) {
         $this->id = $id;
         $this->nombre = $nombre;

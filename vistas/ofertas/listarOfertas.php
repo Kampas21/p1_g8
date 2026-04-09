@@ -29,8 +29,8 @@ if (!$user || !user_has_role($user, 'gerente')) {
 }
 
 require_once __DIR__ . '/../../entities/oferta.php';
-require_once __DIR__ . '/../../entities/producto.php';
-
+//require_once __DIR__ . '/../../entities/producto.php';
+require_once __DIR__ . '/../../includes/productoService.php';
 
 $ofertas = Oferta::getOfertas();
 
@@ -71,12 +71,12 @@ ob_start();
 
                 <?php
                 $precio_total = 0;
-                $productos = Oferta::getProductosDeOferta($oferta['id']); // devuelve un array de productos con cantidad
+                $productos = ProductoService::getProductosDeOferta($oferta['id']); // devuelve un array de productos con cantidad
                 $lista = array_map(function ($p) use (&$precio_total) {
-                    $precio = Producto::getPrecioFinal($p['precio_base'], $p['iva']);
-                    $precio_cant = $precio * $p['cantidad'];
+                    $precio = $p->getPrecioFinal();
+                    $precio_cant = $precio * $p->cantidad;
                     $precio_total += $precio_cant;
-                    return $p['nombre'] . ' (' . $p['cantidad'] . ') ' . round($precio_cant, 2) . '€';
+                    return $p->getNombre() . ' (' . $p->cantidad . ') ' . round($precio_cant, 2) . '€';
                 }, $productos);
                 ?>
 
@@ -111,7 +111,7 @@ ob_start();
 </div>
 
 <p>
-    <a class="btn-volver" href="../categorias/listarOfertas.php">Volver</a>
+    <a class="btn-volver" href="../../index.php">Volver</a>
 </p>
 
 <?php

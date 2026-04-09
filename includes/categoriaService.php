@@ -21,4 +21,22 @@ class CategoriaService {
 
         return $categorias;
     }
+
+    public static function getById($id) {
+        global $conn;
+
+        $stmt = $conn->prepare("SELECT * FROM categorias WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+
+        $row = $stmt->get_result()->fetch_assoc();
+
+        return new Categoria(
+            $row['id'],
+            $row['nombre'],
+            $row['descripcion'],
+            $row['imagen'],
+            $row['activa']
+        );
+    }
 }
