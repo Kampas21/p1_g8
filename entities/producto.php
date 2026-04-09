@@ -32,5 +32,5 @@ class Producto {
     public function isOfertado() { return $this->ofertado; }
 
     public function getPrecioFinal() {
-    return round($this->precio_base * (1 + $this->iva / 100), 2);}
+    return round($this->precio * (1 + $this->iva / 100), 2);}
 }

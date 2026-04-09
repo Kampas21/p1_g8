@@ -43,7 +43,7 @@ ob_start();
 <h1>Productos</h1>
 
 <p>
-    <a class="btn-nuevo" href="crearProducto.php?categoria_id=<?= $categoria_id ?>">
+    <a class="btn-nuevo" href="producto_form.php?modo=crear&categoria_id=<?= $categoria_id ?>">
         + Crear producto
     </a>
 </p>
@@ -52,40 +52,35 @@ ob_start();
     <p>No hay productos en esta categoría.</p>
 <?php else: ?>
     <?php foreach ($productos as $p): ?>
-        <div class="panel" style="margin-bottom:15px;">
+        <div class="panel">
             <h3><?= htmlspecialchars($p->getNombre()) ?></h3>
 
-            <p><?= htmlspecialchars($p['descripcion']) ?></p>
+            <p><?= htmlspecialchars($p->getDescripcion()) ?></p>
 
-<?php
-$precioBase = $p->getPrecioBase();
-$iva = $p->getIva();
-$precioFinal = $p->getPrecioFinal();
-?>
-
-<p><strong>Precio base:</strong> <?= number_format($precioBase, 2) ?> €</p>
-<p><strong>IVA:</strong> <?= number_format($iva, 0) ?> %</p>
-<p><strong>Precio final:</strong> <?= number_format($precioFinal, 2) ?> €</p>
-            <?php if ($p->getOfertado() == 1): ?>
-                <p style="color:green;">Ofertado</p>
+            <p><strong>Precio base:</strong> <?= number_format($p->getPrecio(), 2) ?> €</p>
+            <p><strong>IVA:</strong> <?= number_format($p->getIVA(), 0) ?> %</p>
+            <p><strong>Precio final:</strong> <?= number_format($p->getPrecioFinal(), 2) ?> €</p>
+            
+            <?php if ($p->isOfertado() == 1): ?>
+                <p class="texto-exito">Ofertado</p>
             <?php else: ?>
-                <p style="color:red;">No ofertado</p>
+                <p class="texto-error">No ofertado</p>
             <?php endif; ?>
 
             <a class="btn editar"
-               href="editarProducto.php?id=<?= $p['id'] ?>&categoria_id=<?= $categoria_id ?>">
+               href="producto_form.php?id=<?= $p->getId() ?>&categoria_id=<?= $categoria_id ?>">
                 Editar
             </a>
 
-            <?php if ((int)$p['ofertado'] === 1): ?>
+            <?php if ((int)$p->isOfertado() === 1): ?>
                 <a class="btn borrar"
-                   href="borrarProducto.php?id=<?= $p['id'] ?>&categoria_id=<?= $categoria_id ?>"
+                   href="borrarProducto.php?id=<?= $p->getId() ?>&categoria_id=<?= $categoria_id ?>"
                    onclick="return confirm('¿Seguro que quieres desactivar este producto?')">
                     Eliminar
                 </a>
             <?php else: ?>
                 <a class="btn activar"
-                   href="activarProducto.php?id=<?= $p['id'] ?>&categoria_id=<?= $categoria_id ?>">
+                   href="activarProducto.php?id=<?= $p->getId() ?>&categoria_id=<?= $categoria_id ?>">
                     Activar
                 </a>
             <?php endif; ?>
