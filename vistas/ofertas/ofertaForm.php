@@ -1,31 +1,34 @@
 <?php
-require_once __DIR__ . '/../../entities/oferta.php';
+//require_once __DIR__ . '/../../entities/oferta.php';
 require_once __DIR__ . '/../../includes/productoService.php';
+require_once __DIR__ . '/../../includes/ofertaService.php';
 
 $productos = ProductoService::getAllActivos();
 
 $modoEdicion = isset($oferta);
 
 $action = $modoEdicion
-    ? "editarOferta.php?id=" . $oferta['id']
+    ? "editarOferta.php?id=" . $oferta->getId()
     : "crearOferta.php";
 
-$nombre = $modoEdicion ? $oferta['nombre'] : '';
-$descripcion = $modoEdicion ? $oferta['descripcion'] : '';
+$nombre = $modoEdicion ? $oferta->getNombre() : '';
+$descripcion = $modoEdicion ? $oferta->getDescripcion() : '';
+$descuento = $modoEdicion ? $oferta->getDescuento() : '';
 
-$fecha_inicio = $modoEdicion && !empty($oferta['fecha_inicio'])
-    ? date('Y-m-d\TH:i', strtotime($oferta['fecha_inicio']))
-    : '';
-$fecha_fin = $modoEdicion && !empty($oferta['fecha_fin'])
-    ? date('Y-m-d\TH:i', strtotime($oferta['fecha_fin']))
+$fecha_inicio = $modoEdicion && $oferta->getFechaInicio()
+    ? date('Y-m-d\TH:i', strtotime($oferta->getFechaInicio()))
     : '';
 
-$descuento = $modoEdicion ? $oferta['descuento'] : '';
+$fecha_fin = $modoEdicion && $oferta->getFechaFin()
+    ? date('Y-m-d\TH:i', strtotime($oferta->getFechaFin()))
+    : '';
+
+
 
 $productosSeleccionados = [];
 
 if ($modoEdicion) {
-    $productosSeleccionados = ProductoService::getProductosDeOferta($oferta['id']);
+    $productosSeleccionados = ProductoService::getProductosDeOferta($oferta->getId());
 }
 ?>
 
@@ -111,7 +114,7 @@ if ($modoEdicion) {
 
                 <td>
                     <input type="number"
-                        name="cantidades[<?= $p->getNombre() ?>]"
+                        name="cantidades[<?= $p->getId() ?>]"
                         value="<?= $cantidad ?>"
                         min="0">
                 </td>

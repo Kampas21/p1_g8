@@ -69,7 +69,16 @@ class OfertaService
         $stmt = $conn->prepare("SELECT * FROM ofertas WHERE id = ?");
         $stmt->bind_param("i", $id);
         $stmt->execute();
-        $fila = $stmt->get_result()->fetch_assoc();
+        
+        $result = $stmt->get_result();
+        $fila = $result->fetch_assoc();
+
+        $result->free();
+        $stmt->close();
+
+        if (!$fila) {
+            return null;
+        }
 
         return new Oferta(
             $fila['id'],
