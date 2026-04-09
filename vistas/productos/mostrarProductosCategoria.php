@@ -10,12 +10,12 @@ require_once __DIR__ . '/../../includes/categoriaService.php';
 
 $user = current_user();
 
-// 🔒 Solo gerente
+//Solo gerente
 if (!$user || !user_has_role($user, 'gerente')) {
     die("Acceso denegado");
 }
 
-// 📌 Obtener categoría
+//Obtener categoría
 $categoria_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
 if (!$categoria_id) {
@@ -28,10 +28,10 @@ if (!$categoria) {
     die('Categoría no encontrada');
 }
 
-// 📦 Obtener productos
+//Obtener productos
 $productos = ProductoService::getAllByCategoria($categoria_id);
 
-// 🎨 Vista
+//Vista
 $tituloPagina = 'Productos';
 $rutaCSS = '../../CSS/estilo.css';
 
@@ -53,60 +53,7 @@ ob_start();
 <div class="productos-container">
 
 <?php foreach ($productos as $p): ?>
-
-    <div class="producto-card">
-
-        <h3><?= htmlspecialchars($p->getNombre()) ?></h3>
-
-        <p><?= htmlspecialchars($p->getDescripcion()) ?></p>
-
-        <p><strong>Precio base:</strong> <?= number_format($p->getPrecio(), 2) ?> €</p>
-
-        <p><strong>IVA:</strong> <?= $p->getIVA() ?>%</p>
-
-        <p><strong>Precio final:</strong> <?= number_format($p->getPrecioFinal(), 2) ?> €</p>
-
-        <p>
-            <strong>Estado:</strong>
-            <?php if ($p->isOfertado()): ?>
-                <span style="color:green;">Activo</span>
-            <?php else: ?>
-                <span style="color:gray;">Inactivo</span>
-            <?php endif; ?>
-        </p>
-
-        <div class="acciones">
-
-            <a href="editarProducto.php?id=<?= $p->getId() ?>&categoria_id=<?= $categoria_id ?>">
-                Editar
-            </a>
-
-            <?php if ($p->isOfertado()): ?>
-                
-                <form method="POST" action="../../scripts/productos/desactivarProducto.php" style="display:inline;">
-                    <input type="hidden" name="id" value="<?= $p->getId() ?>">
-                    <input type="hidden" name="categoria_id" value="<?= $categoria_id ?>">
-                    <button type="submit" onclick="return confirm('¿Desactivar producto?')">
-                        Desactivar
-                    </button>
-                </form>
-
-            <?php else: ?>
-
-                <form method="POST" action="../../scripts/productos/activarProducto.php" style="display:inline;">
-                    <input type="hidden" name="id" value="<?= $p->getId() ?>">
-                    <input type="hidden" name="categoria_id" value="<?= $categoria_id ?>">
-                    <button type="submit">
-                        Activar
-                    </button>
-                </form>
-
-            <?php endif; ?>
-
-        </div>
-
-    </div>
-
+    <?php include __DIR__ . '/_tarjeta_producto.php'; ?>
 <?php endforeach; ?>
 
 </div>

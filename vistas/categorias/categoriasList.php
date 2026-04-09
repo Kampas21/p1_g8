@@ -52,43 +52,7 @@ ob_start();
     </tr>
 
     <?php foreach ($categorias as $cat): ?>
-    <tr>
-        <td><?= $cat->getId() ?></td>
-
-        <td><?= htmlspecialchars($cat->getNombre()) ?></td>
-
-        <td class="descripcion">
-            <?= htmlspecialchars($cat->getDescripcion()) ?>
-        </td>
-
-        <td>
-            <?= $cat->isActiva()
-                ? '<span class="texto-exito">Activa</span>'
-                : '<span class="texto-error">Inactiva</span>' ?>
-        </td>
-
-        <td>
-            <a href="categoria_form.php?id=<?= $cat->getId() ?>" class="btn small primary">Editar</a>
-
-            <a class="btn prod"
-               href="../productos/mostrarProductosCategoria.php?id=<?= $cat->getId() ?>">
-                Productos
-            </a>
-
-            <?php if ($cat->isActiva()): ?>
-                <a class="btn activar"
-                   href="borrarCategoria.php?id=<?= $cat->getId() ?>"
-                   onclick="return confirm('¿Seguro que quieres desactivar esta categoría?')">
-                    Desactivar
-                </a>
-            <?php else: ?>
-                <a class="btn borrar"
-                   href="activarCategoria.php?id=<?= $cat->getId() ?>">
-                    Activar
-                </a>
-            <?php endif; ?>
-        </td>
-    </tr>
+        <?php include __DIR__ . '/_fila_categoria.php'; ?>
     <?php endforeach; ?>
 
 </table>
