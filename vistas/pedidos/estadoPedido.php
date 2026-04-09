@@ -62,7 +62,7 @@ ob_start();
   <?php endforeach; ?>
 
   <div class="panel">
-    <div class="actions-inline" style="margin-bottom:12px;">
+    <div class="actions-inline mb-12">
       <a href="listarPedidosCliente.php" class="btn">← Mis pedidos</a>
     </div>
 
@@ -127,11 +127,11 @@ ob_start();
   </div>
 
   <?php if ($pedido['estado'] === 'recibido'): ?>
-  <div class="panel" style="margin-top:20px; border-left: 4px solid #f44336;">
-    <div class="mensaje-info" style="margin-bottom: 10px;">
+  <div class="panel" class="panel mt-20 panel-danger-border">
+    <div class="mensaje-info" class="mensaje-info mb-12">
       Este pedido aún no ha sido pagado. Puedes cancelarlo si ya no lo necesitas.
     </div>
-    <form method="POST" action="estadoPedido.php?id=<?= (int)$pedido_id ?>" style="margin-top:10px;">
+    <form method="POST" action="estadoPedido.php?id=<?= (int)$pedido_id ?>" class="mt-10">
       <input type="hidden" name="accion" value="cancelar">
       <button type="submit" class="btn danger"
         onclick="return confirm('¿Seguro que quieres cancelar este pedido?')">

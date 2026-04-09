@@ -15,7 +15,7 @@ class FormularioElegirTipo extends Formulario {
 
     protected function generaCamposFormulario(&$datos) {
         return <<<EOF
-        <div style="display:flex; gap:10px; margin-top:20px;">
+        <div class="actions-inline mt-20">
             <button type="submit" name="tipo" value="local" class="btn primary">Tomar en el local</button>
             <button type="submit" name="tipo" value="llevar" class="btn primary">Para llevar</button>
         </div>

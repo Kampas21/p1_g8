@@ -60,7 +60,7 @@ class FormularioRegistro extends Formulario
                 <input id="password_confirm" type="password" name="password_confirm" required minlength="6" />
                 {$erroresCampos['password_confirm']}
             </div>
-            <div style="margin-top: 15px;">
+            <div class="mt-16">
                 <button type="submit" name="registro_submit" class="btn primary">Registrarme</button>
             </div>
         </fieldset>

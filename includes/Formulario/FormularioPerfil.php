@@ -21,10 +21,10 @@ class FormularioPerfil extends Formulario
     
     protected function generaCamposFormulario(&$datos)
     {
-        $username = $datos['username'] ?? $this->user['username'] ?? '';
-        $email = $datos['email'] ?? $this->user['email'] ?? '';
-        $nombre = $datos['nombre'] ?? $this->user['nombre'] ?? '';
-        $apellidos = $datos['apellidos'] ?? $this->user['apellidos'] ?? '';
+        $username = $datos['username'] ?? $this->user->getUsername() ?? '';
+        $email = $datos['email'] ?? $this->user->getEmail() ?? '';
+        $nombre = $datos['nombre'] ?? $this->user->getNombre() ?? '';
+        $apellidos = $datos['apellidos'] ?? $this->user->getApellidos() ?? '';
 
         $htmlErroresGlobales = self::generaListaErroresGlobales($this->errores);
         $erroresCampos = self::generaErroresCampos(
@@ -33,7 +33,7 @@ class FormularioPerfil extends Formulario
         );
 
         
-        $imagenAvatar = $this->user['avatar_url'] ?? '';
+        $imagenAvatar = $this->user->getAvatarUrl() ?? '';
         
         $htmlAvatar = <<<EOF
         <div class="perfil-avatar">
@@ -96,7 +96,7 @@ class FormularioPerfil extends Formulario
             $_POST['avatar_mode'] = 'keep';
         }
         
-        list($clean, $erroresValidacion) = \user_validate_data($_POST, false, (int)$this->user['id'], false);
+        list($clean, $erroresValidacion) = \user_validate_data($_POST, false, $this->user->getId(), false);
         
         if (count($erroresValidacion) > 0) {
             $this->errores = $erroresValidacion;
@@ -112,12 +112,12 @@ class FormularioPerfil extends Formulario
             }
 
             
-            \user_update((int)$this->user['id'], $clean, [
+            \user_update($this->user->getId(), $clean, [
                 'avatar_choice' => $avatarChoice,
                 'allow_role' => false
             ]);
             
-            \login_user(\user_find_by_id((int)$this->user['id']));
+            \login_user(\user_find_by_id((int)$this->user->getId()));
         }
     }
 }

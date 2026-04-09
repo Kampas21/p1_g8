@@ -73,12 +73,12 @@ ob_start();
     </table>
 
     <?php if ($pedido['metodo_pago'] === 'camarero'): ?>
-      <div class="mensaje-info" style="margin-top:14px; padding:10px; background-color:#e7f3fe; border-left:4px solid #2196F3;">
+      <div class="mensaje-info" class="mensaje-info panel-info-border mt-16">
         Dirígete al mostrador para pagar. Tu número de pedido es <strong>#<?= e($pedido['numero_pedido']) ?></strong>.
       </div>
     <?php endif; ?>
 
-    <div class="actions-inline" style="margin-top:16px;">
+    <div class="actions-inline mt-16">
       <a href="listarPedidosCliente.php" class="btn primary">Ver mis pedidos</a>
       <a href="elegirTipo.php" class="btn">Hacer otro pedido</a>
     </div>

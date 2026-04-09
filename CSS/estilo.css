@@ -891,3 +891,152 @@ button:hover, input[type="submit"]:hover {
 .acciones a:hover {
     text-decoration: underline;
 }
+
+/* Espaciados y márgenes */
+.mb-12 { margin-bottom: 12px; }
+.mt-10 { margin-top: 10px; }
+.mt-16 { margin-top: 16px; }
+.mt-20 { margin-top: 20px; }
+.m-0 { margin: 0; }
+
+/* Alineaciones y Flexbox */
+.text-right { text-align: right; }
+.text-center { text-align: center; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.flex-end { justify-content: flex-end; }
+.flex-wrap-gap { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+
+/* Visualizaciones en línea */
+.inline-block { display: inline-block; }
+.form-inline-action { display: inline; margin: 0; padding: 0; }
+
+/* Estados y Textos */
+.text-danger { color: #e74c3c; /* Rojo oscuro */ }
+.text-success { color: #2ecc71; /* Verde esmeralda */ }
+.text-muted-italic { color: #666; font-style: italic; font-size: 0.95em; }
+
+/* Alertas especiales */
+.panel-danger-border { border-left: 4px solid #f44336; }
+.panel-info-border { padding: 10px; background-color: #e7f3fe; border-left: 4px solid #2196F3; }
+
+/* Imágenes en miniaturas de tablas  */
+.img-thumbnail {
+    width: 50px; 
+    height: 50px; 
+    object-fit: cover; 
+    border-radius: 4px;
+}
+
+/* Botones categorizados */
+.btn-categoria {
+    font-size: 15px;
+    padding: 12px 20px;
+}
+
+/* =======================================================
+   ESTILOS PANEL CAMARERO (gestionCamarero.php)
+======================================================== */
+.tablet-grid { 
+    display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px; 
+}
+.columna { 
+    flex: 1; min-width: 250px; background: #fff; border-radius: 8px; overflow: hidden; border: 1px solid #ddd; 
+}
+.columna-header { 
+    padding: 12px; font-weight: bold; font-size: 1.1em; color: white; display: flex; justify-content: space-between; align-items: center; 
+}
+.columna-header.recibido { background-color: #f44336; }
+.columna-header.listo { background-color: #2196F3; }
+.columna-header.terminado { background-color: #4CAF50; }
+.columna-body { 
+    padding: 15px; display: flex; flex-direction: column; gap: 15px; background: #f9f9f9; min-height: 200px; 
+}
+.pedido-card { 
+    background: white; padding: 15px; border-radius: 6px; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+}
+.pedido-card-header { 
+    display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; 
+}
+.pedido-card-body p { margin: 5px 0; }
+.pedido-num { font-size: 1.2em; font-weight: bold; color: #333; }
+.badge { background: rgba(0,0,0,0.2); padding: 3px 10px; border-radius: 20px; font-size: 0.9em; }
+
+
+/* =======================================================
+   ADAPTACIONES PARA MÓVIL (Clientes en vertical)
+======================================================== */
+@media screen and (max-width: 768px) {
+    /* Convertir cosas que estén en fila a columnas  */
+    .form-grid, .actions-inline {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+    
+    /* Los botones deberán ocupar todo el ancho en móvil para pulsarlos mejor */
+    .btn {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 8px;
+    }
+
+    /* Permitir que las tablas del carrito no se salgan de la pantalla sino que hagan scroll horizontal */
+    .table-wrap {
+        overflow-x: auto;
+        display: block;
+        width: 100%;
+    }
+}
+
+
+/* =======================================================
+   2. ADAPTACIONES PARA TABLET APAISADA (Camareros / Cocineros)
+======================================================== */
+@media screen and (min-width: 768px) and (max-width: 1100px) and (orientation: landscape) {
+    /* Aquí forzamos que el grid del camarero y cocinero se divida perfectamente en 3 o 2 columnas */
+    .tablet-grid {
+        display: flex;
+        flex-direction: row;
+        gap: 15px;
+    }
+
+    .columna {
+        flex: 1; /* Esto hace que formen columnas iguales en la tablet */
+    }
+
+    /* Reducimos un poco el texto para que quepan las tarjetas en tablet */
+    .pedido-card-body p {
+        font-size: 0.9em;
+    }
+}
+
+
+/* =======================================================
+   3. ADAPTACIONES PARA PC (Clientes en escritorio o Gerentes)
+======================================================== */
+@media screen and (min-width: 1100px) {
+    /* Aquí podemos establecer anchos máximos para que en pantallas gigantes 
+       la web no se estire demasiado y sea difícil de leer */
+    main {
+        max-width: 1200px;
+        margin: 0 auto; /* Centrado */
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* Dividir formularios en 2 columnas */
+        gap: 20px;
+    }
+
+    .full {
+        grid-column: span 2; /* Algunos campos que ocupen todo en PC */
+    }
+}
+
+/* Para inputs numericos en las tablas */
+.input-cantidad { width: 54px; padding: 4px; text-align: center; }
+
+
+/* Textos y padding extra */
+.text-gray { color: gray; }
+.pr-15 { padding-right: 15px; }
+

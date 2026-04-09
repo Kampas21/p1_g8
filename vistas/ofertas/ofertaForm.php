@@ -100,8 +100,8 @@ if ($modoEdicion) {
                 <?php if ($modoEdicion): ?>
                     <td>
                         <?= $cantidad > 0
-                            ? '<span style="color:green">✔</span>'
-                            : '<span style="color:gray">—</span>' ?>
+                            ? '<span class="text-success">✔</span>'
+                            : '<span class="text-gray">—</span>' ?>
                     </td>
                 <?php endif; ?>
 

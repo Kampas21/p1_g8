@@ -67,7 +67,7 @@ class FormularioPago extends Formulario {
             </div>
           </div>
 
-          <div style="margin-top:14px;">
+          <div class="mt-16">
             <button type="submit" name="metodo_pago" value="tarjeta" class="btn primary">
               Pagar {$this->total} € con tarjeta
             </button>

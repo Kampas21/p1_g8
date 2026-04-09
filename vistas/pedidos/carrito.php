@@ -58,7 +58,7 @@ ob_start();
 
   <div class="panel">
     <h2>Mi carrito
-      <span style="font-size:14px; font-weight:normal; color:#888;">
+      <span class="text-muted-italic">
         — pedido <?= e($pedido['tipo'] === 'local' ? '🍽️ en local' : '🥡 para llevar') ?>
       </span>
     </h2>
@@ -85,11 +85,11 @@ ob_start();
               $prod_id = (int)$linea['producto_id'];
             ?>
               <tr>
-                <td style="text-align: center;">
+                <td class="text-center">
                   <?php if (!empty($linea['imagen'])): ?>
-                    <img src="<?= RUTA_APP . '/' . e($linea['imagen']) ?>" alt="<?= e($linea['nombre']) ?>" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                    <img src="<?= RUTA_APP . '/' . e($linea['imagen']) ?>" alt="<?= e($linea['nombre']) ?>" class="img-thumbnail">
                   <?php else: ?>
-                    <span style="font-size: 12px; color: #888;">(Sin imagen)</span>
+                    <span class="text-muted-italic">(Sin imagen)</span>
                   <?php endif; ?>
                 </td>
 
@@ -109,21 +109,21 @@ ob_start();
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="4" style="text-align: right; padding-right: 15px;"><strong>Total:</strong></td>
+              <td colspan="4" class="text-right" class="pr-15"><strong>Total:</strong></td>
               <td colspan="2"><strong><?= $total ?> €</strong></td>
             </tr>
           </tfoot>
         </table>
       </div>
 
-      <div class="actions-inline" style="margin-top:16px;">
+      <div class="actions-inline mt-16">
         <a href="catalogo.php" class="btn">← Seguir añadiendo</a>
         
         
         <a href="../ofertas/ofertaCliente.php" class="btn">Ofertas</a>
         <a href="pago.php" class="btn primary">Confirmar pedido →</a>
 
-        <div style="display:inline-block;">
+        <div class="inline-block">
           <?= $htmlFormCancelar ?>
         </div>
       </div>

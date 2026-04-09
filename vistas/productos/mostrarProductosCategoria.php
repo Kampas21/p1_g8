@@ -68,9 +68,9 @@ ob_start();
         <p>
             <strong>Estado:</strong>
             <?php if ($p->isOfertado()): ?>
-                <span style="color:green;">Activo</span>
+                <span class="text-success">Activo</span>
             <?php else: ?>
-                <span style="color:gray;">No ofertado</span>
+                <span class="text-gray">No ofertado</span>
             <?php endif; ?>
         </p>
 
@@ -81,7 +81,7 @@ ob_start();
             </a>
 
             <?php if ($p->isOfertado()): ?>
-                <form method="POST" action="borrarProducto.php" style="display:inline;">
+                <form method="POST" action="borrarProducto.php" class="form-inline-action">
                     <input type="hidden" name="id" value="<?= $p->getId() ?>">
                     <input type="hidden" name="categoria_id" value="<?= $categoria_id ?>">
                     <button type="submit" onclick="return confirm('¿Desactivar producto?')">
@@ -89,7 +89,7 @@ ob_start();
                     </button>
                 </form>
             <?php else: ?>
-                <form method="POST" action="activarProducto.php" style="display:inline;">
+                <form method="POST" action="activarProducto.php" class="form-inline-action">
                     <input type="hidden" name="id" value="<?= $p->getId() ?>">
                     <input type="hidden" name="categoria_id" value="<?= $categoria_id ?>">
                     <button type="submit">
@@ -108,7 +108,7 @@ ob_start();
 
 <?php endif; ?>
 
-<p style="margin-top:20px;">
+<p class="mt-20">
     <a class="btn-volver" href="../categorias/categoriasList.php">
         ← Volver a categorías
     </a>

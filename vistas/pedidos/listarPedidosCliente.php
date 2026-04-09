@@ -33,8 +33,8 @@ ob_start();
   <?php endforeach; ?>
 
   <div class="panel">
-    <div class="actions-inline" style="justify-content:space-between; align-items:center;">
-      <h2 style="margin:0;">Mis pedidos</h2>
+    <div class="actions-inline flex-between">
+      <h2 class="m-0">Mis pedidos</h2>
       <a href="elegirTipo.php" class="btn primary">+ Nuevo pedido</a>
     </div>
   </div>

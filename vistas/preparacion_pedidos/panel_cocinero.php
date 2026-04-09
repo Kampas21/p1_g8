@@ -92,7 +92,7 @@ ob_start();
                 ?>
                     <tr class="tabla-panel-fila">
                         <td><strong>Pedido #<?= $pedido_id ?></strong></td>
-                        <td style="text-align: right;">
+                        <td class="text-right">
                             <?php 
                                 // Formulario Tomar Pedido (de la cola a mis pedidos)
                                 $formTomar = new \es\ucm\fdi\aw\Formulario\FormularioAccionesCocina($pedido_id, 'tomar', $cocinero_id);
