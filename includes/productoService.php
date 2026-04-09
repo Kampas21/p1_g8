@@ -93,6 +93,7 @@ class ProductoService {
     public static function create($nombre, $descripcion, $categoria_id, $precio, $iva) {
         global $conn;
 
+<<<<<<< HEAD
         $disponible = 1;
         $ofertado = 1;
 
@@ -145,6 +146,46 @@ class ProductoService {
     }
 
     public static function activar($id) {
+=======
+        $stmt = $conn->prepare("INSERT INTO productos (nombre, descripcion, categoria_id, precio_base, iva, ofertado) VALUES (?, ?, ?, ?, ?, 1)");
+        $stmt->bind_param("ssidd", $nombre, $descripcion, $categoria_id, $precio, $iva);
+
+        return $stmt->execute();
+    }
+
+    public static function update($id, $nombre, $descripcion, $categoria_id, $precio, $iva) {
+        global $conn;
+
+        $stmt = $conn->prepare("
+        UPDATE productos 
+        SET nombre = ?, descripcion = ?, categoria_id = ?, precio_base = ?, iva = ?
+        WHERE id = ?
+        ");
+
+        $stmt->bind_param("ssiddi", $nombre, $descripcion, $categoria_id, $precio, $iva, $id);
+
+        return $stmt->execute();
+    }
+
+    public static function activar($id) {
+        global $conn;
+
+        $stmt = $conn->prepare("UPDATE productos SET ofertado = 1 WHERE id = ?");       
+        $stmt->bind_param("i", $id);
+        return $stmt->execute();
+    }
+
+    public static function desactivar($id) {
+        global $conn;
+
+        $stmt = $conn->prepare("UPDATE productos SET ofertado = 0 WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        return $stmt->execute();
+    }
+
+    public static function getProductosDeOferta($oferta_id)
+    {
+>>>>>>> c55de23354cd414581ca0daa6ccf2323ee5ba1a6
         global $conn;
 
         $stmt = $conn->prepare("UPDATE productos SET ofertado = 1 WHERE id = ?");
@@ -155,6 +196,7 @@ class ProductoService {
         return $ok;
     }
 
+<<<<<<< HEAD
     public static function desactivar($id) {
         global $conn;
 
@@ -164,5 +206,28 @@ class ProductoService {
         $stmt->close();
 
         return $ok;
+=======
+        $producto = new Producto(
+            $fila['id'],
+            $fila['nombre'],
+            $fila['descripcion'],
+            $fila['categoria_id'],
+            $fila['precio_base'],
+            $fila['iva'],
+            $fila['disponible'],
+            $fila['ofertado']
+        );
+
+        $producto->cantidad = $fila['cantidad'];
+
+        $productos[] = $producto;
+        }
+
+        $result->free();
+        $stmt->close();
+
+        return $productos;
+>>>>>>> c55de23354cd414581ca0daa6ccf2323ee5ba1a6
     }
+    
 }

@@ -10,12 +10,12 @@ require_once __DIR__ . '/../../includes/categoriaService.php';
 
 $user = current_user();
 
-// 🔒 Solo gerente
+//Solo gerente
 if (!$user || !user_has_role($user, 'gerente')) {
     die("Acceso denegado");
 }
 
-// 📌 Obtener categoría
+//Obtener categoría
 $categoria_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
 if (!$categoria_id) {
@@ -28,10 +28,10 @@ if (!$categoria) {
     die('Categoría no encontrada');
 }
 
-// 📦 Obtener productos
+//Obtener productos
 $productos = ProductoService::getAllByCategoria($categoria_id);
 
-// 🎨 Vista
+//Vista
 $tituloPagina = 'Productos';
 $rutaCSS = '../../CSS/estilo.css';
 
