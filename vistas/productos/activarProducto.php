@@ -9,17 +9,18 @@ require_once __DIR__ . '/../../includes/productoService.php';
 
 $user = current_user();
 
-// 🔒 Solo gerente
+// Solo gerente
 if (!$user || !user_has_role($user, 'gerente')) {
     die("Acceso denegado");
 }
 
 $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+$categoria_id = filter_input(INPUT_POST, 'categoria_id', FILTER_VALIDATE_INT);
 
 if ($id) {
     ProductoService::activar($id);
 }
 
-// Redirigir
-header("Location: " . $_SERVER['HTTP_REFERER']);
+// 🔥 redirección correcta
+header("Location: ../productos/mostrarProductosCategoria.php?id=" . $categoria_id);
 exit;
