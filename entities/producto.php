@@ -57,10 +57,6 @@ class Producto {
     }
 
     public function getPrecioFinal() {
-<<<<<<< HEAD
         return round($this->precio * (1 + $this->iva / 100), 2);
     }
-=======
-    return round($this->precio * (1 + $this->iva / 100), 2);}
->>>>>>> 02a7ae2da73ba46f74f12d6b3ce5d1d78125ca97
 }

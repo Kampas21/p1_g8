@@ -32,7 +32,6 @@ class CategoriaService {
         $stmt->bind_param("i", $id);
         $stmt->execute();
 
-<<<<<<< HEAD
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
 
@@ -42,15 +41,11 @@ class CategoriaService {
         if (!$row) {
             return null;
         }
-=======
-        $row = $stmt->get_result()->fetch_assoc();
->>>>>>> 02a7ae2da73ba46f74f12d6b3ce5d1d78125ca97
 
         return new Categoria(
             $row['id'],
             $row['nombre'],
             $row['descripcion'],
-<<<<<<< HEAD
             $row['activa']
         );
     }
@@ -100,10 +95,4 @@ class CategoriaService {
         $stmt2->execute();
         $stmt2->close();
     }
-=======
-            $row['imagen'],
-            $row['activa']
-        );
-    }
->>>>>>> 02a7ae2da73ba46f74f12d6b3ce5d1d78125ca97
 }
