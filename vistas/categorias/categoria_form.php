@@ -20,7 +20,7 @@ $isCreate = ($modo === 'crear') || ($id <= 0);
 $categoriaToEdit = null;
 
 if (!$isCreate) {
-    // Obtenemos la categoría usando la función estática de tu compañero
+    // Obtenemos la categoría
     $categoriaToEdit = \Categoria::getCategoriaById($id);
     if (!$categoriaToEdit) {
         header("Location: categoriasList.php");
@@ -41,7 +41,7 @@ ob_start();
     
     <?= $htmlFormCategoria ?>
     
-    <div style="margin-top:20px;">
+    <div class="mt-20">
         <a class="btn" href="categoriasList.php">&laquo; Cancelar y volver al listado</a>
     </div>
 </div>

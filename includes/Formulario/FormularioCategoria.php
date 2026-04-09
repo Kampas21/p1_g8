@@ -19,7 +19,7 @@ class FormularioCategoria extends Formulario
         ]);
     }
     
-    protected function generaCamposFormulario(&$datos)
+     protected function generaCamposFormulario(&$datos)
     {
         $nombre = $datos['nombre'] ?? $this->categoriaToEdit['nombre'] ?? '';
         $descripcion = $datos['descripcion'] ?? $this->categoriaToEdit['descripcion'] ?? '';
@@ -36,12 +36,12 @@ class FormularioCategoria extends Formulario
                 <input id="nombre" type="text" name="nombre" value="$nombre" required />
                 {$erroresCampos['nombre']}
             </div>
-            <div style="margin-top: 10px;">
+            <div class="mt-10">
                 <label for="descripcion">Descripción:</label>
-                <textarea id="descripcion" name="descripcion" rows="5" style="width:100%; box-sizing:border-box;" required>$descripcion</textarea>
+                <textarea id="descripcion" name="descripcion" rows="5" class="w-100" required>$descripcion</textarea>
                 {$erroresCampos['descripcion']}
             </div>
-            <div style="margin-top: 20px;">
+            <div class="mt-20">
                 <button type="submit" class="btn primary">Guardar Categoría</button>
             </div>
         </fieldset>

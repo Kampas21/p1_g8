@@ -63,12 +63,12 @@ ob_start();
 
         <td>
             <?= $cat->isActiva()
-                ? '<span style="color:green">Activa</span>'
-                : '<span style="color:red">Inactiva</span>' ?>
+                ? '<span class="texto-exito">Activa</span>'
+                : '<span class="texto-error">Inactiva</span>' ?>
         </td>
 
         <td>
-            <a href="categoria_form.php?id=<?= $cat['id'] ?>" class="btn small primary">Editar</a>
+            <a href="categoria_form.php?id=<?= $cat->getId() ?>" class="btn small primary">Editar</a>
 
             <a class="btn prod"
                href="../productos/mostrarProductosCategoria.php?id=<?= $cat->getId() ?>">

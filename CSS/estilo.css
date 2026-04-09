@@ -845,3 +845,11 @@ button:hover, input[type="submit"]:hover {
     padding: 10px;
     border: none;
 }
+
+.mt-10 { margin-top: 10px; }
+.mt-20 { margin-top: 20px; }
+.w-100 { width: 100%; box-sizing: border-box; }
+
+/* Estados */
+.texto-exito { color: green; font-weight: bold; }
+.texto-error { color: red; font-weight: bold; }
