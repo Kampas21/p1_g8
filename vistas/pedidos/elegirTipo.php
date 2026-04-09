@@ -4,6 +4,7 @@ require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/application.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/util.php';
+require_once __DIR__ . '/../../includes/pedidoService.php';
 require_once __DIR__ . '/../../entities/pedido.php';
 require_once __DIR__ . '/../../includes/Formulario/FormularioElegirTipo.php';
 
@@ -11,7 +12,7 @@ $user = require_login();
 $usuario_id = (int)$user->getId();
 
 // Si ya tiene un carrito/pedido activo, lo mandamos al carrito
-$pedidoActivo = Pedido::getPedidoNuevo($usuario_id);
+$pedidoActivo = PedidoService::getPedidoNuevo($usuario_id);
 if ($pedidoActivo) {
     redirect('carrito.php');
 }
