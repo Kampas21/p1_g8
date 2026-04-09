@@ -10,11 +10,12 @@ require_once __DIR__ . '/../../entities/pedido.php';
 require_once __DIR__ . '/../../entities/producto.php';
 require_once __DIR__ . '/../../entities/categoria.php';
 require_once __DIR__ . '/../../includes/Formulario/FormularioAddCarrito.php';
+require_once __DIR__ . '/../../includes/pedidoService.php';
 
 $user = require_login();
 $usuario_id = (int)$user->getId();
 
-$pedido = Pedido::getPedidoNuevo($usuario_id);
+$pedido = PedidoService::getPedidoNuevo($usuario_id);
 if (!$pedido) {
     redirect('elegirTipo.php');
 }

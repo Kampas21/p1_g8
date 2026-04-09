@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../includes/application.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/util.php';
 require_once __DIR__ . '/../../entities/pedido.php';
+require_once __DIR__ . '/../../includes/pedidoService.php';
 
 $user = require_login();
 
@@ -15,7 +16,7 @@ if (!$pedido_id) {
     redirect('elegirTipo.php');
 }
 
-$pedido = Pedido::getPedidoById($pedido_id);
+$pedido = PedidoService::getPedidoById($pedido_id);
 if (!$pedido) {
     redirect('elegirTipo.php');
 }

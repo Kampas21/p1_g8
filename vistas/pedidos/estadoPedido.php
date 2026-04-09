@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../includes/application.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/util.php';
 require_once __DIR__ . '/../../entities/pedido.php';
+require_once __DIR__ . '/../../includes/pedidoService.php';
 
 $user = require_login();
 $usuario_id = (int)$user->getId();
@@ -14,7 +15,7 @@ if (!$pedido_id) {
     redirect('listarPedidosCliente.php');
 }
 
-$pedido = Pedido::getPedidoById($pedido_id);
+$pedido = PedidoService::getPedidoById($pedido_id);
 
 if (!$pedido || (int)$pedido['usuario_id'] !== $usuario_id) {
     http_response_code(403);
@@ -28,11 +29,11 @@ if (!$pedido || (int)$pedido['usuario_id'] !== $usuario_id) {
     exit();
 }
 
-$lineas = Pedido::getProductosPedido($pedido_id);
+$lineas = PedidoService::getProductosPedido($pedido_id);
 
 if (is_post() && ($_POST['accion'] ?? '') === 'cancelar') {
     if ($pedido['estado'] === 'recibido') {
-        Pedido::cancelarPedido($pedido_id);
+        PedidoService::cancelarPedido($pedido_id);
     }
     flash_set('success', 'Pedido cancelado correctamente.');
     redirect('listarPedidosCliente.php');

@@ -10,17 +10,18 @@ require_once __DIR__ . '/../../entities/pedido.php';
 require_once __DIR__ . '/../../includes/Formulario/FormularioActualizarLineaPedido.php';
 require_once __DIR__ . '/../../includes/Formulario/FormularioEliminarLineaPedido.php';
 require_once __DIR__ . '/../../includes/Formulario/FormularioCancelarPedido.php';
+require_once __DIR__ . '/../../includes/pedidoService.php';
 
 $user = require_login();
 $usuario_id = (int)$user->getId();
 
-$pedido = Pedido::getPedidoNuevo($usuario_id);
+$pedido = PedidoService::getPedidoNuevo($usuario_id);
 if (!$pedido) {
   redirect('elegirTipo.php');
 }
 $pedido_id = (int)$pedido['id'];
 
-$lineas = Pedido::getProductosPedido($pedido_id);
+$lineas = PedidoService::getProductosPedido($pedido_id);
 
 $total = 0;
 

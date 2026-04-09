@@ -3,6 +3,7 @@ namespace es\ucm\fdi\aw\Formulario;
 
 require_once __DIR__ . '/Formulario.php';
 require_once __DIR__ . '/../../entities/pedido.php';
+require_once __DIR__ . '/../../includes/pedidoService.php';
 
 class FormularioEstadoCamarero extends Formulario {
 
@@ -38,10 +39,10 @@ class FormularioEstadoCamarero extends Formulario {
         ];
 
         if (isset($transiciones[$accion])) {
-            $pedido = \Pedido::getPedidoById($this->pedido_id);
+            $pedido = \PedidoService::getPedidoById($this->pedido_id);
             $t = $transiciones[$accion];
             if ($pedido && $pedido['estado'] === $t['de']) {
-                \Pedido::cambiarEstado($this->pedido_id, $t['a']);
+                \PedidoService::cambiarEstado($this->pedido_id, $t['a']);
             }
         }
     }

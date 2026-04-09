@@ -3,6 +3,7 @@ namespace es\ucm\fdi\aw\Formulario;
 
 require_once __DIR__ . '/Formulario.php';
 require_once __DIR__ . '/../../entities/pedido.php';
+require_once __DIR__ . '/../../includes/pedidoService.php';
 
 class FormularioElegirTipo extends Formulario {
 
@@ -25,7 +26,7 @@ class FormularioElegirTipo extends Formulario {
     protected function procesaFormulario(&$datos) {
         $tipo = $_POST['tipo'] ?? 'local';
         
-        $pedido_id = \Pedido::crearPedido($this->usuario_id, $tipo);
+        $pedido_id = \PedidoService::crearPedido($this->usuario_id, $tipo);
         $_SESSION['ultimo_pedido_id'] = $pedido_id;
     }
 }

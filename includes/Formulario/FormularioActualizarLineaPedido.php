@@ -3,6 +3,7 @@ namespace es\ucm\fdi\aw\Formulario;
 
 require_once __DIR__ . '/Formulario.php';
 require_once __DIR__ . '/../../entities/pedido.php';
+require_once __DIR__ . '/../../includes/pedidoService.php';
 
 class FormularioActualizarLineaPedido extends Formulario {
 
@@ -35,10 +36,10 @@ class FormularioActualizarLineaPedido extends Formulario {
         
         if ($prod_id > 0) {
             if ($cantidad <= 0) {
-                \Pedido::removeProducto($this->pedido_id, $prod_id);
+                \PedidoService::removeProducto($this->pedido_id, $prod_id);
                 flash_set('success', 'Producto eliminado del carrito.');
             } else {
-                \Pedido::updateCantidad($this->pedido_id, $prod_id, $cantidad);
+                \PedidoService::updateCantidad($this->pedido_id, $prod_id, $cantidad);
                 flash_set('success', 'Cantidad actualizada.');
             }
         }

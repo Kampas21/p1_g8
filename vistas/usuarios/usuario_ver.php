@@ -14,7 +14,7 @@ $user = $id > 0 ? user_find_by_id($id) : null;
 
 if (!$user) {
     flash_set('error', 'Usuario no encontrado.');
-    redirect(RUTA_APP . '/entities/usuarios.php');
+    redirect(RUTA_APP . 'usuarios.php');
 }
 
 $tituloPagina = 'Ver usuario';

@@ -23,7 +23,7 @@ $rol = $user ? $user->getRol() : 'No autenticado';
         <ul class="menu-izq">
             <?php if ($user && $user->getRol() === 'gerente'): ?>
                 
-                <li><a href="<?= RUTA_APP ?>/entities/usuarios.php">Listado de usuarios</a></li>
+                <li><a href="<?= RUTA_APP ?>/vistas/usuarios/usuarios.php">Listado de usuarios</a></li>
                 <li><a href="<?= RUTA_APP ?>/vistas/usuarios/usuario_form.php?modo=crear">Registrar trabajador</a></li>
                 <li><a href="<?= RUTA_APP ?>/vistas/usuarios/perfil.php">Mi perfil</a></li>
                 <li><a href="<?= RUTA_APP ?>/vistas/usuarios/logout.php">Cerrar sesión</a></li>

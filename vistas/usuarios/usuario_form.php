@@ -23,7 +23,7 @@ if (!$isCreate) {
     $userToEdit = user_find_by_id($id);
     if (!$userToEdit) {
         flash_set('error', 'El usuario especificado no existe.');
-        redirect('../../entities/usuarios.php');
+        redirect('usuarios.php');
     }
 }
 
@@ -48,7 +48,7 @@ ob_start();
     
     <div class="mt-20">
         <?php if ($isCreate): ?>
-            <a class="btn" href="../../entities/usuarios.php">&laquo; Volver al listado</a>
+            <a class="btn" href="usuarios.php">&laquo; Volver al listado</a>
         <?php else: ?>
             <a class="btn" href="usuario_ver.php?id=<?= $id ?>">&laquo; Volver al perfil</a>
         <?php endif; ?>

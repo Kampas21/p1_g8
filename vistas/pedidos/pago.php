@@ -6,17 +6,18 @@ require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/util.php';
 require_once __DIR__ . '/../../entities/pedido.php';
 require_once __DIR__ . '/../../includes/Formulario/FormularioPago.php';
+require_once __DIR__ . '/../../includes/pedidoService.php';
 
 $user = require_login();
 $usuario_id = (int)$user->getId();
 
-$pedido = Pedido::getPedidoNuevo($usuario_id);
+$pedido = PedidoService::getPedidoNuevo($usuario_id);
 if (!$pedido) {
     redirect('elegirTipo.php');
 }
 $pedido_id = $pedido['id'];
 
-$lineas = Pedido::getProductosPedido($pedido_id);
+$lineas = PedidoService::getProductosPedido($pedido_id);
 if (empty($lineas)) {
     redirect('carrito.php');
 }

@@ -3,6 +3,7 @@ namespace es\ucm\fdi\aw\Formulario;
 
 require_once __DIR__ . '/Formulario.php';
 require_once __DIR__ . '/../../entities/pedido.php';
+require_once __DIR__ . '/../../includes/pedidoService.php';
 
 class FormularioAccionesCocina extends Formulario {
 
@@ -44,11 +45,11 @@ class FormularioAccionesCocina extends Formulario {
         $accion = $datos['accion'] ?? '';
 
         if ($accion === 'tomar') {
-            \Pedido::asignarCocineroYEstado($this->pedido_id, $this->cocinero_id, 'cocinando');
+            \PedidoService::asignarCocineroYEstado($this->pedido_id, $this->cocinero_id, 'cocinando');
         } elseif ($accion === 'marcar_plato') {
-            \Pedido::marcarProductoPreparado($this->pedido_id, $this->producto_id);
+            \PedidoService::marcarProductoPreparado($this->pedido_id, $this->producto_id);
         } elseif ($accion === 'finalizar') {
-            \Pedido::cambiarEstado($this->pedido_id, 'listo_cocina');
+            \PedidoService::cambiarEstado($this->pedido_id, 'listo_cocina');
         }
     }
 }

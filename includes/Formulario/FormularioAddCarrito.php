@@ -5,6 +5,7 @@ require_once __DIR__ . '/Formulario.php';
 require_once __DIR__ . '/../../entities/pedido.php';
 require_once __DIR__ . '/../../includes/productoService.php';
 require_once __DIR__ . '/../../includes/util.php';
+require_once __DIR__ . '/../../includes/pedidoService.php';
 
 class FormularioAddCarrito extends Formulario {
 
@@ -41,7 +42,7 @@ class FormularioAddCarrito extends Formulario {
             $producto = \ProductoService::getById($prod_id);
             if ($producto) {
                 $precio = $producto->getPrecioFinal();
-                \Pedido::addProducto($this->pedido_id, $prod_id, $precio);
+                \PedidoService::addProducto($this->pedido_id, $prod_id, $precio);
                 flash_set('success', 'Producto añadido al carrito.');
             } else {
                 return ['general' => 'El producto no existe.'];

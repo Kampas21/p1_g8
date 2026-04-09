@@ -5,11 +5,12 @@ require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../entities/pedido.php';
 require_once __DIR__ . '/../../includes/Formulario/FormularioAccionesCocina.php';
 require_once __DIR__ . '/../../includes/pedidoService.php';
+require_once __DIR__ . '/../../includes/pedidoService.php';
 
 $user = require_role('cocinero'); 
 $cocinero_id = (int)$user->getId();
 
-$pedidosEnCola = PedidoService::getPedidosPorEstado('en_preparacion'); 
+$pedidosEnCola = PedidoService::getPedidosPorState('en_preparacion'); 
 $misPedidos = PedidoService::getPedidosCocinando($cocinero_id);
 
 // ---- EMPIEZA LA VISTA DEL PROYECTO ----
@@ -40,7 +41,7 @@ ob_start();
                             
                             <ul class="lista-platos">
                                 <?php 
-                                $productos = Pedido::getProductosPedido($pedido_id);
+                                $productos = PedidoService::getProductosPedido($pedido_id);
                                 $todosPreparados = true; 
                                 $hayProductos = count($productos) > 0;
 
