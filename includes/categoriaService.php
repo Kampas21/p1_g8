@@ -1,6 +1,7 @@
 <?php
-require_once __DIR__ . '/../entities/Categoria.php';
+require_once __DIR__ . '/../entities/categoria.php';
 require_once __DIR__ . '/application.php';
+
 class CategoriaService {
 
     public static function getAll() {
@@ -15,9 +16,11 @@ class CategoriaService {
                 $row['id'],
                 $row['nombre'],
                 $row['descripcion'],
-                 $row['activa']
+                $row['activa']
             );
         }
+
+        $result->free();
 
         return $categorias;
     }
@@ -29,14 +32,67 @@ class CategoriaService {
         $stmt->bind_param("i", $id);
         $stmt->execute();
 
-        $row = $stmt->get_result()->fetch_assoc();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+
+        $result->free();
+        $stmt->close();
+
+        if (!$row) {
+            return null;
+        }
 
         return new Categoria(
             $row['id'],
             $row['nombre'],
             $row['descripcion'],
-            $row['imagen'],
             $row['activa']
         );
+    }
+
+    public static function create($nombre, $descripcion) {
+        global $conn;
+
+        $stmt = $conn->prepare("INSERT INTO categorias (nombre, descripcion, activa) VALUES (?, ?, 1)");
+        $stmt->bind_param("ss", $nombre, $descripcion);
+        $stmt->execute();
+        $stmt->close();
+    }
+
+    public static function update($id, $nombre, $descripcion) {
+        global $conn;
+
+        $stmt = $conn->prepare("UPDATE categorias SET nombre = ?, descripcion = ? WHERE id = ?");
+        $stmt->bind_param("ssi", $nombre, $descripcion, $id);
+        $stmt->execute();
+        $stmt->close();
+    }
+
+    public static function desactivar($id) {
+        global $conn;
+
+        $stmt = $conn->prepare("UPDATE categorias SET activa = 0 WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $stmt->close();
+
+        $stmt2 = $conn->prepare("UPDATE productos SET ofertado = 0 WHERE categoria_id = ?");
+        $stmt2->bind_param("i", $id);
+        $stmt2->execute();
+        $stmt2->close();
+    }
+
+    public static function activar($id) {
+        global $conn;
+
+        $stmt = $conn->prepare("UPDATE categorias SET activa = 1 WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $stmt->close();
+
+        $stmt2 = $conn->prepare("UPDATE productos SET ofertado = 1 WHERE categoria_id = ?");
+        $stmt2->bind_param("i", $id);
+        $stmt2->execute();
+        $stmt2->close();
     }
 }

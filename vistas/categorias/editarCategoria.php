@@ -38,34 +38,19 @@ if (!$categoria) {
     die("La categoría no existe.");
 }
 
+$error = '';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    CategoriaService::desactivar($id);
-    header('Location: categoriasList.php');
-    exit();
+    $nombre = trim(filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? '');
+    $descripcion = trim(filter_input(INPUT_POST, 'descripcion', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? '');
+
+    if ($nombre === '' || $descripcion === '') {
+        $error = "Todos los campos son obligatorios.";
+    } else {
+        CategoriaService::update($id, $nombre, $descripcion);
+        header('Location: categoriasList.php');
+        exit();
+    }
 }
 
-$tituloPagina = 'Desactivar categoría';
-$rutaCSS = '../../CSS/estilo.css';
-ob_start();
-?>
-
-<h1>Desactivar categoría</h1>
-
-<p>
-    ¿Seguro que quieres desactivar la categoría
-    <strong><?= htmlspecialchars($categoria->getNombre()) ?></strong>?
-</p>
-
-<p>Sus productos pasarán a no ofertados.</p>
-
-<form method="POST">
-    <p><button type="submit" class="btn-aceptar">Sí, desactivar</button></p>
-</form>
-
-<p>
-    <a class="btn-volver" href="categoriasList.php">Cancelar</a>
-</p>
-
-<?php
-$contenidoPrincipal = ob_get_clean();
-require __DIR__ . '/../../includes/plantilla.php';
+require __DIR__ . '/categoriasForm.php';

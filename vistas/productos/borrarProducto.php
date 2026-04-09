@@ -1,11 +1,15 @@
 <?php
-require_once '../../includes/productoService.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+require_once __DIR__ . '/../../includes/productoService.php';
 
+$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+
+if ($id) {
     ProductoService::desactivar($id);
 }
 
-header("Location: categoriasList.php");
-exit;
+header("Location: " . $_SERVER['HTTP_REFERER']);
+exit();
