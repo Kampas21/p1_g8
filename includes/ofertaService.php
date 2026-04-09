@@ -101,10 +101,7 @@ class OfertaService
         $stmt->bind_param("ssssd", $nombre, $descripcion, $fecha_inicio, $fecha_fin, $descuento);
         $stmt->execute();
 
-        $insertId = $conn->insert_id;
         $stmt->close();
-
-        return $insertId;
     }
 
     // Editar oferta existente
