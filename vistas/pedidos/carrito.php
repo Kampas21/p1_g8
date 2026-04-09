@@ -6,56 +6,43 @@ require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/util.php';
 require_once __DIR__ . '/../../entities/pedido.php';
 
+// Requerimos los nuevos formularios
+require_once __DIR__ . '/../../includes/Formulario/FormularioActualizarLineaPedido.php';
+require_once __DIR__ . '/../../includes/Formulario/FormularioEliminarLineaPedido.php';
+require_once __DIR__ . '/../../includes/Formulario/FormularioCancelarPedido.php';
+
 $user = require_login();
-$usuario_id = (int)$user['id'];
+$usuario_id = (int)$user->getId();
 
 $pedido = Pedido::getPedidoNuevo($usuario_id);
 if (!$pedido) {
   redirect('elegirTipo.php');
 }
-$pedido_id = $pedido['id'];
-
-// Procesar acciones POST
-if (is_post()) {
-  $accion      = $_POST['accion'] ?? '';
-  $producto_id = (int)($_POST['producto_id'] ?? 0);
-
-  if ($accion === 'actualizar' && $producto_id > 0) {
-    $cantidad = (int)($_POST['cantidad'] ?? 1);
-    if ($cantidad <= 0) {
-      Pedido::removeProducto($pedido_id, $producto_id);
-      flash_set('success', 'Producto eliminado del carrito.');
-    } else {
-      Pedido::updateCantidad($pedido_id, $producto_id, $cantidad);
-      flash_set('success', 'Cantidad actualizada.');
-    }
-    redirect('carrito.php');
-  }
-
-  if ($accion === 'eliminar' && $producto_id > 0) {
-    Pedido::removeProducto($pedido_id, $producto_id);
-    flash_set('success', 'Producto eliminado.');
-    redirect('carrito.php');
-  }
-
-  if ($accion === 'cancelar') {
-    Pedido::cancelarPedido($pedido_id);
-    flash_set('success', 'Pedido cancelado.');
-    redirect('elegirTipo.php');
-  }
-
-  if ($accion === 'confirmar') {
-    redirect('pago.php');
-  }
-}
+$pedido_id = (int)$pedido['id'];
 
 $lineas = Pedido::getProductosPedido($pedido_id);
 
 $total = 0;
+
+$formsActualizarHtml = [];
+$formsEliminarHtml = [];
+
 foreach ($lineas as $linea) {
   $total += $linea['precio_unitario'] * $linea['cantidad'];
+  $prod_id = (int)$linea['producto_id'];
+  
+  // Instanciamos formularios de cada fila
+  $formUpdate = new \es\ucm\fdi\aw\Formulario\FormularioActualizarLineaPedido($pedido_id, $prod_id, (int)$linea['cantidad']);
+  $formsActualizarHtml[$prod_id] = $formUpdate->gestiona();
+
+  $formRemove = new \es\ucm\fdi\aw\Formulario\FormularioEliminarLineaPedido($pedido_id, $prod_id);
+  $formsEliminarHtml[$prod_id] = $formRemove->gestiona();
 }
 $total = round($total, 2);
+
+// Instanciamos el de cancelar pedido general
+$formCancelar = new \es\ucm\fdi\aw\Formulario\FormularioCancelarPedido($pedido_id);
+$htmlFormCancelar = $formCancelar->gestiona();
 
 // ---- EMPIEZA LA VISTA ----
 $tituloPagina = 'Mi carrito | Bistro FDI';
@@ -65,8 +52,7 @@ ob_start();
 
 <main>
 
-  <?php
-  foreach (flash_get_all() as $f): ?>
+  <?php foreach (flash_get_all() as $f): ?>
     <div class="mensaje-<?= e($f['type']) ?>"><?= e($f['message']) ?></div>
   <?php endforeach; ?>
 
@@ -86,7 +72,7 @@ ob_start();
         <table>
           <thead>
             <tr>
-              <th>Imagen</th> <!-- NUEVA CABECERA -->
+              <th>Imagen</th>
               <th>Producto</th>
               <th>Precio ud.</th>
               <th>Cantidad</th>
@@ -95,9 +81,10 @@ ob_start();
             </tr>
           </thead>
           <tbody>
-            <?php foreach ($lineas as $linea): ?>
+            <?php foreach ($lineas as $linea): 
+              $prod_id = (int)$linea['producto_id'];
+            ?>
               <tr>
-                <!-- NUEVA COLUMNA DE IMAGEN -->
                 <td style="text-align: center;">
                   <?php if (!empty($linea['imagen'])): ?>
                     <img src="<?= RUTA_APP . '/' . e($linea['imagen']) ?>" alt="<?= e($linea['nombre']) ?>" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
@@ -109,27 +96,19 @@ ob_start();
                 <td><?= e($linea['nombre']) ?></td>
                 <td><?= e($linea['precio_unitario']) ?> €</td>
                 <td>
-                  <form method="POST" action="carrito.php" style="display:inline-flex;gap:6px;align-items:center;">
-                    <input type="hidden" name="accion" value="actualizar">
-                    <input type="hidden" name="producto_id" value="<?= (int)$linea['producto_id'] ?>">
-                    <input type="number" name="cantidad" value="<?= (int)$linea['cantidad'] ?>" min="0" style="width:54px;padding:4px;">
-                    <button type="submit" class="btn small">OK</button>
-                  </form>
+                  <!-- Formulario Actualizar -->
+                  <?= $formsActualizarHtml[$prod_id] ?>
                 </td>
                 <td><?= round($linea['precio_unitario'] * $linea['cantidad'], 2) ?> €</td>
                 <td>
-                  <form method="POST" action="carrito.php">
-                    <input type="hidden" name="accion" value="eliminar">
-                    <input type="hidden" name="producto_id" value="<?= (int)$linea['producto_id'] ?>">
-                    <button type="submit" class="btn danger small">Eliminar</button>
-                  </form>
+                  <!-- Formulario Eliminar -->
+                  <?= $formsEliminarHtml[$prod_id] ?>
                 </td>
               </tr>
             <?php endforeach; ?>
           </tbody>
           <tfoot>
             <tr>
-              <!-- Aumentamos el colspan a 4 porque hemos añadido una columna de imagen -->
               <td colspan="4" style="text-align: right; padding-right: 15px;"><strong>Total:</strong></td>
               <td colspan="2"><strong><?= $total ?> €</strong></td>
             </tr>
@@ -139,24 +118,14 @@ ob_start();
 
       <div class="actions-inline" style="margin-top:16px;">
         <a href="catalogo.php" class="btn">← Seguir añadiendo</a>
+        
+        
+        <a href="../ofertas/ofertaCliente.php" class="btn">Ofertas</a>
+        <a href="pago.php" class="btn primary">Confirmar pedido →</a>
 
-        <form method="POST" action="../ofertas/ofertaCliente.php" style="display:inline-block;">
-          <input type="hidden" name="pedido_id" value="<?= (int)$pedido_id ?>">
-          <button type="submit" class="btn">Ofertas</button>
-        </form>
-
-        <form method="POST" action="carrito.php" style="display:inline-block;">
-          <input type="hidden" name="accion" value="confirmar">
-          <button type="submit" class="btn primary">Confirmar pedido →</button>
-        </form>
-
-        <form method="POST" action="carrito.php" style="display:inline-block;">
-          <input type="hidden" name="accion" value="cancelar">
-          <button type="submit" class="btn danger"
-            onclick="return confirm('¿Seguro que quieres cancelar el pedido?')">
-            Cancelar pedido
-          </button>
-        </form>
+        <div style="display:inline-block;">
+          <?= $htmlFormCancelar ?>
+        </div>
       </div>
     <?php endif; ?>
   </div>

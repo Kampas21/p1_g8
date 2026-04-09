@@ -9,9 +9,10 @@ require_once __DIR__ . '/../../includes/productoService.php';
 require_once __DIR__ . '/../../entities/pedido.php';
 require_once __DIR__ . '/../../entities/producto.php';
 require_once __DIR__ . '/../../entities/categoria.php';
+require_once __DIR__ . '/../../includes/Formulario/FormularioAddCarrito.php';
 
 $user = require_login();
-$usuario_id = (int)$user['id'];
+$usuario_id = (int)$user->getId();
 
 $pedido = Pedido::getPedidoNuevo($usuario_id);
 if (!$pedido) {
@@ -19,32 +20,26 @@ if (!$pedido) {
 }
 $pedido_id = $pedido['id'];
 
-// Procesar "Añadir al carrito"
-if (is_post()) {
-    $producto_id  = (int)($_POST['producto_id']  ?? 0);
-    $categoria_id = (int)($_POST['categoria_id'] ?? 0);
-
-    if ($producto_id > 0) {
-        $producto = ProductoService::getById($producto_id);
-        if ($producto) {
-            $precio = $producto->getPrecioFinal();
-            Pedido::addProducto($pedido_id, $producto_id, $precio);
-            flash_set('success', 'Producto añadido al carrito.');
-        }
-    }
-
-    $url = 'catalogo.php' . ($categoria_id ? "?categoria=$categoria_id" : '');
-    redirect($url);
-}
-
-// Mostrar categorías o productos según parámetro GET
+// Obtener categoría GET
 $categoria_id = isset($_GET['categoria']) && is_numeric($_GET['categoria'])
     ? (int)$_GET['categoria']
     : null;
 
+// Inicializamos el almacén de los formularios HTML
+$formHtmls = [];
+
 if ($categoria_id) {
     $productos = ProductoService::getAllByCategoria($categoria_id);
     $categoria = CategoriaService::getById($categoria_id);
+    
+    // Instanciamos un formulario por cada producto para que intercepte si hubo POST
+    if (!empty($productos)) {
+        foreach ($productos as $p) {
+            $prod_id = (int)$p->getId();
+            $formAdd = new \es\ucm\fdi\aw\Formulario\FormularioAddCarrito($pedido_id, $prod_id, $categoria_id);
+            $formHtmls[$prod_id] = $formAdd->gestiona();
+        }
+    }
 } else {
     $categorias = CategoriaService::getAll();
 }
@@ -60,14 +55,11 @@ ob_start();
 ?>
 
 <main>
-  <?php 
-  // Mostrar mensajes flash
-  foreach (flash_get_all() as $f): ?>
+  <?php foreach (flash_get_all() as $f): ?>
       <div class="mensaje-<?= e($f['type']) ?>"><?= e($f['message']) ?></div>
   <?php endforeach; ?>
 
   <div class="panel">
-
     <?php if ($categoria_id): ?>
 
       <div class="actions-inline" style="margin-bottom:12px;">
@@ -97,11 +89,8 @@ ob_start();
                 <td><?= e($p->getDescripcion()) ?></td>
                 <td><?= $p->getPrecioFinal() ?> €</td>
                 <td>
-                  <form method="POST" action="catalogo.php">
-                    <input type="hidden" name="producto_id" value="<?= (int)$p->getId() ?>">
-                    <input type="hidden" name="categoria_id" value="<?= $categoria_id ?>">
-                    <button type="submit" class="btn primary small">+ Añadir</button>
-                  </form>
+                  <!-- Aquí imprimimos la vista generada del formulario que instanciamos arriba -->
+                  <?= $formHtmls[$p->getId()] ?>
                 </td>
               </tr>
             <?php endforeach; ?>

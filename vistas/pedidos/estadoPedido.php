@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../includes/util.php';
 require_once __DIR__ . '/../../entities/pedido.php';
 
 $user = require_login();
-$usuario_id = (int)$user['id'];
+$usuario_id = (int)$user->getId();
 
 $pedido_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 if (!$pedido_id) {

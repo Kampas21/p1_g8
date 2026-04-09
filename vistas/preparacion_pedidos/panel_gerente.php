@@ -14,7 +14,7 @@ ob_start();
   
 <div class="panel">
     <h2>👔 Visión Global de Gerencia</h2>
-    <p>Usuario: <?= htmlspecialchars($user['nombre']) ?> (Rol: <?= htmlspecialchars($user['rol']) ?>)</p>
+    <p>Usuario: <?= htmlspecialchars($user->getNombre()) ?> (Rol: <?= htmlspecialchars($user->getRol()) ?>)</p>
 </div>
 
 <div class="panel">

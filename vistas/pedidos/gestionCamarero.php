@@ -5,38 +5,23 @@ require_once __DIR__ . '/../../includes/application.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/util.php';
 require_once __DIR__ . '/../../entities/pedido.php';
+require_once __DIR__ . '/../../includes/Formulario/FormularioEstadoCamarero.php';
 
 $user = require_role('camarero');
-
-if (is_post()) {
-    $pedido_id = (int)($_POST['pedido_id'] ?? 0);
-    $accion    = $_POST['accion'] ?? '';
-
-    $transiciones = [
-        'cobrar'    => ['de' => 'recibido',     'a' => 'en_preparacion'],
-        'preparado' => ['de' => 'listo_cocina', 'a' => 'terminado'],
-        'entregar'  => ['de' => 'terminado',    'a' => 'entregado'],
-    ];
-
-    if ($pedido_id > 0 && isset($transiciones[$accion])) {
-        $pedido = Pedido::getPedidoById($pedido_id);
-        $t = $transiciones[$accion];
-        if ($pedido && $pedido['estado'] === $t['de']) {
-            Pedido::cambiarEstado($pedido_id, $t['a']);
-        }
-    }
-
-    redirect('gestionCamarero.php');
-}
 
 $recibidos     = Pedido::getPedidosPorEstado('recibido');
 $listos_cocina = Pedido::getPedidosPorEstado('listo_cocina');
 $terminados    = Pedido::getPedidosPorEstado('terminado');
 
+
 function renderTarjetas(array $pedidos, string $accion, string $btnLabel): void {
     if (empty($pedidos)): ?>
         <p style="color: #666; font-style: italic;">No hay pedidos.</p>
-    <?php else: foreach ($pedidos as $p): ?>
+    <?php else: foreach ($pedidos as $p): 
+        $pedido_id = (int)$p['id'];
+        $formObj = new \es\ucm\fdi\aw\Formulario\FormularioEstadoCamarero($pedido_id, $accion, $btnLabel);
+        $htmlForm = $formObj->gestiona();
+    ?>
         <div class="pedido-card">
             <div class="pedido-card-header">
                 <span class="pedido-num">#<?= (int)$p['numero_pedido'] ?></span>
@@ -47,11 +32,7 @@ function renderTarjetas(array $pedidos, string $accion, string $btnLabel): void 
                 <p><strong>Hora:</strong> <?= e(substr($p['fecha_hora'], 11, 5)) ?></p>
                 <p><strong>Total:</strong> <?= e($p['total']) ?> €</p>
             </div>
-            <form method="POST" action="gestionCamarero.php">
-                <input type="hidden" name="pedido_id" value="<?= (int)$p['id'] ?>">
-                <input type="hidden" name="accion"    value="<?= e($accion) ?>">
-                <button type="submit" class="btn primary" style="width: 100%; margin-top: 10px;"><?= e($btnLabel) ?></button>
-            </form>
+            <?= $htmlForm ?>
         </div>
     <?php endforeach; endif;
 }
@@ -77,7 +58,7 @@ ob_start();
 </style>
 
 <div class="panel">
-    <h2>Panel de Camarero — <?= e($user['nombre']) ?></h2>
+    <h2>Panel de Camarero — <?= e($user->getNombre()) ?></h2>
     
     <div class="tablet-grid">
       <div class="columna">
@@ -86,7 +67,7 @@ ob_start();
           <span class="badge"><?= count($recibidos) ?></span>
         </div>
         <div class="columna-body">
-          <?php renderTarjetas($recibidos, 'cobrar', 'Cobrado → En preparación') ?>
+          <?php renderTarjetas($recibidos, 'cobrar', 'Cobrar pedido →') ?>
         </div>
       </div>
 
@@ -96,7 +77,7 @@ ob_start();
           <span class="badge"><?= count($listos_cocina) ?></span>
         </div>
         <div class="columna-body">
-          <?php renderTarjetas($listos_cocina, 'preparado', 'Revisado → Listo para entregar') ?>
+          <?php renderTarjetas($listos_cocina, 'preparado', 'Pedido revisado →') ?>
         </div>
       </div>
 
@@ -106,7 +87,7 @@ ob_start();
           <span class="badge"><?= count($terminados) ?></span>
         </div>
         <div class="columna-body">
-          <?php renderTarjetas($terminados, 'entregar', 'Entregado al cliente') ?>
+          <?php renderTarjetas($terminados, 'entregar', 'Entregar al cliente ✓') ?>
         </div>
       </div>
     </div>

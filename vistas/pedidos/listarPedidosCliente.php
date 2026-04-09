@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../includes/util.php';
 require_once __DIR__ . '/../../entities/pedido.php';
 
 $user    = require_login();
-$pedidos = Pedido::getPedidosDeUsuario((int)$user['id']);
+$pedidos = Pedido::getPedidosDeUsuario((int)$user->getId());
 
 $etiquetas = [
     'recibido'       => 'Pendiente de pago',
