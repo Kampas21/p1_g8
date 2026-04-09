@@ -29,15 +29,15 @@ if ($modo === 'editar') {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $nombre = trim($_POST['nombre']);
-    $descripcion = trim($_POST['descripcion']);
+    $nombre = trim((string) filter_input(INPUT_POST, 'nombre'));
+    $descripcion = trim((string) filter_input(INPUT_POST, 'descripcion'));
 
     if (!$nombre || strlen($nombre) < 3) {
-        $errores[] = "Nombre inválido";
+        $errores[] = "El nombre debe tener al menos 3 caracteres.";
     }
 
     if (!$descripcion) {
-        $errores[] = "Descripción obligatoria";
+        $errores[] = "La descripción es obligatoria.";
     }
 
     if (empty($errores)) {
@@ -65,7 +65,8 @@ ob_start();
 <h1><?= $modo === 'crear' ? 'Crear' : 'Editar' ?> categoría</h1>
 
 <?php if (!empty($errores)): ?>
-    <ul class="text-danger">
+
+    <ul class="errores">
         <?php foreach ($errores as $e): ?>
             <li><?= htmlspecialchars($e) ?></li>
         <?php endforeach; ?>

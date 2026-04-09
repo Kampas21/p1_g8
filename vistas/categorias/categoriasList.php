@@ -26,7 +26,6 @@ if (!$user || !user_has_role($user, 'gerente')) {
     exit;
 }
 
-// 🔥 IMPORTANTE
 $categorias = CategoriaService::getAll();
 
 $tituloPagina = 'Categorías';
@@ -38,7 +37,7 @@ ob_start();
 <h1>Lista de categorías</h1>
 
 <p>
-    <a href="categoria_form.php?modo=crear" class="btn-nuevo">
+    <a href="categoria_form.php" class="btn-nuevo">
         + Nueva categoría
     </a>
 </p>
@@ -47,60 +46,23 @@ ob_start();
     <p>No hay categorías.</p>
 <?php else: ?>
 
-<table border="1">
-    <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Descripción</th>
-        <th>Estado</th>
-        <th>Acciones</th>
-    </tr>
+<table class="tabla">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
 
-    <?php foreach ($categorias as $cat): ?>
+    <tbody>
+        <?php foreach ($categorias as $cat): ?>
+            <?php include __DIR__ . '/_fila_categoria.php'; ?>
+        <?php endforeach; ?>
+    </tbody>
 
-    <tr>
-        <td><?= $cat->getId() ?></td>
-
-        <td><?= htmlspecialchars($cat->getNombre()) ?></td>
-
-        <td><?= htmlspecialchars($cat->getDescripcion()) ?></td>
-
-        <td>
-            <?= $cat->isActiva()
-                ? '<span class="text-success">Activa</span>'
-                : '<span class="text-danger">Inactiva</span>' ?>
-        </td>
-
-        <td>
-
-            <a href="categoria_form.php?id=<?= $cat->getId() ?>">
-                Editar
-            </a>
-
-            <a href="../productos/mostrarProductosCategoria.php?id=<?= $cat->getId() ?>">
-                Productos
-            </a>
-
-            <?php if ($cat->isActiva()): ?>
-                <form method="POST" action="borrarCategoria.php" class="form-inline-action">
-                    <input type="hidden" name="id" value="<?= $cat->getId() ?>">
-                    <button type="submit" onclick="return confirm('¿Desactivar?')">
-                        Desactivar
-                    </button>
-                </form>
-            <?php else: ?>
-                <form method="POST" action="activarCategoria.php" class="form-inline-action">
-                    <input type="hidden" name="id" value="<?= $cat->getId() ?>">
-                    <button type="submit">
-                        Activar
-                    </button>
-                </form>
-            <?php endif; ?>
-
-        </td>
-    </tr>
-
-    <?php endforeach; ?>
 
 </table>
 
