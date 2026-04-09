@@ -27,7 +27,6 @@ if (!$categoria) {
     die('Categoría no encontrada');
 }
 
-// 🔥 cargar productos desde script (NO desde vista)
 require_once __DIR__ . '/../../scripts/productos/cargarProductosCategoria.php';
 
 // Vista

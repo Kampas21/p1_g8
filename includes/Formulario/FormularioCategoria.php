@@ -17,7 +17,7 @@ class FormularioCategoria extends Formulario {
 
     protected function generaCamposFormulario(&$datos) {
 
-        // 🔒 ESCAPAR HTML (IMPORTANTE)
+        
         $nombre = htmlspecialchars($datos['nombre'] ?? ($this->categoria ? $this->categoria->getNombre() : ''), ENT_QUOTES);
         $descripcion = htmlspecialchars($datos['descripcion'] ?? ($this->categoria ? $this->categoria->getDescripcion() : ''), ENT_QUOTES);
 
@@ -44,11 +44,9 @@ class FormularioCategoria extends Formulario {
 
         $this->errores = [];
 
-        // 🔒 SANITIZAR INPUT
         $nombre = filter_var(trim($datos['nombre'] ?? ''), FILTER_SANITIZE_SPECIAL_CHARS);
         $descripcion = filter_var(trim($datos['descripcion'] ?? ''), FILTER_SANITIZE_SPECIAL_CHARS);
 
-        // ✅ VALIDACIONES
         if (!$nombre || strlen($nombre) < 3) {
             $this->errores['nombre'] = "El nombre debe tener al menos 3 caracteres";
         }
@@ -57,12 +55,10 @@ class FormularioCategoria extends Formulario {
             $this->errores['descripcion'] = "La descripción debe tener al menos 3 caracteres";
         }
 
-        // ❌ SI HAY ERRORES → PARAR
         if (count($this->errores) > 0) {
             return;
         }
 
-        // 💾 GUARDAR (crear o editar)
         if ($this->categoria) {
             CategoriaService::update(
                 $this->categoria->getId(),
@@ -73,7 +69,6 @@ class FormularioCategoria extends Formulario {
             CategoriaService::create($nombre, $descripcion);
         }
 
-        // 🔁 REDIRECCIÓN
         $this->urlRedireccion = "categoriasList.php";
     }
 }
