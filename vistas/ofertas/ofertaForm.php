@@ -59,6 +59,10 @@ if ($modoEdicion) {
         <label>Descuento (%), del 1 al 100:</label><br>
         <input type="number" name="descuento" step="0.01" min="0" max="100"
             value="<?= htmlspecialchars($descuento) ?>" required>
+
+        <!-- <label>Precio con descuento aplicado, solo se pueden dos decimales:</label><br>
+        <input type="number" name="precio_des" step="0.01" min="0"
+            value="<?= htmlspecialchars($precio_des) ?>" required> -->
     </p>
 
 
