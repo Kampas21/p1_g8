@@ -54,7 +54,7 @@ if ($modoEdicion) {
         <label>Fecha fin:</label>
         <input type="datetime-local" name="fecha_fin" value="<?= htmlspecialchars($fecha_fin) ?>" required>
     </p>
-
+    
     <p>
         <label>Descuento (%), del 1 al 100:</label><br>
         <input type="number" name="descuento" step="0.01" min="0" max="100"
