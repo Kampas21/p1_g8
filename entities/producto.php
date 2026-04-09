@@ -22,15 +22,39 @@ class Producto {
         $this->ofertado = $ofertado;
     }
 
-    public function getId() { return $this->id; }
-    public function getNombre() { return $this->nombre; }
-    public function getDescripcion() { return $this->descripcion; }
-    public function getCategoriaId() { return $this->categoria_id; }
-    public function getPrecio() { return $this->precio; }
-    public function getIVA() { return $this->iva; }
-    public function isDisponible() { return $this->disponible; }
-    public function isOfertado() { return $this->ofertado; }
+    public function getId() {
+        return $this->id;
+    }
+
+    public function getNombre() {
+        return $this->nombre;
+    }
+
+    public function getDescripcion() {
+        return $this->descripcion;
+    }
+
+    public function getCategoriaId() {
+        return $this->categoria_id;
+    }
+
+    public function getPrecio() {
+        return $this->precio;
+    }
+
+    public function getIVA() {
+        return $this->iva;
+    }
+
+    public function isDisponible() {
+        return $this->disponible;
+    }
+
+    public function isOfertado() {
+        return $this->ofertado;
+    }
 
     public function getPrecioFinal() {
-    return round($this->precio_base * (1 + $this->iva / 100), 2);}
+        return round($this->precio * (1 + $this->iva / 100), 2);
+    }
 }

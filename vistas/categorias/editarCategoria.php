@@ -5,6 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/categoriaService.php';
 
 $user = current_user();
 
@@ -25,31 +26,31 @@ if (!$user || !user_has_role($user, 'gerente')) {
     exit;
 }
 
-require_once __DIR__ . '/../../entities/categoria.php';
+$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
-$id = $_GET['id'] ?? null;
-
-if (!$id || !is_numeric($id)) {
+if (!$id) {
     die("ID de categoría no válido.");
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nombre = trim($_POST['nombre'] ?? '');
-    $descripcion = trim($_POST['descripcion'] ?? '');
-
-    if ($nombre !== '' && $descripcion !== '') {
-        Categoria::editarCategoria((int)$id, $nombre, $descripcion);
-        header('Location: categoriasList.php');
-        exit();
-    }
-
-    $error = "Todos los campos son obligatorios.";
-}
-
-$categoria = Categoria::getCategoriaById((int)$id);
+$categoria = CategoriaService::getById($id);
 
 if (!$categoria) {
     die("La categoría no existe.");
+}
+
+$error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nombre = trim(filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? '');
+    $descripcion = trim(filter_input(INPUT_POST, 'descripcion', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? '');
+
+    if ($nombre === '' || $descripcion === '') {
+        $error = "Todos los campos son obligatorios.";
+    } else {
+        CategoriaService::update($id, $nombre, $descripcion);
+        header('Location: categoriasList.php');
+        exit();
+    }
 }
 
 require __DIR__ . '/categoriasForm.php';

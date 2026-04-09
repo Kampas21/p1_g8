@@ -6,41 +6,39 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/productoService.php';
+require_once __DIR__ . '/../../includes/categoriaService.php';
 
 $user = current_user();
 
+// 🔒 Solo gerente
 if (!$user || !user_has_role($user, 'gerente')) {
-    $tituloPagina = 'Acceso bloqueado';
-    $rutaCSS = '../../CSS/estilo.css';
-
-    ob_start();
-    ?>
-    <div class="panel">
-        <h1>Acceso bloqueado</h1>
-        <p>No tienes permisos para acceder a productos.</p>
-        <p><a class="btn-volver" href="../../index.php">Volver al inicio</a></p>
-    </div>
-    <?php
-    $contenidoPrincipal = ob_get_clean();
-    require __DIR__ . '/../../includes/plantilla.php';
-    exit;
+    die("Acceso denegado");
 }
 
+// 📌 Obtener categoría
 $categoria_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
 if (!$categoria_id) {
     die('Categoría inválida');
 }
 
+$categoria = CategoriaService::getById($categoria_id);
+
+if (!$categoria) {
+    die('Categoría no encontrada');
+}
+
+// 📦 Obtener productos
 $productos = ProductoService::getAllByCategoria($categoria_id);
 
+// 🎨 Vista
 $tituloPagina = 'Productos';
 $rutaCSS = '../../CSS/estilo.css';
 
 ob_start();
 ?>
 
-<h1>Productos</h1>
+<h1>Productos de la categoría: <?= htmlspecialchars($categoria->getNombre()) ?></h1>
 
 <p>
     <a class="btn-nuevo" href="crearProducto.php?categoria_id=<?= $categoria_id ?>">
@@ -51,50 +49,74 @@ ob_start();
 <?php if (empty($productos)): ?>
     <p>No hay productos en esta categoría.</p>
 <?php else: ?>
-    <?php foreach ($productos as $p): ?>
-        <div class="panel" style="margin-bottom:15px;">
-            <h3><?= htmlspecialchars($p->getNombre()) ?></h3>
 
-            <p><?= htmlspecialchars($p['descripcion']) ?></p>
+<div class="productos-container">
 
-<?php
-$precioBase = $p->getPrecioBase();
-$iva = $p->getIva();
-$precioFinal = $p->getPrecioFinal();
-?>
+<?php foreach ($productos as $p): ?>
 
-<p><strong>Precio base:</strong> <?= number_format($precioBase, 2) ?> €</p>
-<p><strong>IVA:</strong> <?= number_format($iva, 0) ?> %</p>
-<p><strong>Precio final:</strong> <?= number_format($precioFinal, 2) ?> €</p>
-            <?php if ($p->getOfertado() == 1): ?>
-                <p style="color:green;">Ofertado</p>
+    <div class="producto-card">
+
+        <h3><?= htmlspecialchars($p->getNombre()) ?></h3>
+
+        <p><?= htmlspecialchars($p->getDescripcion()) ?></p>
+
+        <p><strong>Precio base:</strong> <?= number_format($p->getPrecio(), 2) ?> €</p>
+
+        <p><strong>IVA:</strong> <?= $p->getIVA() ?>%</p>
+
+        <p><strong>Precio final:</strong> <?= number_format($p->getPrecioFinal(), 2) ?> €</p>
+
+        <p>
+            <strong>Estado:</strong>
+            <?php if ($p->isOfertado()): ?>
+                <span style="color:green;">Activo</span>
             <?php else: ?>
-                <p style="color:red;">No ofertado</p>
+                <span style="color:gray;">Inactivo</span>
             <?php endif; ?>
+        </p>
 
-            <a class="btn editar"
-               href="editarProducto.php?id=<?= $p['id'] ?>&categoria_id=<?= $categoria_id ?>">
+        <div class="acciones">
+
+            <a href="editarProducto.php?id=<?= $p->getId() ?>&categoria_id=<?= $categoria_id ?>">
                 Editar
             </a>
 
-            <?php if ((int)$p['ofertado'] === 1): ?>
-                <a class="btn borrar"
-                   href="borrarProducto.php?id=<?= $p['id'] ?>&categoria_id=<?= $categoria_id ?>"
-                   onclick="return confirm('¿Seguro que quieres desactivar este producto?')">
-                    Eliminar
-                </a>
+            <?php if ($p->isOfertado()): ?>
+                
+                <form method="POST" action="../../scripts/productos/desactivarProducto.php" style="display:inline;">
+                    <input type="hidden" name="id" value="<?= $p->getId() ?>">
+                    <input type="hidden" name="categoria_id" value="<?= $categoria_id ?>">
+                    <button type="submit" onclick="return confirm('¿Desactivar producto?')">
+                        Desactivar
+                    </button>
+                </form>
+
             <?php else: ?>
-                <a class="btn activar"
-                   href="activarProducto.php?id=<?= $p['id'] ?>&categoria_id=<?= $categoria_id ?>">
-                    Activar
-                </a>
+
+                <form method="POST" action="../../scripts/productos/activarProducto.php" style="display:inline;">
+                    <input type="hidden" name="id" value="<?= $p->getId() ?>">
+                    <input type="hidden" name="categoria_id" value="<?= $categoria_id ?>">
+                    <button type="submit">
+                        Activar
+                    </button>
+                </form>
+
             <?php endif; ?>
+
         </div>
-    <?php endforeach; ?>
+
+    </div>
+
+<?php endforeach; ?>
+
+</div>
+
 <?php endif; ?>
 
-<p>
-    <a class="btn-volver" href="../categorias/categoriasList.php">← Volver a categorías</a>
+<p style="margin-top:20px;">
+    <a class="btn-volver" href="../categorias/categoriasList.php">
+        ← Volver a categorías
+    </a>
 </p>
 
 <?php

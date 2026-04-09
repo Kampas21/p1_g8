@@ -5,6 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/categoriaService.php';
 
 $user = current_user();
 
@@ -25,19 +26,19 @@ if (!$user || !user_has_role($user, 'gerente')) {
     exit;
 }
 
-require_once __DIR__ . '/../../entities/categoria.php';
+$error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nombre = trim($_POST['nombre'] ?? '');
-    $descripcion = trim($_POST['descripcion'] ?? '');
+    $nombre = trim(filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? '');
+    $descripcion = trim(filter_input(INPUT_POST, 'descripcion', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? '');
 
-    if ($nombre !== '' && $descripcion !== '') {
-        Categoria::crearCategoria($nombre, $descripcion);
+    if ($nombre === '' || $descripcion === '') {
+        $error = "Todos los campos son obligatorios.";
+    } else {
+        CategoriaService::create($nombre, $descripcion);
         header('Location: categoriasList.php');
         exit();
     }
-
-    $error = "Todos los campos son obligatorios.";
 }
 
 require __DIR__ . '/categoriasForm.php';

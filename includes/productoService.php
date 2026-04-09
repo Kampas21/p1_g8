@@ -15,20 +15,20 @@ class ProductoService {
         $productos = [];
 
         while ($fila = $result->fetch_assoc()) {
-      $productos[] = new Producto(
-        $fila['id'],
-        $fila['nombre'],
-        $fila['descripcion'],
-        $fila['categoria_id'],
-        $fila['precio_base'],
-        $fila['iva'],
-        $fila['disponible'],
-        $fila['ofertado']
-    );
-      }
+            $productos[] = new Producto(
+                $fila['id'],
+                $fila['nombre'],
+                $fila['descripcion'],
+                $fila['categoria_id'],
+                $fila['precio_base'],
+                $fila['iva'],
+                $fila['disponible'],
+                $fila['ofertado']
+            );
+        }
 
-    $result->free();
-    $stmt->close();
+        $result->free();
+        $stmt->close();
 
         return $productos;
     }
@@ -40,7 +40,15 @@ class ProductoService {
         $stmt->bind_param("i", $id);
         $stmt->execute();
 
-        $row = $stmt->get_result()->fetch_assoc();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+
+        $result->free();
+        $stmt->close();
+
+        if (!$row) {
+            return null;
+        }
 
         return new Producto(
             $row['id'],
@@ -55,41 +63,43 @@ class ProductoService {
     }
 
     public static function create($nombre, $descripcion, $categoria_id, $precio, $iva) {
-        global $conn;
+    global $conn;
 
-        $stmt = $conn->prepare("
-            INSERT INTO productos (nombre, descripcion, categoria_id, precio_base, iva, disponible, ofertado)
-            VALUES (?, ?, ?, ?, ?, 1, 0)
-        ");
-        $stmt->bind_param("ssidi", $nombre, $descripcion, $categoria_id, $precio, $iva);
-        $stmt->execute();
-    }
+    $stmt = $conn->prepare("INSERT INTO productos (nombre, descripcion, categoria_id, precio_base, iva, ofertado) VALUES (?, ?, ?, ?, ?, 1)");
+    $stmt->bind_param("ssidd", $nombre, $descripcion, $categoria_id, $precio, $iva);
 
-    public static function actualizar($id, $nombre, $descripcion, $categoria_id, $precio, $iva) {
-        global $conn;
+    return $stmt->execute();
+}
 
-        $stmt = $conn->prepare("
-            UPDATE productos
-            SET nombre = ?, descripcion = ?, categoria_id = ?, precio_base = ?, iva = ?
-            WHERE id = ?
-        ");
-        $stmt->bind_param("ssidii", $nombre, $descripcion, $categoria_id, $precio, $iva, $id);
-        $stmt->execute();
-    }
+   public static function update($id, $nombre, $descripcion, $categoria_id, $precio, $iva) {
+    global $conn;
 
-    public static function desactivar($id) {
-        global $conn;
+    $stmt = $conn->prepare("
+        UPDATE productos 
+        SET nombre = ?, descripcion = ?, categoria_id = ?, precio_base = ?, iva = ?
+        WHERE id = ?
+    ");
 
-        $stmt = $conn->prepare("UPDATE productos SET ofertado = 0 WHERE id = ?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-    }
+    $stmt->bind_param("ssiddi", $nombre, $descripcion, $categoria_id, $precio, $iva, $id);
+
+    return $stmt->execute();
+}
 
     public static function activar($id) {
-        global $conn;
+    global $conn;
 
-        $stmt = $conn->prepare("UPDATE productos SET ofertado = 1 WHERE id = ?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-    }
+    $stmt = $conn->prepare("UPDATE productos SET ofertado = 1 WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    return $stmt->execute();
+}
+
+public static function desactivar($id) {
+    global $conn;
+
+    $stmt = $conn->prepare("UPDATE productos SET ofertado = 0 WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    return $stmt->execute();
+}
+
+    
 }

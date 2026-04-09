@@ -5,6 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/categoriaService.php';
 
 $user = current_user();
 
@@ -25,27 +26,25 @@ if (!$user || !user_has_role($user, 'gerente')) {
     exit;
 }
 
-require_once __DIR__ . '/../../entities/categoria.php';
+$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
-$id = $_GET['id'] ?? null;
-
-if (!$id || !is_numeric($id)) {
+if (!$id) {
     die("ID de categoría no válido.");
 }
 
-$categoria = Categoria::getCategoriaById((int)$id);
+$categoria = CategoriaService::getById($id);
 
 if (!$categoria) {
     die("La categoría no existe.");
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    Categoria::borrarCategoria((int)$id);
+    CategoriaService::desactivar($id);
     header('Location: categoriasList.php');
     exit();
 }
 
-$tituloPagina = 'Borrar Categorías';
+$tituloPagina = 'Desactivar categoría';
 $rutaCSS = '../../CSS/estilo.css';
 ob_start();
 ?>
@@ -54,12 +53,10 @@ ob_start();
 
 <p>
     ¿Seguro que quieres desactivar la categoría
-    <strong><?= htmlspecialchars($categoria['nombre']) ?></strong>?
+    <strong><?= htmlspecialchars($categoria->getNombre()) ?></strong>?
 </p>
 
-<p>
-    Sus productos pasarán a no ofertados.
-</p>
+<p>Sus productos pasarán a no ofertados.</p>
 
 <form method="POST">
     <p><button type="submit" class="btn-aceptar">Sí, desactivar</button></p>

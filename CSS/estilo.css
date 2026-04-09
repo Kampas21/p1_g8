@@ -845,3 +845,49 @@ button:hover, input[type="submit"]:hover {
     padding: 10px;
     border: none;
 }
+
+.productos-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.producto-card {
+    border: 2px solid #8b5e3c;   
+    border-radius: 15px;        
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: #ffffff;
+}
+
+.producto-card:hover {
+    transform: scale(1.01);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.producto-info h3 {
+    margin-bottom: 8px;
+}
+
+.activo {
+    color: green;
+    font-weight: bold;
+}
+
+.inactivo {
+    color: gray;
+    font-weight: bold;
+}
+
+.acciones {
+    margin-top: 10px;
+}
+
+.acciones a {
+    margin-right: 10px;
+    text-decoration: none;
+    color: #007bff;
+}
+
+.acciones a:hover {
+    text-decoration: underline;
+}
