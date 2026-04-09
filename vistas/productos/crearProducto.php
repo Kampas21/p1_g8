@@ -9,7 +9,6 @@ require_once __DIR__ . '/../../includes/productoService.php';
 
 $user = current_user();
 
-// 🔒 Control acceso
 if (!$user || !user_has_role($user, 'gerente')) {
     $tituloPagina = 'Acceso bloqueado';
     $rutaCSS = '../../CSS/estilo.css';
@@ -27,14 +26,14 @@ if (!$user || !user_has_role($user, 'gerente')) {
     exit;
 }
 
-// 📥 categoría
+
 $categoria_id = filter_input(INPUT_GET, 'categoria_id', FILTER_VALIDATE_INT);
 
 if (!$categoria_id) {
     die("Categoría inválida");
 }
 
-// 📩 procesar formulario
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $nombre = $_POST['nombre'] ?? '';
@@ -48,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// 🎨 plantilla
+
 $tituloPagina = 'Crear producto';
 $rutaCSS = '../../CSS/estilo.css';
 

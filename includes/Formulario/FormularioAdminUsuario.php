@@ -139,7 +139,23 @@ class FormularioAdminUsuario extends Formulario
                     $_POST['avatar_mode'] = 'default';
                 }
             } else {
+                // Si el gerente cambia el rol y no sube foto, forzamos un Avatar Predefinido automático
+            $rolSeleccionado = $_POST['rol'] ?? 'cliente';
+            $rolActual = $this->userToEdit['rol'] ?? 'cliente';
+            
+            if ($rolSeleccionado !== $rolActual || $this->isCreate) {
+                $_POST['avatar_mode'] = 'preset';
+                
+                
+                if ($rolSeleccionado === 'gerente') $_POST['avatar_preset'] = 'preset_manager';
+                elseif ($rolSeleccionado === 'cocinero') $_POST['avatar_preset'] = 'preset_chef';
+                elseif ($rolSeleccionado === 'camarero') $_POST['avatar_preset'] = 'preset_waiter';
+                else {
+                    $_POST['avatar_mode'] = 'default';
+                }
+            } else {
                 $_POST['avatar_mode'] = 'keep'; // Si no hay cambio de rol y no sube foto, se mantiene igual
+            }
             }
         }
 

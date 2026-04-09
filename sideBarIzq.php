@@ -6,13 +6,15 @@ if (session_status() === PHP_SESSION_NONE) {
 $user = function_exists('current_user') ? current_user() : null;
 ?>
 
+
 <nav aria-label="Navegación principal">
     <h3>Menú</h3>
     <ul class="menu-izq">
         <!-- Enlaces públicos para todos (logueados o no) -->
         <li><a href="<?= RUTA_APP ?>/index.php">Inicio</a></li>
         <li><a href="<?= RUTA_APP ?>/vistas/pedidos/elegirTipo.php">Nuevo pedido</a></li>
-        
+        <li><a href="<?= RUTA_APP ?>/vistas/ofertas/ofertaCliente.php">Nuestras ofertas</a></li>
+
         <!-- Enlaces solo para usuarios logueados -->
         <?php if ($user): ?>
             
