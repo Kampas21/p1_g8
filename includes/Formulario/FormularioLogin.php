@@ -62,7 +62,7 @@ class FormularioLogin extends Formulario
         if (count($this->errores) === 0) {
             $user = user_find_by_username_or_email($login);
             
-            if (!$user || !password_verify($password, (string)$user['password_hash'])) {
+            if (!$user || !password_verify($password, (string)$user->getPasswordHash())) {
                 $this->errores[] = "El usuario o el password no coinciden";
             } else {
                 login_user($user); 

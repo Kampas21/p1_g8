@@ -213,7 +213,7 @@ class Pedido
     }
 
     // --- PANEL DE GERENTE (FUNCIONALIDAD 3) ---
-public static function getPedidosPendientesGerente() {
+    public static function getPedidosPendientesGerente() {
         global $conn;
         // Cambiamos u.avatar por u.avatar_valor para evitar el error de columna desconocida
         $query = "SELECT p.*, u.nombre AS cocinero_nombre, u.apellidos AS cocinero_apellidos, u.avatar_valor 
@@ -222,6 +222,62 @@ public static function getPedidosPendientesGerente() {
                   ORDER BY p.fecha_hora ASC";
         $rs = $conn->query($query);
         return $rs->fetch_all(MYSQLI_ASSOC);
+    }
+
+    /**
+     * Obtiene los pedidos activos de un usuario para su perfil 
+     */
+    public static function getPedidosActivosByUsuario(int $usuario_id): array
+    {
+        global $conn;
+        $sql = "
+            SELECT numero_pedido, estado, fecha_hora, total
+            FROM pedidos
+            WHERE usuario_id = ?
+               AND estado IN ('en_preparacion', 'cocinando', 'listo_cocina', 'terminado')
+            ORDER BY fecha_hora DESC
+        ";
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) return [];
+        
+        $stmt->bind_param("i", $usuario_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        $pedidos = [];
+        while ($row = $result->fetch_assoc()) {
+            $pedidos[] = $row;
+        }
+        $stmt->close();
+        return $pedidos;
+    }
+
+    /**
+     * Obtiene el histórico de pedidos de un usuario para su perfil
+     */
+    public static function getPedidosHistoricoByUsuario(int $usuario_id): array
+    {
+        global $conn;
+        $sql = "
+            SELECT numero_pedido, fecha_hora, tipo, total, estado
+            FROM pedidos
+            WHERE usuario_id = ?
+            ORDER BY fecha_hora DESC
+            LIMIT 15
+        ";
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) return [];
+        
+        $stmt->bind_param("i", $usuario_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        $pedidos = [];
+        while ($row = $result->fetch_assoc()) {
+            $pedidos[] = $row;
+        }
+        $stmt->close();
+        return $pedidos;
     }
 
 

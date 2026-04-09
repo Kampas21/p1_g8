@@ -10,7 +10,7 @@ class FormularioAdminUsuario extends Formulario
     private $isCreate;
     private $userToEdit;
 
-    public function __construct(bool $isCreate, ?\Usuario $userToEdit = null) { // ¡Ojo al tipo \Usuario!
+    public function __construct(bool $isCreate, ?\Usuario $userToEdit = null) { 
         $this->isCreate = $isCreate;
         $this->userToEdit = $userToEdit;
         

@@ -10,6 +10,6 @@ if (!is_post()) {
 }
 require_csrf();
 
-user_remove_custom_avatar((int)$user['id']);
+user_remove_custom_avatar((int)$user->getId());
 flash_set('success', 'Avatar personalizado eliminado. Se ha restaurado el avatar por defecto.');
 redirect('perfil.php');

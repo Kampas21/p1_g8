@@ -23,7 +23,7 @@ if ($id <= 0) {
     redirect(RUTA_APP . '/entities/usuarios.php');
 }
 
-if ($id === (int)$admin['id']) {
+if ($id === (int)$admin->getId()) {
     flash_set('error', 'No puedes desactivarte a ti mismo/a.');
     redirect(RUTA_APP . '/entities/usuarios.php');
 }
@@ -34,7 +34,7 @@ if (!$user) {
     redirect(RUTA_APP . '/entities/usuarios.php');
 }
 
-if ((int)$user['activo'] !== 1) {
+if ($user->isActivo()) {
     flash_set('info', 'El usuario ya estaba desactivado.');
     redirect(RUTA_APP . '/entities/usuarios.php?ver=todo');
 }
