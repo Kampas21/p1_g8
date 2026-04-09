@@ -121,5 +121,40 @@ class ProductoService {
         $stmt->execute();
     }
 
-    
+    public static function getProductosDeOferta($oferta_id)
+    {
+        global $conn;
+        
+        $stmt = $conn->prepare("SELECT p.*, op.cantidad FROM productos p
+        JOIN oferta_productos op ON p.id = op.producto_id WHERE op.oferta_id = ?");
+        $stmt->bind_param("i", $oferta_id);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $productos = [];
+
+       while ($fila = $result->fetch_assoc()) {
+
+    $producto = new Producto(
+        $fila['id'],
+        $fila['nombre'],
+        $fila['descripcion'],
+        $fila['categoria_id'],
+        $fila['precio_base'],
+        $fila['iva'],
+        $fila['disponible'],
+        $fila['ofertado']
+    );
+
+    // 👇 añadimos el dato de la oferta
+    $producto->cantidad = $fila['cantidad'];
+
+    $productos[] = $producto;
+}
+
+    $result->free();
+    $stmt->close();
+
+        return $productos;
+    }
 }
