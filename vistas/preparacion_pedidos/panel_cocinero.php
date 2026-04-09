@@ -4,12 +4,13 @@ require_once __DIR__ . '/../../includes/application.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../entities/pedido.php';
 require_once __DIR__ . '/../../includes/Formulario/FormularioAccionesCocina.php';
+require_once __DIR__ . '/../../includes/pedidoService.php';
 
 $user = require_role('cocinero'); 
 $cocinero_id = (int)$user->getId();
 
-$pedidosEnCola = Pedido::getPedidosPorEstado('en_preparacion'); 
-$misPedidos = Pedido::getPedidosCocinando($cocinero_id);
+$pedidosEnCola = PedidoService::getPedidosPorEstado('en_preparacion'); 
+$misPedidos = PedidoService::getPedidosCocinando($cocinero_id);
 
 // ---- EMPIEZA LA VISTA DEL PROYECTO ----
 $tituloPagina = 'Panel de Cocina | Bistro FDI';

@@ -15,8 +15,11 @@ class PedidoService
             "INSERT INTO pedidos (usuario_id, tipo, estado) VALUES (?, ?, 'nuevo')"
         );
         $stmt->bind_param("is", $usuario_id, $tipo);
-        $stmt->execute();
-        return $conn->insert_id;
+
+        $ok = $stmt->execute();
+        $stmt->close();
+
+        return $ok;
     }
 
     /**
@@ -30,6 +33,30 @@ class PedidoService
         );
         $stmt->bind_param("i", $usuario_id);
         $stmt->execute();
+
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+
+        $result->free();
+        $stmt->close();
+
+        if (!$row) {
+            return null;
+        }
+
+        return new Pedido(
+            $row['id'],
+            $row['numero_pedido'],
+            $row['fecha_hora'],
+            $row['fecha'],
+            $row['estado'],
+            $row['tipo'],
+            $row['metodo_pago'],
+            $row['usuario_id'],
+            $row['total_sin_descuentos'],
+            $row['total_descuento'],
+            $row['cocinero_id']
+        );
         return $stmt->get_result()->fetch_assoc();
     }
 
@@ -45,7 +72,7 @@ class PedidoService
         return $stmt->execute();
     }
 
-    
+
     /**
      * Actualiza la cantidad de un producto en el carrito.
      */
@@ -82,11 +109,15 @@ class PedidoService
 
         $stmt = $conn->prepare("DELETE FROM productos_en_pedido WHERE pedido_id = ?");
         $stmt->bind_param("i", $pedido_id);
+
         $stmt->execute();
+        $stmt->close();
 
         $stmt = $conn->prepare("DELETE FROM pedidos WHERE id = ?");
         $stmt->bind_param("i", $pedido_id);
+
         $stmt->execute();
+        $stmt->close();
     }
 
     /**
@@ -121,11 +152,35 @@ class PedidoService
         $stmt = $conn->prepare("SELECT * FROM pedidos WHERE id = ?");
         $stmt->bind_param("i", $id);
         $stmt->execute();
+
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+
+        $result->free();
+        $stmt->close();
+
+        if (!$row) {
+            return null;
+        }
+
+        return new Pedido(
+            $row['id'],
+            $row['numero_pedido'],
+            $row['fecha_hora'],
+            $row['fecha'],
+            $row['estado'],
+            $row['tipo'],
+            $row['metodo_pago'],
+            $row['usuario_id'],
+            $row['total_sin_descuentos'],
+            $row['total_descuento'],
+            $row['cocinero_id']
+        );
         return $stmt->get_result()->fetch_assoc();
     }
 
 
-    public static function getPedidosDeUsuario(int $usuario_id): array
+    public static function getPedidosDeUsuario(int $usuario_id)
     {
         global $conn;
         $stmt = $conn->prepare(
@@ -135,7 +190,30 @@ class PedidoService
         );
         $stmt->bind_param("i", $usuario_id);
         $stmt->execute();
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        $result = $stmt->get_result();
+        $pedidos = [];
+
+        while ($fila = $result->fetch_assoc()) {
+            return new Pedido(
+                $fila['id'],
+                $fila['numero_pedido'],
+                $fila['fecha_hora'],
+                $fila['fecha'],
+                $fila['estado'],
+                $fila['tipo'],
+                $fila['metodo_pago'],
+                $fila['usuario_id'],
+                $fila['total_sin_descuentos'],
+                $fila['total_descuento'],
+                $fila['cocinero_id']
+            );
+        }
+
+        $result->free();
+        $stmt->close();
+
+        return $pedidos;
     }
 
 
@@ -149,7 +227,7 @@ class PedidoService
         return $stmt->execute();
     }
 
-     /**
+    /**
      * Devuelve los productos de un pedido con nombre, imagen, iva y estado.
      */
     public static function getProductosPedido($pedido_id)
@@ -183,9 +261,10 @@ class PedidoService
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
-    
 
-    public static function marcarProductoPreparado($pedido_id, $producto_id) {
+
+    public static function marcarProductoPreparado($pedido_id, $producto_id)
+    {
         global $conn;
         // Cambia el estado de una sola línea del pedido a 'preparado'
         $stmt = $conn->prepare("UPDATE productos_en_pedido SET estado = 'preparado' WHERE pedido_id = ? AND producto_id = ?");
@@ -197,8 +276,9 @@ class PedidoService
 
 
     // --- ESTADOS GLOBALES DEL PEDIDO (FUNCIONALIDAD 3) ---
-   
-    public static function getPedidosCocinando($cocinero_id) {
+
+    public static function getPedidosCocinando($cocinero_id)
+    {
         global $conn;
         $stmt = $conn->prepare("SELECT * FROM pedidos WHERE cocinero_id = ? AND estado = 'cocinando' ORDER BY fecha_hora ASC");
         $stmt->bind_param("i", $cocinero_id);
@@ -206,7 +286,8 @@ class PedidoService
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
-    public static function asignarCocineroYEstado($pedido_id, $cocinero_id, $estado) {
+    public static function asignarCocineroYEstado($pedido_id, $cocinero_id, $estado)
+    {
         global $conn;
         $stmt = $conn->prepare("UPDATE pedidos SET cocinero_id = ?, estado = ? WHERE id = ?");
         $stmt->bind_param("isi", $cocinero_id, $estado, $pedido_id);
@@ -214,7 +295,8 @@ class PedidoService
     }
 
     // --- PANEL DE GERENTE (FUNCIONALIDAD 3) ---
-    public static function getPedidosPendientesGerente() {
+    public static function getPedidosPendientesGerente()
+    {
         global $conn;
         // Cambiamos u.avatar por u.avatar_valor para evitar el error de columna desconocida
         $query = "SELECT p.*, u.nombre AS cocinero_nombre, u.apellidos AS cocinero_apellidos, u.avatar_valor 
@@ -240,18 +322,18 @@ class PedidoService
         ";
         $stmt = $conn->prepare($sql);
         if (!$stmt) return [];
-        
+
         $stmt->bind_param("i", $usuario_id);
         $stmt->execute();
         $result = $stmt->get_result();
-        
+
         $pedidos = [];
         while ($row = $result->fetch_assoc()) {
             $pedidos[] = $row;
         }
 
         $result->free();
-        
+
         $stmt->close();
         return $pedidos;
     }
@@ -271,11 +353,11 @@ class PedidoService
         ";
         $stmt = $conn->prepare($sql);
         if (!$stmt) return [];
-        
+
         $stmt->bind_param("i", $usuario_id);
         $stmt->execute();
         $result = $stmt->get_result();
-        
+
         $pedidos = [];
         while ($row = $result->fetch_assoc()) {
             $pedidos[] = $row;
@@ -286,6 +368,4 @@ class PedidoService
         $stmt->close();
         return $pedidos;
     }
-
-
 }

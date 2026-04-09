@@ -5,9 +5,10 @@ require_once __DIR__ . '/../../includes/application.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/util.php';
 require_once __DIR__ . '/../../entities/pedido.php';
+require_once __DIR__ . '/../../includes/pedidoService.php';
 
 $user    = require_login();
-$pedidos = Pedido::getPedidosDeUsuario((int)$user->getId());
+$pedidos = PedidoService::getPedidosDeUsuario((int)$user->getId());
 
 $etiquetas = [
     'recibido'       => 'Pendiente de pago',

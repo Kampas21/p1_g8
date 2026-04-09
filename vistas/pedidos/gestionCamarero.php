@@ -6,12 +6,13 @@ require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/util.php';
 require_once __DIR__ . '/../../entities/pedido.php';
 require_once __DIR__ . '/../../includes/Formulario/FormularioEstadoCamarero.php';
+require_once __DIR__ . '/../../includes/pedidoService.php';
 
 $user = require_role('camarero');
 
-$recibidos     = Pedido::getPedidosPorEstado('recibido');
-$listos_cocina = Pedido::getPedidosPorEstado('listo_cocina');
-$terminados    = Pedido::getPedidosPorEstado('terminado');
+$recibidos     = PedidoService::getPedidosPorEstado('recibido');
+$listos_cocina = PedidoService::getPedidosPorEstado('listo_cocina');
+$terminados    = PedidoService::getPedidosPorEstado('terminado');
 
 
 function renderTarjetas(array $pedidos, string $accion, string $btnLabel): void {
