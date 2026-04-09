@@ -3,123 +3,154 @@ namespace es\ucm\fdi\aw\Formulario;
 
 require_once __DIR__ . '/Formulario.php';
 require_once __DIR__ . '/../productoService.php';
-class FormularioProducto extends Formulario {
 
+class FormularioProducto extends Formulario
+{
     private $isCreate;
     private $categoria_id;
     private $producto;
 
-    public function __construct($isCreate, $categoria_id, $producto = null) {
+    public function __construct(bool $isCreate, int $categoria_id, $producto = null)
+    {
         parent::__construct('formProducto');
-
         $this->isCreate = $isCreate;
         $this->categoria_id = $categoria_id;
         $this->producto = $producto;
     }
 
-    protected function generaCamposFormulario(&$datos) {
+    protected function generaCamposFormulario(&$datos)
+    {
+        $nombre = htmlspecialchars($datos['nombre'] ?? ($this->producto ? $this->producto->getNombre() : ''), ENT_QUOTES, 'UTF-8');
+        $descripcion = htmlspecialchars($datos['descripcion'] ?? ($this->producto ? $this->producto->getDescripcion() : ''), ENT_QUOTES, 'UTF-8');
+        $precio = htmlspecialchars((string)($datos['precio'] ?? ($this->producto ? $this->producto->getPrecio() : '')), ENT_QUOTES, 'UTF-8');
+        $iva = (int)($datos['iva'] ?? ($this->producto ? $this->producto->getIVA() : 21));
 
-        $nombre = htmlspecialchars($datos['nombre'] ?? ($this->producto ? $this->producto->getNombre() : ''));
-        $descripcion = htmlspecialchars($datos['descripcion'] ?? ($this->producto ? $this->producto->getDescripcion() : ''));
-        $precio = $datos['precio'] ?? ($this->producto ? $this->producto->getPrecio() : '');
-        $iva = $datos['iva'] ?? ($this->producto ? $this->producto->getIVA() : 21);
+        $errores = self::generaErroresCampos(['nombre', 'descripcion', 'precio', 'iva'], $this->errores, 'span', ['class' => 'text-danger']);
+        $erroresGlobales = self::generaListaErroresGlobales($this->errores, 'text-danger');
+        $textoBoton = $this->isCreate ? 'Crear producto' : 'Actualizar producto';
+        $precioFinal = '';
 
-        $html = <<<HTML
+        if ($precio !== '' && is_numeric($precio)) {
+            $precioFinal = number_format(((float)$precio) * (1 + ($iva / 100)), 2, '.', '');
+        }
+
+        $selected4 = $iva === 4 ? 'selected' : '';
+        $selected10 = $iva === 10 ? 'selected' : '';
+        $selected21 = $iva === 21 ? 'selected' : '';
+
+        return <<<HTML
+        {$erroresGlobales}
 
         <p>
-            <label>Nombre:</label><br>
-            <input type="text" name="nombre" value="$nombre" required minlength="3">
+            <label for="nombre">Nombre:</label><br>
+            <input id="nombre" type="text" name="nombre" value="{$nombre}" required minlength="3" maxlength="100">
+            {$errores['nombre']}
         </p>
 
         <p>
-            <label>Descripción:</label><br>
-            <textarea name="descripcion" required minlength="3">$descripcion</textarea>
+            <label for="descripcion">Descripción:</label><br>
+            <textarea id="descripcion" name="descripcion" required minlength="3" maxlength="1000">{$descripcion}</textarea>
+            {$errores['descripcion']}
         </p>
 
         <p>
-            <label>Precio base (€):</label><br>
-            <input type="number" name="precio" step="0.01" min="0" value="$precio" required>
+            <label for="precio">Precio base (€):</label><br>
+            <input id="precio" type="number" name="precio" step="0.01" min="0.01" value="{$precio}" required>
+            {$errores['precio']}
         </p>
 
         <p>
-            <label>IVA:</label><br>
-            <select name="iva" required>
-                <option value="4" {$this->selected($iva, 4)}>4%</option>
-                <option value="10" {$this->selected($iva, 10)}>10%</option>
-                <option value="21" {$this->selected($iva, 21)}>21%</option>
+            <label for="iva">IVA:</label><br>
+            <select id="iva" name="iva" required>
+                <option value="4" {$selected4}>4%</option>
+                <option value="10" {$selected10}>10%</option>
+                <option value="21" {$selected21}>21%</option>
             </select>
+            {$errores['iva']}
+        </p>
+
+        <p>
+            <strong>Precio final:</strong>
+            <span id="precioFinal">{$precioFinal}</span> €
         </p>
 
         <input type="hidden" name="categoria_id" value="{$this->categoria_id}">
 
         <p>
-            <button type="submit">
-                {$this->textoBoton()}
-            </button>
+            <button type="submit">{$textoBoton}</button>
         </p>
 
-HTML;
+        <script>
+        (function () {
+            const precioInput = document.getElementById('precio');
+            const ivaSelect = document.getElementById('iva');
+            const precioFinal = document.getElementById('precioFinal');
 
-        return $html;
+            function recalcular() {
+                const precio = parseFloat(precioInput.value || '0');
+                const iva = parseInt(ivaSelect.value || '0', 10);
+
+                if (precio > 0 && [4, 10, 21].includes(iva)) {
+                    precioFinal.textContent = (precio * (1 + iva / 100)).toFixed(2);
+                } else {
+                    precioFinal.textContent = '';
+                }
+            }
+
+            precioInput.addEventListener('input', recalcular);
+            ivaSelect.addEventListener('change', recalcular);
+            recalcular();
+        })();
+        </script>
+        HTML;
     }
 
-    private function textoBoton() {
-        return $this->isCreate ? "Crear producto" : "Actualizar producto";
-    }
+    protected function procesaFormulario(&$datos)
+    {
+        $this->errores = [];
 
-    private function selected($valor, $option) {
-        return ((int)$valor === (int)$option) ? 'selected' : '';
-    }
+        $nombre = trim((string)($datos['nombre'] ?? ''));
+        $descripcion = trim((string)($datos['descripcion'] ?? ''));
+        $precio = filter_var($datos['precio'] ?? null, FILTER_VALIDATE_FLOAT);
+        $iva = filter_var($datos['iva'] ?? null, FILTER_VALIDATE_INT);
+        $categoria_id = filter_var($datos['categoria_id'] ?? null, FILTER_VALIDATE_INT);
 
-    protected function procesaFormulario(&$datos) {
+        $nombre = filter_var($nombre, FILTER_SANITIZE_SPECIAL_CHARS);
+        $descripcion = filter_var($descripcion, FILTER_SANITIZE_SPECIAL_CHARS);
 
-        $nombre = trim($datos['nombre'] ?? '');
-        $descripcion = trim($datos['descripcion'] ?? '');
-        $precio = floatval($datos['precio'] ?? -1);
-        $iva = intval($datos['iva'] ?? 0);
-        $categoria_id = intval($datos['categoria_id']);
-
-        /* ========= VALIDACIONES ========= */
-
-        if (!$nombre || strlen($nombre) < 3) {
-            $this->errores['nombre'] = "Nombre inválido (mín 3 caracteres)";
+        if ($nombre === '' || mb_strlen($nombre) < 3) {
+            $this->errores['nombre'] = 'El nombre debe tener al menos 3 caracteres.';
         }
 
-        if (!$descripcion || strlen($descripcion) < 3) {
-            $this->errores['descripcion'] = "Descripción inválida";
+        if ($descripcion === '' || mb_strlen($descripcion) < 3) {
+            $this->errores['descripcion'] = 'La descripción debe tener al menos 3 caracteres.';
         }
 
-        if ($precio < 0) {
-            $this->errores['precio'] = "Precio inválido";
+        if ($precio === false || $precio <= 0) {
+            $this->errores['precio'] = 'El precio debe ser un número mayor que 0.';
         }
 
-        if (!in_array($iva, [4,10,21])) {
-            $this->errores['iva'] = "IVA inválido";
+        if ($iva === false || !in_array($iva, [4, 10, 21], true)) {
+            $this->errores['iva'] = 'El IVA debe ser 4, 10 o 21.';
         }
 
-        /* ========= SI HAY ERRORES → PARAR ========= */
+        if ($categoria_id === false || $categoria_id <= 0) {
+            $this->errores[] = 'Categoría inválida.';
+        }
 
-        if (count($this->errores) > 0) {
+        if (!empty($this->errores)) {
             return;
         }
 
-        /* ========= GUARDAR ========= */
+        $ok = $this->isCreate
+            ? \ProductoService::create($nombre, $descripcion, $categoria_id, (float)$precio, $iva)
+            : \ProductoService::update($this->producto->getId(), $nombre, $descripcion, $categoria_id, (float)$precio, $iva);
 
-        if ($this->isCreate) {
-            \ProductoService::create($nombre, $descripcion, $categoria_id, $precio, $iva);
-        } else {
-            \ProductoService::update(
-                $this->producto->getId(),
-                $nombre,
-                $descripcion,
-                $categoria_id,
-                $precio,
-                $iva
-            );
+        if (!$ok) {
+            $this->errores[] = 'No se pudo guardar el producto.';
+            return;
         }
 
-        /* ========= REDIRECCIÓN ========= */
-
-        $this->urlRedireccion = "mostrarProductosCategoria.php?id=" . $categoria_id;
+        $this->urlRedireccion = 'mostrarProductosCategoria.php?id=' . $categoria_id;
     }
 }
