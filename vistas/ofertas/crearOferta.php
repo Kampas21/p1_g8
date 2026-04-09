@@ -8,10 +8,9 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once __DIR__ . '/../../entities/oferta.php';
-require_once __DIR__ . '/../../entities/ofertaProducto.php';
 require_once __DIR__ . '/../../includes/config.php';
-
+require_once __DIR__ . '/../../includes/ofertaService.php';
+require_once __DIR__ . '/../../includes/ofertaProductoService.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -35,14 +34,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $descuento !== ''
     ) {
 
-        $id = Oferta::crearOferta($nombre, $descripcion, $fecha_inicio, $fecha_fin, $descuento);
+        $id = OfertaService::crearOferta($nombre, $descripcion, $fecha_inicio, $fecha_fin, $descuento);
 
         foreach ($cantidades as $producto_id => $cantidad) {
 
             $cantidad = (int)$cantidad;
 
             if ($cantidad > 0) {
-                OfertaProducto::addProducto($id, $producto_id, $cantidad);
+                ofertaProductoService::addProducto($id, $producto_id, $cantidad);
             }
         }
 

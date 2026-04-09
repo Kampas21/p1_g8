@@ -1,103 +1,66 @@
 <?php
-require_once __DIR__ . '/../includes/application.php';
 
 class Oferta
 {
-    public static function getOfertas()
+
+    private $id;
+    private $nombre;
+    private $descripcion;
+    private $fecha_inicio;
+    private $fecha_fin;
+    private $descuento; // porcentaje, e.g. 20 = 20%
+
+    public function __construct($id, $nombre, $descripcion, $fecha_inicio, $fecha_fin, float $descuento)
     {
-        global $conn;
-
-        $query = "SELECT * FROM ofertas ORDER BY fecha_inicio DESC";
-        $rs = $conn->query($query);
-
-        $ofertas = [];
-
-        while ($fila = $rs->fetch_assoc()) {
-            $ofertas[] = $fila;
-        }
-
-        return $ofertas;
+        $this->id = $id;
+        $this->nombre = $nombre;
+        $this->descripcion = $descripcion;
+        $this->fecha_inicio = $fecha_inicio;
+        $this->fecha_fin = $fecha_fin;
+        $this->descuento = $descuento;
     }
 
-    public static function getOfertasActivas()
+    // Getters
+    public function getId()
     {
-        global $conn;
-
-        $query = "SELECT * FROM ofertas 
-                  WHERE NOW() BETWEEN fecha_inicio AND fecha_fin 
-                  AND activa = 1";
-
-        $rs = $conn->query($query);
-
-        $ofertas = [];
-        while ($fila = $rs->fetch_assoc()) {
-            $ofertas[] = $fila;
-        }
-
-        return $ofertas;
+        return $this->id;
     }
 
-    public static function getOfertaById($id)
+    public function getNombre()
     {
-        global $conn;
-
-        $stmt = $conn->prepare("SELECT * FROM ofertas WHERE id = ?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-
-        return $stmt->get_result()->fetch_assoc();
+        return $this->nombre;
     }
 
-    public static function crearOferta($nombre, $descripcion, $fecha_inicio, $fecha_fin, $descuento)
+    public function getDescripcion()
     {
-        global $conn;
-
-        $stmt = $conn->prepare(
-            "INSERT INTO ofertas (nombre, descripcion, fecha_inicio, fecha_fin, descuento)
-             VALUES (?, ?, ?, ?, ?)"
-        );
-
-        $stmt->bind_param("ssssd", $nombre, $descripcion, $fecha_inicio, $fecha_fin, $descuento);
-        $stmt->execute();
-        return $conn->insert_id;
+        return $this->descripcion;
     }
 
-    public static function editarOferta($id, $nombre, $descripcion, $fecha_inicio, $fecha_fin, $descuento)
+    public function getFechaInicio()
     {
-        global $conn;
-
-        $stmt = $conn->prepare(
-            "UPDATE ofertas 
-             SET nombre = ?, descripcion = ?, fecha_inicio = ?, fecha_fin = ?, descuento = ?
-             WHERE id = ?"
-        );
-
-        $stmt->bind_param("ssssdi", $nombre, $descripcion, $fecha_inicio, $fecha_fin, $descuento, $id);
-        return $stmt->execute();
+        return $this->fecha_inicio;
     }
 
-    public static function borrarOferta($id)
+    public function getFechaFin()
     {
-        global $conn;
-
-        $stmt = $conn->prepare("DELETE FROM ofertas WHERE id = ?");
-        $stmt->bind_param("i", $id);
-        return $stmt->execute();
+        return $this->fecha_fin;
     }
 
-    public static function ofertaEnUso($oferta_id)
+    public function getDescuento()
     {
-        global $conn;
+        return $this->descuento;
+    }
 
-        $stmt = $conn->prepare(
-            "SELECT pedido_id
-         FROM ofertas_en_pedido
-         WHERE oferta_id = ?"
-        );
+    // Método útil: saber si la oferta está activa en el momento actual
+    public function estaActiva()
+    {
+        $ahora = new \DateTimeZone('Europe/Madrid');
+        return $ahora >= $this->fecha_inicio && $ahora <= $this->fecha_fin;
+    }
 
-        $stmt->bind_param("i", $oferta_id);
-        $stmt->execute();
-
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    // Aplicar descuento a un precio
+    public function aplicarDescuento(float $precioOriginal)
+    {
+        return round($precioOriginal * (1 - $this->descuento / 100), 2);
     }
 }

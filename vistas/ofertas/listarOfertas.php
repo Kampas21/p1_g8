@@ -31,8 +31,9 @@ if (!$user || !user_has_role($user, 'gerente')) {
 require_once __DIR__ . '/../../entities/oferta.php';
 //require_once __DIR__ . '/../../entities/producto.php';
 require_once __DIR__ . '/../../includes/productoService.php';
+require_once __DIR__ . '/../../includes/ofertaService.php';
 
-$ofertas = Oferta::getOfertas();
+$ofertas = OfertaService::getAll();
 
 $tituloPagina = 'Lista de ofertas';
 $rutaCSS = '../../CSS/estilo.css';
@@ -63,15 +64,15 @@ ob_start();
 
         <?php foreach ($ofertas as $oferta): ?>
             <tr>
-                <td><?= $oferta['id'] ?></td>
-                <td><?= htmlspecialchars($oferta['nombre']) ?></td>
-                <td class="descripcion"><?= htmlspecialchars($oferta['descripcion']) ?></td>
-                <td><?= htmlspecialchars($oferta['fecha_inicio']) ?></td>
-                <td><?= htmlspecialchars($oferta['fecha_fin']) ?></td>
+                <td><?= $oferta->getId() ?></td>
+                <td><?= htmlspecialchars($oferta->getNombre()) ?></td>
+                <td class="descripcion"><?= htmlspecialchars($oferta->getDescripcion()) ?></td>
+                <td><?= htmlspecialchars($oferta->getFechaInicio()) ?></td>
+                <td><?= htmlspecialchars($oferta->getFechaFin()) ?></td>
 
                 <?php
                 $precio_total = 0;
-                $productos = ProductoService::getProductosDeOferta($oferta['id']); // devuelve un array de productos con cantidad
+                $productos = ProductoService::getProductosDeOferta($oferta->getId()); // devuelve un array de productos con cantidad
                 $lista = array_map(function ($p) use (&$precio_total) {
                     $precio = $p->getPrecioFinal();
                     $precio_cant = $precio * $p->cantidad;
@@ -88,21 +89,21 @@ ob_start();
                 </td>
 
                 <td><?= htmlspecialchars($precio_total) . '€' ?></td>
-                <td><?= htmlspecialchars($oferta['descuento']) . '%' ?></td>
+                <td><?= htmlspecialchars($oferta->getDescuento()) . '%' ?></td>
                 <?php
-                $precio_des = round($precio_total * (1 - $oferta['descuento'] / 100), 2);
+                $precio_des = $oferta->aplicarDescuento($precio_total);
                 ?>
 
                 <td><?= htmlspecialchars($precio_des) . '€' ?></td>
 
                 <td>
-                    <?= (strtotime($oferta['fecha_fin']) <= time())
+                    <?= ($oferta->estaActiva())
                         ? '<span style="color:red">Caducada</span>'
                         : '<span style="color:green">Activa</span>' ?>
                 </td>
                 <td>
-                    <a class="btn editar" href="editarOferta.php?id=<?= $oferta['id'] ?>">Editar</a>
-                    <a class="btn borrar" href="borrarOferta.php?id=<?= $oferta['id'] ?>">Borrar</a>
+                    <a class="btn editar" href="editarOferta.php?id=<?= $oferta->getId() ?>">Editar</a>
+                    <a class="btn borrar" href="borrarOferta.php?id=<?= $oferta->getId() ?>">Borrar</a>
 
                 </td>
             </tr>

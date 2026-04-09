@@ -1,7 +1,5 @@
 <?php
 require_once __DIR__ . '/../../entities/oferta.php';
-
-//require_once __DIR__ . '/../../entities/producto.php';
 require_once __DIR__ . '/../../includes/productoService.php';
 
 $productos = ProductoService::getAllActivos();
@@ -27,7 +25,7 @@ $descuento = $modoEdicion ? $oferta['descuento'] : '';
 $productosSeleccionados = [];
 
 if ($modoEdicion) {
-    $productosSeleccionados = Oferta::getProductosDeOferta($oferta['id']);
+    $productosSeleccionados = ProductoService::getProductosDeOferta($oferta['id']);
 }
 ?>
 
@@ -84,8 +82,8 @@ if ($modoEdicion) {
 
             if ($modoEdicion) {
                 foreach ($productosSeleccionados as $ps) {
-                    if ($ps['producto_id'] == $p->getId()) {
-                        $cantidad = $ps['cantidad'];
+                    if ($ps->getId() == $p->getId()) {
+                        $cantidad = $ps->cantidad;
                         break;
                     }
                 }

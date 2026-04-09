@@ -29,15 +29,17 @@ if (!$user) {
     exit;
 }
 
-require_once __DIR__ . '/../../entities/oferta.php';
+//require_once __DIR__ . '/../../entities/oferta.php';
 //require_once __DIR__ . '/../../entities/producto.php';
 require_once __DIR__ . '/../../includes/productoService.php';
+require_once __DIR__ . '/../../includes/ofertaService.php';
+
 
 $pedido_id = $_POST['pedido_id'] ?? null;
 $modoSeleccion = $pedido_id !== null;
 
 
-$ofertas = Oferta::getOfertasActivas();
+$ofertas = OfertaService::getAllActivas();
 
 $tituloPagina = 'Ofertas disponibles';
 $rutaCSS = '../../CSS/estilo.css';
@@ -71,16 +73,16 @@ ob_start();
                     <!-- CHECKBOX -->
                     <?php if ($modoSeleccion): ?>
                         <td>
-                            <input type="checkbox" name="ofertas[]" value="<?= $oferta['id'] ?>">
+                            <input type="checkbox" name="ofertas[]" value="<?= $oferta->getId() ?>">
                         </td>
                     <?php endif; ?>
 
-                    <td><?= htmlspecialchars($oferta['nombre']) ?></td>
-                    <td><?= htmlspecialchars($oferta['descripcion']) ?></td>
+                    <td><?= htmlspecialchars($oferta->getNombre()) ?></td>
+                    <td><?= htmlspecialchars($oferta->getDescripcion()) ?></td>
 
                     <?php
                     $precio_total = 0;
-                    $productos = ProductoService::getProductosDeOferta($oferta['id']);
+                    $productos = ProductoService::getProductosDeOferta($oferta->getId());
 
                     $lista = array_map(function ($p) use (&$precio_total) {
                         $precio = $p->getPrecioFinal();
@@ -99,10 +101,10 @@ ob_start();
                     </td>
 
                     <td><?= round($precio_total, 2) . '€' ?></td>
-                    <td><?= $oferta['descuento'] . '%' ?></td>
+                    <td><?= $oferta->getDescuento() . '%' ?></td>
 
                     <?php
-                    $precio_final = round($precio_total * (1 - $oferta['descuento'] / 100), 2);
+                    $precio_final = $oferta->aplicarDescuento($precio_total);
                     ?>
 
                     <td><?= $precio_final . '€' ?></td>

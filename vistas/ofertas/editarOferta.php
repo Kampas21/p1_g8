@@ -8,13 +8,13 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once __DIR__ . '/../../entities/oferta.php';
-require_once __DIR__ . '/../../entities/ofertaProducto.php';
+require_once __DIR__ . '/../../includes/ofertaService.php';
+require_once __DIR__ . '/../../includes/ofertaProductoService.php';
 require_once __DIR__ . '/../../includes/config.php';
 
 $id = $_GET['id'] ?? null;
 
-$oferta = Oferta::getOfertaById($id);
+$oferta = OfertaService::getById($id);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $descuento !== ''
     ) {
 
-        Oferta::editarOferta(
+        OfertaService::editarOferta(
             $id,
             $nombre,
             $descripcion,
@@ -52,10 +52,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $cantidad = (int)$cantidad;
 
             if ($cantidad > 0) {
-                OfertaProducto::addProducto($id, $producto_id, $cantidad);
+                OfertaProductoService::addProducto($id, $producto_id, $cantidad);
             }
             else{
-                OfertaProducto::removeProducto($id, $producto_id);
+                OfertaProductoService::removeProducto($id, $producto_id);
             }
         }
 

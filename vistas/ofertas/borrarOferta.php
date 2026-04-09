@@ -1,7 +1,7 @@
 <?php
 
-require_once __DIR__ . '/../../entities/ofertaProducto.php';
-require_once __DIR__ . '/../../entities/oferta.php';
+require_once __DIR__ . '/../../includes/ofertaService.php';
+require_once __DIR__ . '/../../includes/ofertaProductoService.php';
 
 $id = $_GET['id'] ?? null;
 
@@ -12,8 +12,8 @@ if (!$id || !is_numeric($id)) {
 }
 
 
-$oferta = Oferta::getOfertaById((int)$id);
-$oferta_pedido = Oferta::ofertaEnUso((int)$id);
+$oferta = OfertaService::getById((int)$id);
+$oferta_pedido = OfertaService::ofertaEnUso((int)$id);
 
 if (!$oferta) {
     echo '<p>La ofeta no existe.</p>';
@@ -34,8 +34,8 @@ if($oferta_pedido){
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
-    OfertaProducto::removeProductosDeOferta((int)$id);
-    Oferta::borrarOferta((int)$id);
+    OfertaProductoService::removeProductosDeOferta((int)$id);
+    OfertaService::borrarOferta((int)$id);
 
     header("Location: listarOfertas.php");
     exit();
@@ -48,9 +48,9 @@ ob_start();
 
 <link href="../../CSS/estilo.css" rel="stylesheet" type="text/css">
 
-<h1>Borrar <?= htmlspecialchars($oferta['nombre']) ?></h1>
+<h1>Borrar <?= htmlspecialchars($oferta->getNombre()) ?></h1>
 
-<p>¿Seguro que quieres volver a borrar esta oferta <strong><?= htmlspecialchars($oferta['nombre']) ?></strong>?</p>
+<p>¿Seguro que quieres volver a borrar esta oferta <strong><?= htmlspecialchars($oferta->getNombre()) ?></strong>?</p>
 
 <form method="POST">
     <p><button type="submit" class="btn-aceptar">Sí, activar</button></p>
