@@ -1,119 +1,99 @@
-
 <?php
 $tituloPagina = 'Miembros';
-$rutaCSS = '../../CSS/estilo.css';
-ob_start();?>
-<!doctype html>
-<html lang="es">
+ob_start();
+?>
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Miembros | Bistro FDI</title>
- 
-  <link href="CSS/estilo.css" rel="stylesheet" type="text/css">
-  
+<article>
+  <h2 id="top">Miembros del grupo</h2>
 
-  
-</head>
+  <section class="indice" aria-label="Índice de miembros">
+    <p>Selecciona un nombre para ir directamente a su ficha:</p>
+    <ul>
+      <li><a href="#yassim-abdelaziz-mohamed">YASSIM ABDELAZIZ MOHAMED</a></li>
+      <li><a href="#manuel-calzada-garcia">MANUEL CALZADA GARCÍA</a></li>
+      <li><a href="#pablo-gomez-poveda">PABLO GÓMEZ POVEDA</a></li>
+      <li><a href="#roberto-bernabeu-leco">ROBERTO BERNABÉU LECO</a></li>
+      <li><a href="#jose-manuel-pais-mejias">JOSÉ MANUEL PAIS MEJÍAS</a></li>
+    </ul>
+  </section>
 
-<body>
-  
+  <section id="yassim-abdelaziz-mohamed" class="miembro">
+    <h3>YASSIM ABDELAZIZ MOHAMED</h3>
+    <div class="miembro-contenido">
+      <figure>
+        <img class="foto-miembro" src="img/miembros/yassim.png" alt="Foto de Yassim Abdelaziz Mohamed">
+      </figure>
 
-  <main>
-    <h2 id="top">Miembros del grupo</h2>
-
-    <section class="indice" aria-label="Índice de miembros">
-      <p>Selecciona un nombre para ir directamente a su ficha:</p>
-      <ul>
-        <li><a href="#yassim-abdelaziz-mohamed">YASSIM ABDELAZIZ MOHAMED</a></li>
-        <li><a href="#manuel-calzada-garcia">MANUEL CALZADA GARCÍA</a></li>
-        <li><a href="#pablo-gomez-poveda">PABLO GÓMEZ POVEDA</a></li>
-        <li><a href="#roberto-bernabeu-leco">ROBERTO BERNABÉU LECO</a></li>
-        <li><a href="#jose-manuel-pais-mejias">JOSÉ MANUEL PAIS MEJÍAS</a></li>
-      </ul>
-    </section>
-
-    <section id="yassim-abdelaziz-mohamed" class="miembro">
-      <h3>YASSIM ABDELAZIZ MOHAMED</h3>
-      <div class="miembro-contenido">
-        <figure>
-          <img class="foto-miembro" src="img/miembros/yassim.png" alt="Foto de Yassim Abdelaziz Mohamed">
-        </figure>
-
-        <div class="datos-miembro">
-          <p><strong>Correo:</strong> <a href="mailto:yaabdela@ucm.es">yaabdela@ucm.es</a></p>
-          <p>Le interesan la programación web, la ciberseguridad y el diseño de interfaces. En su tiempo libre practica deporte, cocina recetas nuevas y disfruta aprendiendo tecnologías que mejoren la experiencia de usuario.</p>
-          <p class="volver-arriba"><a href="#top">Volver al índice</a></p>
-        </div>
+      <div class="datos-miembro">
+        <p><strong>Correo:</strong> <a href="mailto:yaabdela@ucm.es">yaabdela@ucm.es</a></p>
+        <p>Le interesan la programación web, la ciberseguridad y el diseño de interfaces. En su tiempo libre practica deporte, cocina recetas nuevas y disfruta aprendiendo tecnologías que mejoren la experiencia de usuario.</p>
+        <p class="volver-arriba"><a href="#top">Volver al índice</a></p>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="manuel-calzada-garcia" class="miembro">
-      <h3>MANUEL CALZADA GARCÍA</h3>
-      <div class="miembro-contenido">
-        <figure>
-          <img class="foto-miembro" src="img/miembros/manuel.png" alt="Foto de Manuel Calzada García">
-        </figure>
+  <section id="manuel-calzada-garcia" class="miembro">
+    <h3>MANUEL CALZADA GARCÍA</h3>
+    <div class="miembro-contenido">
+      <figure>
+        <img class="foto-miembro" src="img/miembros/manuel.png" alt="Foto de Manuel Calzada García">
+      </figure>
 
-        <div class="datos-miembro">
-          <p><strong>Correo:</strong> <a href="mailto:mancal02@ucm.es">mancal02@ucm.es</a></p>
-          <p>Le gusta el desarrollo back-end, la organización de proyectos y el trabajo en equipo. También le interesan las bases de datos y la optimización de consultas. En su tiempo libre lee, hace senderismo y sigue el fútbol.</p>
-          <p class="volver-arriba"><a href="#top">Volver al índice</a></p>
-        </div>
+      <div class="datos-miembro">
+        <p><strong>Correo:</strong> <a href="mailto:mancal02@ucm.es">mancal02@ucm.es</a></p>
+        <p>Le gusta el desarrollo back-end, la organización de proyectos y el trabajo en equipo. También le interesan las bases de datos y la optimización de consultas. En su tiempo libre lee, hace senderismo y sigue el fútbol.</p>
+        <p class="volver-arriba"><a href="#top">Volver al índice</a></p>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="pablo-gomez-poveda" class="miembro">
-      <h3>PABLO GÓMEZ POVEDA</h3>
-      <div class="miembro-contenido">
-        <figure>
-          <img class="foto-miembro" src="img/miembros/pablo.png" alt="Foto de Pablo Gómez Poveda">
-        </figure>
+  <section id="pablo-gomez-poveda" class="miembro">
+    <h3>PABLO GÓMEZ POVEDA</h3>
+    <div class="miembro-contenido">
+      <figure>
+        <img class="foto-miembro" src="img/miembros/pablo.png" alt="Foto de Pablo Gómez Poveda">
+      </figure>
 
-        <div class="datos-miembro">
-          <p><strong>Correo:</strong> <a href="mailto:pagome25@ucm.es">pagome25@ucm.es</a></p>
-          <p>Está interesado en el diseño de productos digitales y en cómo convertir requisitos en funcionalidades claras. Le gusta aprender buenas prácticas de accesibilidad y maquetación. En su tiempo libre escucha música, viaja y fotografía paisajes.</p>
-          <p class="volver-arriba"><a href="#top">Volver al índice</a></p>
-        </div>
+      <div class="datos-miembro">
+        <p><strong>Correo:</strong> <a href="mailto:pagome25@ucm.es">pagome25@ucm.es</a></p>
+        <p>Está interesado en el diseño de productos digitales y en cómo convertir requisitos en funcionalidades claras. Le gusta aprender buenas prácticas de accesibilidad y maquetación. En su tiempo libre escucha música, viaja y fotografía paisajes.</p>
+        <p class="volver-arriba"><a href="#top">Volver al índice</a></p>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="roberto-bernabeu-leco" class="miembro">
-      <h3>ROBERTO BERNABÉU LECO</h3>
-      <div class="miembro-contenido">
-        <figure>
-          <img class="foto-miembro" src="img/miembros/roberto.png" alt="Foto de Roberto Bernabéu Leco">
-        </figure>
+  <section id="roberto-bernabeu-leco" class="miembro">
+    <h3>ROBERTO BERNABÉU LECO</h3>
+    <div class="miembro-contenido">
+      <figure>
+        <img class="foto-miembro" src="img/miembros/roberto.png" alt="Foto de Roberto Bernabéu Leco">
+      </figure>
 
-        <div class="datos-miembro">
-          <p><strong>Correo:</strong> <a href="mailto:robernab@ucm.es">robernab@ucm.es</a></p>
-          <p>Le interesan las arquitecturas web y la calidad del software. Disfruta revisando código y buscando formas de mejorar la mantenibilidad. En su tiempo libre juega a videojuegos, practica deporte y sigue noticias de tecnología.</p>
-          <p class="volver-arriba"><a href="#top">Volver al índice</a></p>
-        </div>
+      <div class="datos-miembro">
+        <p><strong>Correo:</strong> <a href="mailto:robernab@ucm.es">robernab@ucm.es</a></p>
+        <p>Le interesan las arquitecturas web y la calidad del software. Disfruta revisando código y buscando formas de mejorar la mantenibilidad. En su tiempo libre juega a videojuegos, practica deporte y sigue noticias de tecnología.</p>
+        <p class="volver-arriba"><a href="#top">Volver al índice</a></p>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="jose-manuel-pais-mejias" class="miembro">
-      <h3>JOSÉ MANUEL PAIS MEJÍAS</h3>
-      <div class="miembro-contenido">
-        <figure>
-          <img class="foto-miembro" src="img/miembros/jose.png" alt="Foto de José Manuel Pais Mejías">
-        </figure>
+  <section id="jose-manuel-pais-mejias" class="miembro">
+    <h3>JOSÉ MANUEL PAIS MEJÍAS</h3>
+    <div class="miembro-contenido">
+      <figure>
+        <img class="foto-miembro" src="img/miembros/jose.png" alt="Foto de José Manuel Pais Mejías">
+      </figure>
 
-        <div class="datos-miembro">
-          <p><strong>Correo:</strong> <a href="mailto:jpais01@ucm.es">jpais01@ucm.es</a></p>
-          <p>Le atrae la parte de análisis y planificación, y cómo estructurar una web para que sea fácil de navegar. También le interesa el diseño responsive y la experiencia de usuario. En su tiempo libre hace deporte, ve series y cocina.</p>
-          <p class="volver-arriba"><a href="#top">Volver al índice</a></p>
-        </div>
+      <div class="datos-miembro">
+        <p><strong>Correo:</strong> <a href="mailto:jpais01@ucm.es">jpais01@ucm.es</a></p>
+        <p>Le atrae la parte de análisis y planificación, y cómo estructurar una web para que sea fácil de navegar. También le interesa el diseño responsive y la experiencia de usuario. En su tiempo libre hace deporte, ve series y cocina.</p>
+        <p class="volver-arriba"><a href="#top">Volver al índice</a></p>
       </div>
-    </section>
-  </main>
-
-</body>
-
-</html>
+    </div>
+  </section>
+</article>
 
 <?php
 $contenidoPrincipal = ob_get_clean();
 require __DIR__ . '/includes/plantilla.php';
+?>

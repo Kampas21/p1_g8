@@ -16,6 +16,7 @@ if (!$user) {
     $rutaCSS = '../../CSS/estilo.css';
 
     ob_start();
+
 ?>
     <div class="panel">
         <h1>Acceso bloqueado</h1>
@@ -29,10 +30,10 @@ if (!$user) {
 }
 
 require_once __DIR__ . '/../../entities/oferta.php';
-require_once __DIR__ . '/../../entities/producto.php';
+//require_once __DIR__ . '/../../entities/producto.php';
+require_once __DIR__ . '/../../includes/productoService.php';
 
-
-$pedido_id = $_GET['pedido_id'] ?? null;
+$pedido_id = $_POST['pedido_id'] ?? null;
 $modoSeleccion = $pedido_id !== null;
 
 
@@ -79,13 +80,13 @@ ob_start();
 
                     <?php
                     $precio_total = 0;
-                    $productos = Oferta::getProductosDeOferta($oferta['id']);
+                    $productos = ProductoService::getProductosDeOferta($oferta['id']);
 
                     $lista = array_map(function ($p) use (&$precio_total) {
-                        $precio = Producto::getPrecioFinal($p['precio_base'], $p['iva']);
-                        $precio_cant = $precio * $p['cantidad'];
+                        $precio = $p->getPrecioFinal();
+                        $precio_cant = $precio * $p->cantidad;
                         $precio_total += $precio_cant;
-                        return $p['nombre'] . ' (' . $p['cantidad'] . ') ' . round($precio_cant, 2) . '€';
+                        return $p->getNombre() . ' (' . $p->cantidad . ') ' . round($precio_cant, 2) . '€';
                     }, $productos);
                     ?>
 

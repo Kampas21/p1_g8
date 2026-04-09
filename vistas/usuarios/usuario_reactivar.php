@@ -1,0 +1,28 @@
+<?php
+declare(strict_types=1);
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+require_once __DIR__ . '/../../includes/user_repo.php';
+require_once __DIR__ . '/../../includes/auth.php';
+
+$admin = require_role('gerente');
+
+
+if (!is_post()) {
+    redirect(RUTA_APP . '/vistas/usuarios/usuarios.php');
+}
+require_csrf();
+
+$id = (int)($_POST['id'] ?? 0);
+
+if ($id > 0) {
+    user_reactivate($id);
+    flash_set('success', 'Usuario reactivado correctamente.');
+} else {
+    flash_set('error', 'ID de usuario no válido.');
+}
+
+redirect(RUTA_APP . '/vistas/usuarios/usuarios.php?ver=todo');

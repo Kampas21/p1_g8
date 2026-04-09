@@ -11,7 +11,8 @@ function mostrarSaludo(): string {
     $user = current_user();
 
     if ($user) {
-        $nombre = $user['nombre'] ?? $user['username'] ?? 'Usuario';
+        // Ahora usamos los getters del objeto
+        $nombre = $user->getNombre() ?: $user->getUsername();
         return "Bienvenido, " . htmlspecialchars($nombre) .
             " <a href='" . RUTA_APP . "/vistas/usuarios/logout.php'>(salir)</a>";
     }

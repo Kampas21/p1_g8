@@ -85,20 +85,6 @@ class Oferta
         return $stmt->execute();
     }
 
-    public static function getProductosDeOferta($oferta_id)
-    {
-        global $conn;
-        $stmt = $conn->prepare(
-            "SELECT op.producto_id, p.nombre, op.cantidad, p.precio_base, p.iva
-         FROM oferta_productos op
-         JOIN productos p ON p.id = op.producto_id
-         WHERE op.oferta_id = ?"
-        );
-        $stmt->bind_param("i", $oferta_id);
-        $stmt->execute();
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    }
-
     public static function ofertaEnUso($oferta_id)
     {
         global $conn;

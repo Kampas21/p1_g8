@@ -10,17 +10,16 @@ class FormularioAdminUsuario extends Formulario
     private $isCreate;
     private $userToEdit;
 
-    public function __construct(bool $isCreate, ?array $userToEdit = null) {
+    public function __construct(bool $isCreate, ?\Usuario $userToEdit = null) { // ¡Ojo al tipo \Usuario!
         $this->isCreate = $isCreate;
         $this->userToEdit = $userToEdit;
         
         $opciones = ['enctype' => 'multipart/form-data'];
         
-        // Si no es creación, redirige a la ficha del usuario al acabar
         if (!$isCreate && $userToEdit) {
-            $opciones['urlRedireccion'] = RUTA_APP.'/vistas/usuarios/usuario_ver.php?id='.$userToEdit['id'];
+            $opciones['urlRedireccion'] = RUTA_APP.'/vistas/usuarios/usuario_ver.php?id='.$userToEdit->getId();
         } else {
-            $opciones['urlRedireccion'] = RUTA_APP.'/entities/usuarios.php';
+            $opciones['urlRedireccion'] = RUTA_APP.'/vistas/usuarios/usuarios.php';
         }
 
         parent::__construct('formAdminUsuario', $opciones);
@@ -28,11 +27,11 @@ class FormularioAdminUsuario extends Formulario
     
     protected function generaCamposFormulario(&$datos)
     {
-        $username = $datos['username'] ?? $this->userToEdit['username'] ?? '';
-        $email = $datos['email'] ?? $this->userToEdit['email'] ?? '';
-        $nombre = $datos['nombre'] ?? $this->userToEdit['nombre'] ?? '';
-        $apellidos = $datos['apellidos'] ?? $this->userToEdit['apellidos'] ?? '';
-        $rol = $datos['rol'] ?? $this->userToEdit['rol'] ?? 'cliente';
+        $username = $datos['username'] ?? ($this->userToEdit ? $this->userToEdit->getUsername() : '');
+        $email = $datos['email'] ?? ($this->userToEdit ? $this->userToEdit->getEmail() : '');
+        $nombre = $datos['nombre'] ?? ($this->userToEdit ? $this->userToEdit->getNombre() : '');
+        $apellidos = $datos['apellidos'] ?? ($this->userToEdit ? $this->userToEdit->getApellidos() : '');
+        $rol = $datos['rol'] ?? ($this->userToEdit ? $this->userToEdit->getRol() : 'cliente');
 
         $htmlErroresGlobales = self::generaListaErroresGlobales($this->errores);
         $erroresCampos = self::generaErroresCampos(
@@ -126,7 +125,7 @@ class FormularioAdminUsuario extends Formulario
         } else {
             // Si el gerente cambia el rol y no sube foto, forzamos un Avatar Predefinido automático
             $rolSeleccionado = $_POST['rol'] ?? 'cliente';
-            $rolActual = $this->userToEdit['rol'] ?? 'cliente';
+            $rolActual = $this->userToEdit ? $this->userToEdit->getRol() : 'cliente';
             
             if ($rolSeleccionado !== $rolActual || $this->isCreate) {
                 $_POST['avatar_mode'] = 'preset';
@@ -141,7 +140,7 @@ class FormularioAdminUsuario extends Formulario
             } else {
                 // Si el gerente cambia el rol y no sube foto, forzamos un Avatar Predefinido automático
             $rolSeleccionado = $_POST['rol'] ?? 'cliente';
-            $rolActual = $this->userToEdit['rol'] ?? 'cliente';
+            $rolActual = $this->userToEdit ? $this->userToEdit->getRol() : 'cliente';
             
             if ($rolSeleccionado !== $rolActual || $this->isCreate) {
                 $_POST['avatar_mode'] = 'preset';
@@ -159,7 +158,7 @@ class FormularioAdminUsuario extends Formulario
             }
         }
 
-        $ignoreId = $this->isCreate ? null : (int)$this->userToEdit['id'];
+        $ignoreId = $this->isCreate ? null : (int)$this->userToEdit->getId()    ;
         
         list($clean, $erroresValidacion) = \user_validate_data($_POST, $this->isCreate, $ignoreId, true);
         
@@ -179,10 +178,10 @@ class FormularioAdminUsuario extends Formulario
                 \user_create($clean, $avatarChoice);
                 \flash_set('success', 'Usuario creado con éxito.');
             } else {
-                \user_update((int)$this->userToEdit['id'], $clean, [
+                \user_update((int)$this->userToEdit->getId(), $clean, [
                     'avatar_choice' => $avatarChoice,
                     'allow_role' => true
-                ]);
+                ]); 
                 \flash_set('success', 'Usuario actualizado con éxito.');
             }
         }

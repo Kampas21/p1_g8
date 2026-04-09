@@ -1,9 +1,10 @@
 <?php
 require_once __DIR__ . '/../../entities/oferta.php';
 
-require_once __DIR__ . '/../../entities/producto.php';
+//require_once __DIR__ . '/../../entities/producto.php';
+require_once __DIR__ . '/../../includes/productoService.php';
 
-$productos = Producto::getProductos();
+$productos = ProductoService::getAllActivos();
 
 $modoEdicion = isset($oferta);
 
@@ -83,7 +84,7 @@ if ($modoEdicion) {
 
             if ($modoEdicion) {
                 foreach ($productosSeleccionados as $ps) {
-                    if ($ps['producto_id'] == $p['id']) {
+                    if ($ps['producto_id'] == $p->getId()) {
                         $cantidad = $ps['cantidad'];
                         break;
                     }
@@ -103,12 +104,12 @@ if ($modoEdicion) {
                 <?php endif; ?>
 
 
-                <td><?= htmlspecialchars($p['nombre']) ?></td>
-                <td><?= number_format(Producto::getPrecioFinal($p['precio_base'], $p['iva']), 2) ?> €</td>
+                <td><?= htmlspecialchars($p->getNombre()) ?></td>
+                <td><?= number_format($p->getPrecioFinal(), 2) ?> €</td>
 
                 <td>
                     <input type="number"
-                        name="cantidades[<?= $p['id'] ?>]"
+                        name="cantidades[<?= $p->getNombre() ?>]"
                         value="<?= $cantidad ?>"
                         min="0">
                 </td>

@@ -11,6 +11,8 @@ class Producto {
     private $disponible;
     private $ofertado;
 
+    public $cantidad = 0;
+
     public function __construct($id, $nombre, $descripcion, $categoria_id, $precio, $iva, $disponible, $ofertado) {
         $this->id = $id;
         $this->nombre = $nombre;
@@ -55,6 +57,10 @@ class Producto {
     }
 
     public function getPrecioFinal() {
+<<<<<<< HEAD
         return round($this->precio * (1 + $this->iva / 100), 2);
     }
+=======
+    return round($this->precio * (1 + $this->iva / 100), 2);}
+>>>>>>> 02a7ae2da73ba46f74f12d6b3ce5d1d78125ca97
 }

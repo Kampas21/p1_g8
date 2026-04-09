@@ -39,7 +39,7 @@ ob_start();
 <h1>Lista de Categorías</h1>
 
 <p>
-    <a class="btn-nuevo" href="crearCategoria.php">Nueva Categoría</a>
+    <a href="categoria_form.php?modo=crear" class="btn primary">Nueva categoría</a>
 </p>
 
 <table border="1">
@@ -63,15 +63,12 @@ ob_start();
 
         <td>
             <?= $cat->isActiva()
-                ? '<span style="color:green">Activa</span>'
-                : '<span style="color:red">Inactiva</span>' ?>
+                ? '<span class="texto-exito">Activa</span>'
+                : '<span class="texto-error">Inactiva</span>' ?>
         </td>
 
         <td>
-            <a class="btn editar"
-               href="editarCategoria.php?id=<?= $cat->getId() ?>">
-                Editar
-            </a>
+            <a href="categoria_form.php?id=<?= $cat->getId() ?>" class="btn small primary">Editar</a>
 
             <a class="btn prod"
                href="../productos/mostrarProductosCategoria.php?id=<?= $cat->getId() ?>">

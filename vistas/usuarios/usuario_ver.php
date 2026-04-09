@@ -38,30 +38,30 @@ ob_start();
 
   <section class="panel">
     <div class="profile-top">
-      <img class="avatar lg" src="<?= e($user['avatar_url']) ?>" alt="Avatar de <?= e($user['username']) ?>">
+      <img class="avatar lg" src="<?= e($user->getAvatarUrl()) ?>" alt="Avatar de <?= e($user->getUsername()) ?>">
       <div>
         <dl>
-          <p><strong>ID:</strong> <?= (int)$user['id'] ?></p>
-          <p><strong>Usuario:</strong> <?= e($user['username']) ?></p>
-          <p><strong>Email:</strong> <?= e($user['email']) ?></p>
-          <p><strong>Nombre:</strong> <?= e($user['nombre']) ?></p>
-          <p><strong>Apellidos:</strong> <?= e($user['apellidos']) ?></p>
-          <p><strong>Rol:</strong> <?= e(role_label((string)$user['rol'])) ?></p>
-          <p><strong>Estado:</strong> <?= (int)$user['activo'] === 1 ? 'Activo' : 'Inactivo' ?></p>
-          <p><strong>Actualizado:</strong> <?= e((string)$user['updated_at']) ?></p>
+          <p><strong>ID:</strong> <?= $user->getId() ?></p>
+          <p><strong>Usuario:</strong> <?= e($user->getUsername()) ?></p>
+          <p><strong>Email:</strong> <?= e($user->getEmail()) ?></p>
+          <p><strong>Nombre:</strong> <?= e($user->getNombre()) ?></p>
+          <p><strong>Apellidos:</strong> <?= e($user->getApellidos()) ?></p>
+          <p><strong>Rol:</strong> <?= e(role_label((string)$user->getRol())) ?></p>
+          <p><strong>Estado:</strong> <?= $user->isActivo() ? '<span class="texto-exito">Activo</span>' : '<span class="texto-error">Inactivo</span>' ?></p>
+          <p><strong>Actualizado:</strong> <?= e($user->getUpdatedAt()) ?></p>
         </dl>
       </div>
     </div>
 
-    <div class="actions-inline" style="margin-top:14px;">
-      <a class="btn" href="<?= RUTA_APP ?>/entities/usuarios.php">Volver al listado</a>
-      <a class="btn primary" href="<?= RUTA_APP ?>/vistas/usuarios/usuario_form.php?id=<?= (int)$user['id'] ?>">Editar usuario</a>
+    <div class="actions-inline mt-14">
+      <a class="btn" href="usuarios.php">Volver al listado</a>
+      <a class="btn primary" href="usuario_form.php?id=<?= $user->getId() ?>">Editar usuario</a>
 
-      <?php if ((int)$user['activo'] === 1): ?>
-        <form method="post" action="<?= RUTA_APP ?>/vistas/usuarios/usuario_eliminar.php" onsubmit="return confirm('¿Desactivar este usuario?');" style="display:inline;">
+      <?php if ($user->isActivo()): ?>
+        <form method="post" action="usuario_eliminar.php" onsubmit="return confirm('¿Desactivar este usuario?');" class="d-inline">
           <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
-          <input type="hidden" name="id" value="<?= (int)$user['id'] ?>">
-          <button class="danger" type="submit" <?= (int)$user['id'] === (int)$admin['id'] ? 'disabled' : '' ?>>Borrar (desactivar)</button>
+          <input type="hidden" name="id" value="<?= $user->getId() ?>">
+          <button class="btn danger" type="submit" <?= $user->getId() === $admin->getId() ? 'disabled' : '' ?>>Borrar (desactivar)</button>
         </form>
       <?php endif; ?>
     </div>

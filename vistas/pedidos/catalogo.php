@@ -4,6 +4,8 @@ require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/application.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/util.php';
+require_once __DIR__ . '/../../includes/categoriaService.php';
+require_once __DIR__ . '/../../includes/productoService.php';
 require_once __DIR__ . '/../../entities/pedido.php';
 require_once __DIR__ . '/../../entities/producto.php';
 require_once __DIR__ . '/../../entities/categoria.php';
@@ -23,9 +25,9 @@ if (is_post()) {
     $categoria_id = (int)($_POST['categoria_id'] ?? 0);
 
     if ($producto_id > 0) {
-        $producto = Producto::getProductoById($producto_id);
+        $producto = ProductoService::getById($producto_id);
         if ($producto) {
-            $precio = Producto::getPrecioFinal($producto['precio_base'], $producto['iva']);
+            $precio = $producto->getPrecioFinal();
             Pedido::addProducto($pedido_id, $producto_id, $precio);
             flash_set('success', 'Producto añadido al carrito.');
         }
@@ -41,14 +43,14 @@ $categoria_id = isset($_GET['categoria']) && is_numeric($_GET['categoria'])
     : null;
 
 if ($categoria_id) {
-    $productos = Producto::getProductosByCategoria($categoria_id);
-    $categoria = Categoria::getCategoriaById($categoria_id);
+    $productos = ProductoService::getAllByCategoria($categoria_id);
+    $categoria = CategoriaService::getById($categoria_id);
 } else {
-    $categorias = Categoria::getCategorias();
+    $categorias = CategoriaService::getAll();
 }
 
 $titulo = $categoria_id && isset($categoria)
-    ? 'Catálogo — ' . e($categoria['nombre'])
+    ? 'Catálogo — ' . e($categoria->getNombre())
     : 'Catálogo';
 
 // ---- EMPIEZA LA VISTA DEL PROYECTO ----
@@ -73,7 +75,7 @@ ob_start();
         <a href="carrito.php" class="btn primary">🛒 Ver carrito</a>
       </div>
 
-      <h2><?= e($categoria['nombre']) ?></h2>
+      <h2><?= e($categoria->getNombre()) ?></h2>
 
       <?php if (empty($productos)): ?>
         <p>No hay productos disponibles en esta categoría.</p>
@@ -91,12 +93,12 @@ ob_start();
             <tbody>
             <?php foreach ($productos as $p): ?>
               <tr>
-                <td><?= e($p['nombre']) ?></td>
-                <td><?= e($p['descripcion']) ?></td>
-                <td><?= Producto::getPrecioFinal($p['precio_base'], $p['iva']) ?> €</td>
+                <td><?= e($p->getNombre()) ?></td>
+                <td><?= e($p->getDescripcion()) ?></td>
+                <td><?= $p->getPrecioFinal() ?> €</td>
                 <td>
                   <form method="POST" action="catalogo.php">
-                    <input type="hidden" name="producto_id" value="<?= (int)$p['id'] ?>">
+                    <input type="hidden" name="producto_id" value="<?= (int)$p->getId() ?>">
                     <input type="hidden" name="categoria_id" value="<?= $categoria_id ?>">
                     <button type="submit" class="btn primary small">+ Añadir</button>
                   </form>
@@ -118,8 +120,8 @@ ob_start();
 
       <div style="display:flex; flex-wrap:wrap; gap:12px; margin-top:8px;">
         <?php foreach ($categorias as $cat): ?>
-          <a href="catalogo.php?categoria=<?= (int)$cat['id'] ?>" class="btn" style="font-size:15px; padding:12px 20px;">
-            <?= e($cat['nombre']) ?>
+          <a href="catalogo.php?categoria=<?= (int)$cat->getId() ?>" class="btn" style="font-size:15px; padding:12px 20px;">
+            <?= e($cat->getNombre()) ?>
           </a>
         <?php endforeach; ?>
       </div>

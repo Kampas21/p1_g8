@@ -1,9 +1,9 @@
 <?php
 session_start();
 require_once __DIR__ . '/../../includes/config.php';
-require_once __DIR__ . '/../../includes/application.php'; 
-require_once __DIR__ . '/../../includes/auth.php'; 
-require_once __DIR__ . '/../../includes/util.php'; 
+require_once __DIR__ . '/../../includes/application.php';
+require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/util.php';
 require_once __DIR__ . '/../../entities/pedido.php';
 
 $user = require_login();
@@ -11,49 +11,49 @@ $usuario_id = (int)$user['id'];
 
 $pedido = Pedido::getPedidoNuevo($usuario_id);
 if (!$pedido) {
-    redirect('elegirTipo.php'); 
+  redirect('elegirTipo.php');
 }
 $pedido_id = $pedido['id'];
 
 // Procesar acciones POST
 if (is_post()) {
-    $accion      = $_POST['accion'] ?? '';
-    $producto_id = (int)($_POST['producto_id'] ?? 0);
+  $accion      = $_POST['accion'] ?? '';
+  $producto_id = (int)($_POST['producto_id'] ?? 0);
 
-    if ($accion === 'actualizar' && $producto_id > 0) {
-        $cantidad = (int)($_POST['cantidad'] ?? 1);
-        if ($cantidad <= 0) {
-            Pedido::removeProducto($pedido_id, $producto_id);
-            flash_set('success', 'Producto eliminado del carrito.');
-        } else {
-            Pedido::updateCantidad($pedido_id, $producto_id, $cantidad);
-            flash_set('success', 'Cantidad actualizada.');
-        }
-        redirect('carrito.php');
+  if ($accion === 'actualizar' && $producto_id > 0) {
+    $cantidad = (int)($_POST['cantidad'] ?? 1);
+    if ($cantidad <= 0) {
+      Pedido::removeProducto($pedido_id, $producto_id);
+      flash_set('success', 'Producto eliminado del carrito.');
+    } else {
+      Pedido::updateCantidad($pedido_id, $producto_id, $cantidad);
+      flash_set('success', 'Cantidad actualizada.');
     }
+    redirect('carrito.php');
+  }
 
-    if ($accion === 'eliminar' && $producto_id > 0) {
-        Pedido::removeProducto($pedido_id, $producto_id);
-        flash_set('success', 'Producto eliminado.');
-        redirect('carrito.php');
-    }
+  if ($accion === 'eliminar' && $producto_id > 0) {
+    Pedido::removeProducto($pedido_id, $producto_id);
+    flash_set('success', 'Producto eliminado.');
+    redirect('carrito.php');
+  }
 
-    if ($accion === 'cancelar') {
-        Pedido::cancelarPedido($pedido_id);
-        flash_set('success', 'Pedido cancelado.');
-        redirect('elegirTipo.php');
-    }
+  if ($accion === 'cancelar') {
+    Pedido::cancelarPedido($pedido_id);
+    flash_set('success', 'Pedido cancelado.');
+    redirect('elegirTipo.php');
+  }
 
-    if ($accion === 'confirmar') {
-        redirect('pago.php');
-    }
+  if ($accion === 'confirmar') {
+    redirect('pago.php');
+  }
 }
 
 $lineas = Pedido::getProductosPedido($pedido_id);
 
 $total = 0;
 foreach ($lineas as $linea) {
-    $total += $linea['precio_unitario'] * $linea['cantidad'];
+  $total += $linea['precio_unitario'] * $linea['cantidad'];
 }
 $total = round($total, 2);
 
@@ -64,10 +64,10 @@ ob_start();
 ?>
 
 <main>
-  
-  <?php 
+
+  <?php
   foreach (flash_get_all() as $f): ?>
-      <div class="mensaje-<?= e($f['type']) ?>"><?= e($f['message']) ?></div>
+    <div class="mensaje-<?= e($f['type']) ?>"><?= e($f['message']) ?></div>
   <?php endforeach; ?>
 
   <div class="panel">
@@ -83,7 +83,7 @@ ob_start();
 
     <?php else: ?>
       <div class="table-wrap">
-                <table>
+        <table>
           <thead>
             <tr>
               <th>Imagen</th> <!-- NUEVA CABECERA -->
@@ -95,37 +95,37 @@ ob_start();
             </tr>
           </thead>
           <tbody>
-          <?php foreach ($lineas as $linea): ?>
-            <tr>
-              <!-- NUEVA COLUMNA DE IMAGEN -->
-              <td style="text-align: center;">
-                <?php if (!empty($linea['imagen'])): ?>
-                  <img src="<?= RUTA_APP . '/' . e($linea['imagen']) ?>" alt="<?= e($linea['nombre']) ?>" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
-                <?php else: ?>
-                  <span style="font-size: 12px; color: #888;">(Sin imagen)</span>
-                <?php endif; ?>
-              </td>
-              
-              <td><?= e($linea['nombre']) ?></td>
-              <td><?= e($linea['precio_unitario']) ?> €</td>
-              <td>
-                <form method="POST" action="carrito.php" style="display:inline-flex;gap:6px;align-items:center;">
-                  <input type="hidden" name="accion" value="actualizar">
-                  <input type="hidden" name="producto_id" value="<?= (int)$linea['producto_id'] ?>">
-                  <input type="number" name="cantidad" value="<?= (int)$linea['cantidad'] ?>" min="0" style="width:54px;padding:4px;">
-                  <button type="submit" class="btn small">OK</button>
-                </form>
-              </td>
-              <td><?= round($linea['precio_unitario'] * $linea['cantidad'], 2) ?> €</td>
-              <td>
-                <form method="POST" action="carrito.php">
-                  <input type="hidden" name="accion" value="eliminar">
-                  <input type="hidden" name="producto_id" value="<?= (int)$linea['producto_id'] ?>">
-                  <button type="submit" class="btn danger small">Eliminar</button>
-                </form>
-              </td>
-            </tr>
-          <?php endforeach; ?>
+            <?php foreach ($lineas as $linea): ?>
+              <tr>
+                <!-- NUEVA COLUMNA DE IMAGEN -->
+                <td style="text-align: center;">
+                  <?php if (!empty($linea['imagen'])): ?>
+                    <img src="<?= RUTA_APP . '/' . e($linea['imagen']) ?>" alt="<?= e($linea['nombre']) ?>" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                  <?php else: ?>
+                    <span style="font-size: 12px; color: #888;">(Sin imagen)</span>
+                  <?php endif; ?>
+                </td>
+
+                <td><?= e($linea['nombre']) ?></td>
+                <td><?= e($linea['precio_unitario']) ?> €</td>
+                <td>
+                  <form method="POST" action="carrito.php" style="display:inline-flex;gap:6px;align-items:center;">
+                    <input type="hidden" name="accion" value="actualizar">
+                    <input type="hidden" name="producto_id" value="<?= (int)$linea['producto_id'] ?>">
+                    <input type="number" name="cantidad" value="<?= (int)$linea['cantidad'] ?>" min="0" style="width:54px;padding:4px;">
+                    <button type="submit" class="btn small">OK</button>
+                  </form>
+                </td>
+                <td><?= round($linea['precio_unitario'] * $linea['cantidad'], 2) ?> €</td>
+                <td>
+                  <form method="POST" action="carrito.php">
+                    <input type="hidden" name="accion" value="eliminar">
+                    <input type="hidden" name="producto_id" value="<?= (int)$linea['producto_id'] ?>">
+                    <button type="submit" class="btn danger small">Eliminar</button>
+                  </form>
+                </td>
+              </tr>
+            <?php endforeach; ?>
           </tbody>
           <tfoot>
             <tr>
@@ -139,6 +139,11 @@ ob_start();
 
       <div class="actions-inline" style="margin-top:16px;">
         <a href="catalogo.php" class="btn">← Seguir añadiendo</a>
+
+        <form method="POST" action="../ofertas/ofertaCliente.php" style="display:inline-block;">
+          <input type="hidden" name="pedido_id" value="<?= (int)$pedido_id ?>">
+          <button type="submit" class="btn">Ofertas</button>
+        </form>
 
         <form method="POST" action="carrito.php" style="display:inline-block;">
           <input type="hidden" name="accion" value="confirmar">

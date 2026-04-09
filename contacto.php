@@ -1,74 +1,43 @@
 <?php
-$tituloPagina = 'Título de la página';
-$rutaCSS = '../../CSS/estilo.css';
+require_once __DIR__ . '/includes/config.php';
+
+$tituloPagina = 'Contacto | Bistro FDI';
 ob_start();
 ?>
-<!doctype html>
-<html lang="es">
 
-<head>
-  <meta charset="utf-8">
-  <title>Contacto | Bistro FDI</title>
+<div class="panel">
+    <h2>Contacto</h2>
 
-  <link href="CSS/estilo.css" rel="stylesheet" type="text/css">
-</head>
+    <p>¡Contáctanos!</p>
 
-<body>
- 
-
-  
-  <main>
-    <h2>Formulario de contacto</h2>
-    <p>Si quieres más información sobre el proyecto, rellena el formulario:</p>
-
-
-    <form action="mailto:robernab@ucm.es" method="post" enctype="text/plain">
-      <p>
-        <label for="nombre">Nombre:</label><br>
-        <input type="text" id="nombre" name="nombre">
-      </p>
-
-      <p>
-        <label for="email">Dirección de email de contacto:</label><br>
-        <input type="email" id="email" name="email">
-      </p>
-
-      <fieldset>
-        <legend>Motivo de la consulta</legend>
-        <input type="radio" id="eval" name="motivo" value="Evaluación">
-        <label for="eval">Evaluación</label><br>
-
-        <input type="radio" id="sug" name="motivo" value="Sugerencias">
-        <label for="sug">Sugerencias</label><br>
-
-        <input type="radio" id="crit" name="motivo" value="Críticas">
-        <label for="crit">Críticas</label>
-      </fieldset>
-
-      <p>
-        <input type="checkbox" id="terminos" name="terminos" value="Acepto">
-        <label for="terminos">Marque esta casilla para verificar que ha leído nuestros términos y condiciones del
-          servicio.</label>
-      </p>
-
-      <p>
-        <label for="consulta">Consulta:</label><br>
-        <textarea id="consulta" name="consulta" rows="6" cols="50"></textarea>
-      </p>
-
-      <p>
-        <input type="submit" value="Enviar">
-        <input type="reset" value="Borrar">
-      </p>
+    
+    <form action="mailto:robernab@ucm.es" method="post" enctype="text/plain" class="formulario-contacto">
+        <fieldset>
+            <legend>Envíanos un mensaje</legend>
+            <div class="form-grupo">
+                <label for="nombre">Nombre:</label><br>
+                <input type="text" id="nombre" name="nombre" placeholder="Tu nombre..." required>
+            </div>
+            
+            <div class="form-grupo"> 
+                <label for="correo">Correo electrónico:</label><br>
+                <input type="email" id="correo" name="correo" placeholder="ejemplo@correo.com" required>
+            </div>
+            
+            <div class="form-grupo">
+                <label for="mensaje">Mensaje:</label><br>
+                <textarea id="mensaje" name="mensaje" rows="5" cols="40" placeholder="Escribe tu mensaje aquí..." required></textarea>
+            </div>
+            
+            <div class="acciones">
+                <button type="submit" class="btn primary">Enviar</button>
+                <button type="reset" class="btn clear">Limpiar</button>
+            </div>
+        </fieldset>
     </form>
-  </main>
+</div>
 
-  
-
-</body>
-
-</html>
-
-<?php
+<?php 
 $contenidoPrincipal = ob_get_clean();
-require __DIR__ . '/includes/plantilla.php';
+require __DIR__ . '/includes/plantilla.php'; 
+?>
