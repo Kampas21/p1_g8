@@ -43,20 +43,20 @@ class ProductoService {
         $productos = [];
 
         while ($fila = $result->fetch_assoc()) {
-      $productos[] = new Producto(
-        $fila['id'],
-        $fila['nombre'],
-        $fila['descripcion'],
-        $fila['categoria_id'],
-        $fila['precio_base'],
-        $fila['iva'],
-        $fila['disponible'],
-        $fila['ofertado']
-    );
-      }
+            $productos[] = new Producto(
+                $fila['id'],
+                $fila['nombre'],
+                $fila['descripcion'],
+                $fila['categoria_id'],
+                $fila['precio_base'],
+                $fila['iva'],
+                $fila['disponible'],
+                $fila['ofertado']
+            );
+        }
 
-    $result->free();
-    $stmt->close();
+        $result->free();
+        $stmt->close();
 
         return $productos;
     }
@@ -91,43 +91,43 @@ class ProductoService {
     }
 
     public static function create($nombre, $descripcion, $categoria_id, $precio, $iva) {
-    global $conn;
+        global $conn;
 
-    $stmt = $conn->prepare("INSERT INTO productos (nombre, descripcion, categoria_id, precio_base, iva, ofertado) VALUES (?, ?, ?, ?, ?, 1)");
-    $stmt->bind_param("ssidd", $nombre, $descripcion, $categoria_id, $precio, $iva);
+        $stmt = $conn->prepare("INSERT INTO productos (nombre, descripcion, categoria_id, precio_base, iva, ofertado) VALUES (?, ?, ?, ?, ?, 1)");
+        $stmt->bind_param("ssidd", $nombre, $descripcion, $categoria_id, $precio, $iva);
 
-    return $stmt->execute();
-}
+        return $stmt->execute();
+    }
 
-   public static function update($id, $nombre, $descripcion, $categoria_id, $precio, $iva) {
-    global $conn;
+    public static function update($id, $nombre, $descripcion, $categoria_id, $precio, $iva) {
+        global $conn;
 
-    $stmt = $conn->prepare("
+        $stmt = $conn->prepare("
         UPDATE productos 
         SET nombre = ?, descripcion = ?, categoria_id = ?, precio_base = ?, iva = ?
         WHERE id = ?
-    ");
+        ");
 
-    $stmt->bind_param("ssiddi", $nombre, $descripcion, $categoria_id, $precio, $iva, $id);
+        $stmt->bind_param("ssiddi", $nombre, $descripcion, $categoria_id, $precio, $iva, $id);
 
-    return $stmt->execute();
-}
+        return $stmt->execute();
+    }
 
     public static function activar($id) {
-    global $conn;
+        global $conn;
 
-    $stmt = $conn->prepare("UPDATE productos SET ofertado = 1 WHERE id = ?");
-    $stmt->bind_param("i", $id);
-    return $stmt->execute();
-}
+        $stmt = $conn->prepare("UPDATE productos SET ofertado = 1 WHERE id = ?");       
+        $stmt->bind_param("i", $id);
+        return $stmt->execute();
+    }
 
-public static function desactivar($id) {
-    global $conn;
+    public static function desactivar($id) {
+        global $conn;
 
-    $stmt = $conn->prepare("UPDATE productos SET ofertado = 0 WHERE id = ?");
-    $stmt->bind_param("i", $id);
-    return $stmt->execute();
-}
+        $stmt = $conn->prepare("UPDATE productos SET ofertado = 0 WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        return $stmt->execute();
+    }
 
     public static function getProductosDeOferta($oferta_id)
     {
@@ -143,25 +143,26 @@ public static function desactivar($id) {
 
        while ($fila = $result->fetch_assoc()) {
 
-    $producto = new Producto(
-        $fila['id'],
-        $fila['nombre'],
-        $fila['descripcion'],
-        $fila['categoria_id'],
-        $fila['precio_base'],
-        $fila['iva'],
-        $fila['disponible'],
-        $fila['ofertado']
-    );
+        $producto = new Producto(
+            $fila['id'],
+            $fila['nombre'],
+            $fila['descripcion'],
+            $fila['categoria_id'],
+            $fila['precio_base'],
+            $fila['iva'],
+            $fila['disponible'],
+            $fila['ofertado']
+        );
 
-    $producto->cantidad = $fila['cantidad'];
+        $producto->cantidad = $fila['cantidad'];
 
-    $productos[] = $producto;
-}
+        $productos[] = $producto;
+        }
 
-    $result->free();
-    $stmt->close();
+        $result->free();
+        $stmt->close();
 
         return $productos;
     }
+    
 }

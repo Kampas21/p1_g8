@@ -248,6 +248,9 @@ class Pedido
         while ($row = $result->fetch_assoc()) {
             $pedidos[] = $row;
         }
+
+        $result->free();
+        
         $stmt->close();
         return $pedidos;
     }
@@ -276,6 +279,9 @@ class Pedido
         while ($row = $result->fetch_assoc()) {
             $pedidos[] = $row;
         }
+
+        $result->free();
+
         $stmt->close();
         return $pedidos;
     }

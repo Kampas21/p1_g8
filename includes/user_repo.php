@@ -114,6 +114,9 @@ function user_list(array $opts = []): array {
     while ($row = $result->fetch_assoc()) {
         $usuarios[] = row_to_usuario($row);
     }
+
+    $result->free();
+
     $stmt->close();
     $conn->close();
 
@@ -181,6 +184,7 @@ function user_validate_data(array $input, bool $isCreate, ?int $editingId = null
         if ($result->fetch_assoc()) {
             $errors['username'] = 'Ya existe un usuario con ese nombre de usuario.';
         }
+        $result->free();
         $stmt->close();
     }
 
@@ -200,6 +204,7 @@ function user_validate_data(array $input, bool $isCreate, ?int $editingId = null
         if ($result->fetch_assoc()) {
             $errors['email'] = 'Ya existe un usuario con ese email.';
         }
+        $result->free();
         $stmt->close();
     }
 
