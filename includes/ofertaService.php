@@ -37,8 +37,7 @@ class OfertaService
 
         $stmt = $conn->prepare(
             "SELECT * FROM ofertas 
-             WHERE NOW() BETWEEN fecha_inicio AND fecha_fin 
-             AND activa = 1"
+             WHERE NOW() BETWEEN fecha_inicio AND fecha_fin"
         );
         $stmt->execute();
         $result = $stmt->get_result();
