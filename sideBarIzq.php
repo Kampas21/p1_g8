@@ -19,23 +19,23 @@ $user = function_exists('current_user') ? current_user() : null;
         <?php if ($user): ?>
             
             <!-- Categorías y Ofertas: Solo Gerente -->
-            <?php if ($user['rol'] === 'gerente'): ?>
+            <?php if ($user->getRol() === 'gerente'): ?>
                 <li><a href="<?= RUTA_APP ?>/vistas/categorias/categoriasList.php">Categorías</a></li>
                 <li><a href="<?= RUTA_APP ?>/vistas/ofertas/listarOfertas.php">Ofertas</a></li>
             <?php endif; ?>
             
             <!-- Panel Camarero: Solo Camareros y Gerentes -->
-            <?php if ($user['rol'] === 'camarero' || $user['rol'] === 'gerente'): ?>
+            <?php if ($user->getRol() === 'camarero' || $user->getRol() === 'gerente'): ?>
                 <li><a href="<?= RUTA_APP ?>/vistas/pedidos/gestionCamarero.php">Panel Camarero</a></li>
             <?php endif; ?>
 
             <!-- Panel Cocinero: Solo Cocinero y Gerente -->
-            <?php if ($user['rol'] === 'cocinero' || $user['rol'] === 'gerente'): ?>
+            <?php if ($user->getRol() === 'cocinero' || $user->getRol() === 'gerente'): ?>
                 <li><a href="<?= RUTA_APP ?>/vistas/preparacion_pedidos/panel_cocinero.php">Panel Cocinero</a></li>
             <?php endif; ?>
 
             <!-- Panel Gerente: Solo Gerente -->
-            <?php if ($user['rol'] === 'gerente'): ?>
+            <?php if ($user->getRol() === 'gerente'): ?>
                 <li><a href="<?= RUTA_APP ?>/vistas/preparacion_pedidos/panel_gerente.php">Panel Gerente</a></li>
             <?php endif; ?>
                 

@@ -853,3 +853,11 @@ button:hover, input[type="submit"]:hover {
 /* Estados */
 .texto-exito { color: green; font-weight: bold; }
 .texto-error { color: red; font-weight: bold; }
+
+
+.d-inline { display: inline-block; }
+.m-0 { margin: 0; }
+.mt-14 { margin-top: 14px; }
+.mb-15 { margin-bottom: 15px; }
+.w-260 { width: 260px; max-width: 100%; }
+.w-full { width: 100%; }

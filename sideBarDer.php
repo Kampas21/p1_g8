@@ -7,8 +7,8 @@ require_once __DIR__ . '/includes/auth.php';
 
 $user = current_user();
 
-$nombre = $user['nombre'] ?? 'Invitado';
-$rol = $user['rol'] ?? 'No autenticado';
+$nombre = $user->getNombre() ?? 'Invitado';
+$rol = $user->getRol() ?? 'No autenticado';
 ?>
 
 <section class="panel-usuario-sidebar">
@@ -21,7 +21,7 @@ $rol = $user['rol'] ?? 'No autenticado';
     <nav aria-label="Accesos rápidos del usuario">
         <h4>Accesos rápidos</h4>
         <ul class="menu-izq">
-            <?php if ($user && $user['rol'] === 'gerente'): ?>
+            <?php if ($user && $user->getRol() === 'gerente'): ?>
                 
                 <li><a href="<?= RUTA_APP ?>/entities/usuarios.php">Listado de usuarios</a></li>
                 <li><a href="<?= RUTA_APP ?>/vistas/usuarios/usuario_form.php?modo=crear">Registrar trabajador</a></li>

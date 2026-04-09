@@ -3,6 +3,26 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/application.php';
 require_once __DIR__ . '/util.php';
+require_once __DIR__ . '/../entities/usuario.php'; 
+
+// Función de ayuda para convertir la fila de la BBDD a Objeto
+function row_to_usuario(array $row): Usuario {
+    $row['avatar_url'] = user_row_to_avatar_url($row);
+    return new Usuario(
+        (int)$row['id'],
+        $row['username'],
+        $row['email'],
+        $row['nombre'],
+        $row['apellidos'],
+        $row['password_hash'],
+        $row['rol'] ?? 'cliente',
+        $row['avatar_tipo'] ?? 'default',
+        $row['avatar_valor'] ?? null,
+        $row['avatar_url'],
+        (int)$row['activo'],
+        $row['updated_at'] ?? ''
+    );
+}
 
 
 function user_row_to_avatar_url(array $row): string {
@@ -23,60 +43,35 @@ function user_row_to_avatar_url(array $row): string {
     return default_avatar();
 }
 
-function user_find_by_id(int $id, bool $includeInactive = true): ?array {
+function user_find_by_id(int $id, bool $includeInactive = true): ?Usuario {
     $conn = crearConexion();
+    $sql = $includeInactive 
+        ? "SELECT * FROM usuarios WHERE id = ? LIMIT 1" 
+        : "SELECT * FROM usuarios WHERE id = ? AND activo = 1 LIMIT 1";
 
-    if ($includeInactive) {
-        $sql = "SELECT * FROM usuarios WHERE id = ? LIMIT 1";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $id);
-    } else {
-        $sql = "SELECT * FROM usuarios WHERE id = ? AND activo = 1 LIMIT 1";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $id);
-    }
-
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
     $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-
+    $row = $stmt->get_result()->fetch_assoc();
     $stmt->close();
     $conn->close();
 
-    if (!$row) {
-        return null;
-    }
-
-    $row['avatar_url'] = user_row_to_avatar_url($row);
-    return $row;
+    return $row ? row_to_usuario($row) : null;
 }
 
-function user_find_by_username_or_email(string $login): ?array {
+function user_find_by_username_or_email(string $login): ?Usuario {
     $conn = crearConexion();
     $login = trim($login);
-
-    $sql = "SELECT * 
-            FROM usuarios
-            WHERE activo = 1
-              AND (LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?))
-            LIMIT 1";
+    $sql = "SELECT * FROM usuarios WHERE activo = 1 AND (LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?)) LIMIT 1";
 
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ss", $login, $login);
     $stmt->execute();
-
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-
+    $row = $stmt->get_result()->fetch_assoc();
     $stmt->close();
     $conn->close();
 
-    if (!$row) {
-        return null;
-    }
-
-    $row['avatar_url'] = user_row_to_avatar_url($row);
-    return $row;
+    return $row ? row_to_usuario($row) : null;
 }
 
 function user_list(array $opts = []): array {
@@ -115,16 +110,14 @@ function user_list(array $opts = []): array {
     $stmt->execute();
     $result = $stmt->get_result();
 
-    $rows = [];
+   $usuarios = [];
     while ($row = $result->fetch_assoc()) {
-        $row['avatar_url'] = user_row_to_avatar_url($row);
-        $rows[] = $row;
+        $usuarios[] = row_to_usuario($row);
     }
-
     $stmt->close();
     $conn->close();
 
-    return $rows;
+    return $usuarios;
 }
 
 function user_validate_data(array $input, bool $isCreate, ?int $editingId = null, bool $allowRoleEdit = false): array {
@@ -358,21 +351,16 @@ function user_remove_custom_avatar(int $id): void {
         throw new RuntimeException('Usuario no encontrado.');
     }
 
-    if (($user['avatar_tipo'] ?? '') === 'custom') {
-        delete_custom_avatar_file((string)($user['avatar_valor'] ?? ''));
+    if ($user->getAvatarTipo() === 'custom') {
+        delete_custom_avatar_file($user->getAvatarValor() ?? '');
     }
 
     $conn = crearConexion();
-
     $tipo = 'default';
-    $sql = "UPDATE usuarios
-            SET avatar_tipo = ?, avatar_valor = NULL, updated_at = NOW()
-            WHERE id = ?";
-
+    $sql = "UPDATE usuarios SET avatar_tipo = ?, avatar_valor = NULL, updated_at = NOW() WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("si", $tipo, $id);
     $stmt->execute();
     $stmt->close();
-
     $conn->close();
 }

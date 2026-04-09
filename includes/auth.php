@@ -3,30 +3,29 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/user_repo.php';
 
-function current_user(): ?array {
+function current_user(): ?Usuario {
     if (empty($_SESSION['user_id'])) {
         return null;
     }
     $id = (int)$_SESSION['user_id'];
     $user = user_find_by_id($id);
-    if (!$user || (int)$user['activo'] !== 1) {
+    if (!$user || !$user->isActivo()) {
         unset($_SESSION['user_id']);
         return null;
     }
     return $user;
 }
 
-function login_user(array $user): void {
+function login_user(Usuario $user): void {
     session_regenerate_id(true);
-    $_SESSION['user_id'] = (int)$user['id'];
+    $_SESSION['user_id'] = $user->getId();
 }
-
 function logout_user(): void {
     unset($_SESSION['user_id']);
     session_regenerate_id(true);
 }
 
-function require_login(): array {
+function require_login(): Usuario {
     $user = current_user();
     if (!$user) {
         flash_set('error', 'Debes iniciar sesión para acceder a esa página.');
@@ -35,11 +34,11 @@ function require_login(): array {
     return $user;
 }
 
-function user_has_role(array $user, string $minRole): bool {
-    return role_priority((string)$user['rol']) >= role_priority($minRole);
+function user_has_role(Usuario $user, string $minRole): bool {
+    return role_priority($user->getRol()) >= role_priority($minRole);
 }
 
-function require_role(string $minRole): array {
+function require_role(string $minRole): Usuario {
     $user = require_login();
     if (!user_has_role($user, $minRole)) {
         http_response_code(403);

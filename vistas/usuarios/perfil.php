@@ -17,7 +17,7 @@ $user = require_login();
 // Si piden quitar el avatar, que es un simple botón POST fuera del form, lo gestionamos aquí
 if (is_post() && ($_POST['accion'] ?? '') === 'quitar_avatar_personalizado') {
     require_csrf();
-    user_remove_custom_avatar((int)$user['id']);
+    user_remove_custom_avatar((int) $user->getId());
     flash_set('success', 'Avatar personalizado eliminado.');
     header("Location: perfil.php");
     exit();
@@ -38,7 +38,7 @@ if ($checkTable && $checkTable->num_rows > 0) {
 }
 
 if ($pedidosDisponibles) {
-    $uid = (int)$user['id'];
+    $uid = (int) $user->getId();
 
     $sqlActivos = "
         SELECT numero_pedido, estado, fecha_hora, total
@@ -104,30 +104,26 @@ ob_start();
         <h3>Avatar + datos de usuario</h3>
 
         <div class="profile-top">
-            <img class="avatar lg" src="<?= e($user['avatar_url']) ?>" alt="Avatar de <?= e($user['username']) ?>">
+            <img class="avatar lg" src="<?= e($user->getAvatarUrl()) ?>" alt="Avatar de <?= e($user->getUsername()) ?>">
             <div>
-                <p><strong>Usuario:</strong> <?= e($user['username']) ?></p>
-                <p><strong>Email:</strong> <?= e($user['email']) ?></p>
-                <p><strong>Nombre y apellidos:</strong> <?= e($user['nombre']) ?> <?= e($user['apellidos']) ?></p>
-                <p><strong>Rol:</strong> <?= e(role_label((string)$user['rol'])) ?></p>
+                <p><strong>Usuario:</strong> <?= e($user->getUsername()) ?></p>
+                <p><strong>Email:</strong> <?= e($user->getEmail()) ?></p>
+                <p><strong>Nombre y apellidos:</strong> <?= e($user->getNombre()) ?> <?= e($user->getApellidos()) ?></p>
+                <p><strong>Rol:</strong> <?= e(role_label((string) $user->getRol()  )) ?></p>
             </div>
         </div>
+        <details class="mt-14" open>
+            <summary>Foto de perfil / Avatar</summary>
 
-        <details style="margin-top:16px;" open>
-            <summary><strong>Editar perfil</strong></summary>
+            <img src="<?= e($user->getAvatarUrl()) ?>" alt="Avatar" class="avatar xl">
 
-            <?= $htmlFormPerfil ?>
-
-            <!-- Botón para quitar el avatar personalizado, si tiene uno -->
-            <?php if (($user['avatar_tipo'] ?? '') === 'custom'): ?>
-                <form method="post" onsubmit="return confirm('¿Quitar avatar personalizado?');" style="margin-top: 15px;">
+            <?php if (!empty($user->getAvatarPersonalizado())): ?>
+                <form method="post" onsubmit="return confirm('¿Quitar avatar personalizado?');" class="mt-14">
                     <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
-                    <button type="submit" name="accion" value="quitar_avatar_personalizado" class="btn danger">
-                        Volver al avatar por defecto
-                    </button>
+                    <input type="hidden" name="accion" value="quitar_avatar">
+                    <button class="btn danger" type="submit">Eliminar avatar personalizado</button>
                 </form>
             <?php endif; ?>
-
         </details>
     </section>
 
@@ -139,10 +135,18 @@ ob_start();
             <div class="pedido-linea">
                 <strong>Ejemplo visual (boceto)</strong>
                 <div class="progress-steps">
-                    <div class="progress-step done"><div class="dot"></div>En preparación</div>
-                    <div class="progress-step done"><div class="dot"></div>Cocinando</div>
-                    <div class="progress-step active"><div class="dot"></div>Listo cocina</div>
-                    <div class="progress-step"><div class="dot"></div>Terminado</div>
+                    <div class="progress-step done">
+                        <div class="dot"></div>En preparación
+                    </div>
+                    <div class="progress-step done">
+                        <div class="dot"></div>Cocinando
+                    </div>
+                    <div class="progress-step active">
+                        <div class="dot"></div>Listo cocina
+                    </div>
+                    <div class="progress-step">
+                        <div class="dot"></div>Terminado
+                    </div>
                 </div>
             </div>
         <?php elseif (!$pedidosActivos): ?>
@@ -150,8 +154,8 @@ ob_start();
         <?php else: ?>
             <?php foreach ($pedidosActivos as $p): ?>
                 <div class="pedido-linea">
-                    <strong>Pedido #<?= e((string)$p['numero_pedido']) ?></strong>
-                    <div class="muted">Estado actual: <?= e((string)$p['estado']) ?></div>
+                    <strong>Pedido #<?= e((string) $p['numero_pedido']) ?></strong>
+                    <div class="muted">Estado actual: <?= e((string) $p['estado']) ?></div>
                 </div>
             <?php endforeach; ?>
         <?php endif; ?>
@@ -197,11 +201,11 @@ ob_start();
                 <tbody>
                     <?php foreach ($pedidosHistorico as $p): ?>
                         <tr>
-                            <td><?= e((string)$p['numero_pedido']) ?></td>
-                            <td><?= e((string)$p['fecha_hora']) ?></td>
-                            <td><?= e((string)$p['tipo']) ?></td>
-                            <td><?= e((string)$p['total']) ?></td>
-                            <td><?= e((string)$p['estado']) ?></td>
+                            <td><?= e((string) $p['numero_pedido']) ?></td>
+                            <td><?= e((string) $p['fecha_hora']) ?></td>
+                            <td><?= e((string) $p['tipo']) ?></td>
+                            <td><?= e((string) $p['total']) ?></td>
+                            <td><?= e((string) $p['estado']) ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
