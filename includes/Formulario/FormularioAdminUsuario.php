@@ -101,13 +101,13 @@ class FormularioAdminUsuario extends Formulario
                 </div>
                 $htmlPass
             </div>
-            <div style="margin-top: 15px;">
+            <div class="mt-16">
                 <label>Foto / Avatar:</label>
                 <input type="file" name="avatar_pers" class="input-archivo">
                 <small>(Opcional. Si seleccionas uno, reemplazará al que tenga)</small>
                 {$erroresCampos['avatar']}
             </div>
-            <div style="margin-top: 20px;">
+            <div class="mt-20">
                 <button type="submit" class="boton-primario">Guardar Usuario</button>
             </div>
         </fieldset>

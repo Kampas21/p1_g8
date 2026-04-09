@@ -39,7 +39,7 @@ ob_start();
 
 <main>
   <div class="panel">
-    <div class="actions-inline" style="margin-bottom:12px;">
+    <div class="actions-inline mb-12">
       <a href="carrito.php" class="btn">← Volver al carrito</a>
     </div>
 

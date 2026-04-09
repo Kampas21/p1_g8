@@ -65,7 +65,7 @@ ob_start();
 <h1><?= $modo === 'crear' ? 'Crear' : 'Editar' ?> categoría</h1>
 
 <?php if (!empty($errores)): ?>
-    <ul style="color:red;">
+    <ul class="text-danger">
         <?php foreach ($errores as $e): ?>
             <li><?= htmlspecialchars($e) ?></li>
         <?php endforeach; ?>

@@ -27,7 +27,7 @@ ob_start();
             <div class="notice <?= e($type) ?>"><?= e($item['message']) ?></div>
         <?php endforeach; ?>
 
-        <!-- Formulario de Búsqueda (ya sin styles inline) -->
+        
         <form method="get" class="actions-inline">
             <label for="q" class="m-0">Buscar</label>
             <input id="q" type="text" name="q" value="<?= e($search) ?>" class="w-260">

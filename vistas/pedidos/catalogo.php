@@ -62,7 +62,7 @@ ob_start();
   <div class="panel">
     <?php if ($categoria_id): ?>
 
-      <div class="actions-inline" style="margin-bottom:12px;">
+      <div class="actions-inline mb-12">
         <a href="catalogo.php" class="btn">← Categorías</a>
         <a href="carrito.php" class="btn primary">🛒 Ver carrito</a>
       </div>
@@ -101,15 +101,15 @@ ob_start();
 
     <?php else: ?>
 
-      <div class="actions-inline" style="margin-bottom:12px;justify-content:flex-end;">
+      <div class="actions-inline mb-12">
         <a href="carrito.php" class="btn primary">🛒 Ver carrito</a>
       </div>
 
       <h2>Elige una categoría</h2>
 
-      <div style="display:flex; flex-wrap:wrap; gap:12px; margin-top:8px;">
+      <div class="flex-wrap-gap">
         <?php foreach ($categorias as $cat): ?>
-          <a href="catalogo.php?categoria=<?= (int)$cat->getId() ?>" class="btn" style="font-size:15px; padding:12px 20px;">
+          <a href="catalogo.php?categoria=<?= (int)$cat->getId() ?>" class="btn" class="btn-categoria">
             <?= e($cat->getNombre()) ?>
           </a>
         <?php endforeach; ?>

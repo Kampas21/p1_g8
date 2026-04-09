@@ -46,7 +46,7 @@ ob_start();
     <!-- Imprimimos el formulario generado por el Objeto -->
     <?= $htmlFormUsuario ?>
     
-    <div style="margin-top:20px;">
+    <div class="mt-20">
         <?php if ($isCreate): ?>
             <a class="btn" href="../../entities/usuarios.php">&laquo; Volver al listado</a>
         <?php else: ?>

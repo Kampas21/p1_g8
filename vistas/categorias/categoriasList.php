@@ -67,8 +67,8 @@ ob_start();
 
         <td>
             <?= $cat->isActiva()
-                ? '<span style="color:green;">Activa</span>'
-                : '<span style="color:red;">Inactiva</span>' ?>
+                ? '<span class="text-success">Activa</span>'
+                : '<span class="text-danger">Inactiva</span>' ?>
         </td>
 
         <td>
@@ -82,14 +82,14 @@ ob_start();
             </a>
 
             <?php if ($cat->isActiva()): ?>
-                <form method="POST" action="borrarCategoria.php" style="display:inline;">
+                <form method="POST" action="borrarCategoria.php" class="form-inline-action">
                     <input type="hidden" name="id" value="<?= $cat->getId() ?>">
                     <button type="submit" onclick="return confirm('¿Desactivar?')">
                         Desactivar
                     </button>
                 </form>
             <?php else: ?>
-                <form method="POST" action="activarCategoria.php" style="display:inline;">
+                <form method="POST" action="activarCategoria.php" class="form-inline-action">
                     <input type="hidden" name="id" value="<?= $cat->getId() ?>">
                     <button type="submit">
                         Activar

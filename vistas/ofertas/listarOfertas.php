@@ -98,8 +98,8 @@ ob_start();
 
                 <td>
                     <?= ($oferta->estaActiva())
-                        ? '<span style="color:red">Caducada</span>'
-                        : '<span style="color:green">Activa</span>' ?>
+                        ? '<span class="text-danger">Caducada</span>'
+                        : '<span class="text-success">Activa</span>' ?>
                 </td>
                 <td>
                     <a class="btn editar" href="editarOferta.php?id=<?= $oferta->getId() ?>">Editar</a>

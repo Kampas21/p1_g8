@@ -24,7 +24,7 @@ class FormularioEstadoCamarero extends Formulario {
     protected function generaCamposFormulario(&$datos) {
         return <<<EOF
             <input type="hidden" name="accion" value="{$this->accion}">
-            <button type="submit" class="btn primary" style="width: 100%; margin-top: 10px;">{$this->btnLabel}</button>
+            <button type="submit" class="btn primary btn-bloque mt-10">{$this->btnLabel}</button>
         EOF;
     }
 

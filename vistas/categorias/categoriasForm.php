@@ -18,7 +18,7 @@ ob_start();
 <h1><?= $modoEdicion ? 'Editar categoría' : 'Nueva categoría' ?></h1>
 
 <?php if (!empty($errores)): ?>
-    <div style="color:red;">
+    <div class="text-danger">
         <ul>
             <?php foreach ($errores as $e): ?>
                 <li><?= htmlspecialchars($e) ?></li>
