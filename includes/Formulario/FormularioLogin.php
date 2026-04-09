@@ -25,19 +25,19 @@ class FormularioLogin extends Formulario
         $html = <<<EOF
         $htmlErroresGlobales
         <fieldset>
-            <legend>Usuario y contraseña</legend>
-            <div>
+            <legend>Introduce tus datos</legend>
+            <div class="mt-10">
                 <label for="login">Usuario o Email:</label>
-                <input id="login" type="text" name="login" value="$loginUsuario" />
+                <input id="login" type="text" name="login" value="$loginUsuario" required class="w-100" />
                 {$erroresCampos['login']}
             </div>
-            <div>
-                <label for="password">Contraseña:</label>
-                <input id="password" type="password" name="password" />
+            <div class="mt-10">
+                <label for="password">Contraseña (Mínimo 6 caracteres):</label>
+                <input id="password" type="password" name="password" required minlength="6" class="w-100" />
                 {$erroresCampos['password']}
             </div>
-            <div>
-                <button type="submit" name="login_submit">Entrar</button>
+            <div class="mt-20">
+                <button type="submit" name="login_submit" class="btn primary">Entrar</button>
             </div>
         </fieldset>
         EOF;
@@ -48,22 +48,25 @@ class FormularioLogin extends Formulario
     {
         $this->errores = [];
         
-        $login = trim($datos['login'] ?? '');
-        $login = filter_var($login, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        // Saneamiento de datos
+        $loginRaw = $datos['login'] ?? '';
+        $login = filter_var(trim($loginRaw), FILTER_SANITIZE_SPECIAL_CHARS);
+        
         if ( ! $login || empty($login) ) {
-            $this->errores['login'] = 'El nombre de usuario no puede estar vacío';
+            $this->errores['login'] = 'El nombre de usuario o email no puede estar vacío.';
         }
         
         $password = trim($datos['password'] ?? '');
-        if ( ! $password || empty($password) ) {
-            $this->errores['password'] = 'El password no puede estar vacío.';
+        if ( mb_strlen($password) < 6 ) {
+            $this->errores['password'] = 'La contraseña no puede tener menos de 6 caracteres.';
         }
         
         if (count($this->errores) === 0) {
             $user = user_find_by_username_or_email($login);
             
-            if (!$user || !password_verify($password, (string)$user->getPasswordHash())) {
-                $this->errores[] = "El usuario o el password no coinciden";
+            
+            if (!$user || !password_verify($password, $user->getPasswordHash())) {
+                $this->errores['global'] = "El usuario o el password introducido no son correctos.";
             } else {
                 login_user($user); 
             }

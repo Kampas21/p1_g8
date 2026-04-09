@@ -7,8 +7,8 @@ require_once __DIR__ . '/includes/auth.php';
 
 $user = current_user();
 
-$nombre = $user->getNombre() ?? 'Invitado';
-$rol = $user->getRol() ?? 'No autenticado';
+$nombre = $user ? $user->getNombre() : 'Invitado';
+$rol = $user ? $user->getRol() : 'No autenticado';
 ?>
 
 <section class="panel-usuario-sidebar">
