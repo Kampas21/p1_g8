@@ -1,14 +1,12 @@
 <?php
-
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
 require_once __DIR__ . '/../../includes/auth.php';
-require_once __DIR__ . '/../../includes/categoriaService.php';
+require_once __DIR__ . '/../../scripts/categorias/cargarCategorias.php';
 
 $user = current_user();
-
 if (!$user || !user_has_role($user, 'gerente')) {
     $tituloPagina = 'Acceso bloqueado';
     $rutaCSS = '../../CSS/estilo.css';
@@ -26,7 +24,6 @@ if (!$user || !user_has_role($user, 'gerente')) {
     exit;
 }
 
-require_once __DIR__ . '/../../scripts/categorias/cargarCategorias.php';
 $tituloPagina = 'Categorías';
 $rutaCSS = '../../CSS/estilo.css';
 
@@ -36,35 +33,28 @@ ob_start();
 <h1>Lista de categorías</h1>
 
 <p>
-    <a href="categoria_form.php" class="btn-nuevo">
-        + Nueva categoría
-    </a>
+    <a href="crearCategoria.php" class="btn-nuevo">+ Nueva categoría</a>
 </p>
 
 <?php if (empty($categorias)): ?>
     <p>No hay categorías.</p>
 <?php else: ?>
-
-<table class="tabla">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        <?php foreach ($categorias as $cat): ?>
-            <?php include __DIR__ . '/_fila_categoria.php'; ?>
-        <?php endforeach; ?>
-    </tbody>
-
-
-</table>
-
+    <table class="tabla">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($categorias as $cat): ?>
+                <?php require __DIR__ . '/_fila_categoria.php'; ?>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
 <?php endif; ?>
 
 <p>

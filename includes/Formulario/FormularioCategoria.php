@@ -4,76 +4,77 @@ namespace es\ucm\fdi\aw\Formulario;
 require_once __DIR__ . '/Formulario.php';
 require_once __DIR__ . '/../categoriaService.php';
 
-use CategoriaService;
-
-class FormularioCategoria extends Formulario {
-
+class FormularioCategoria extends Formulario
+{
     private $categoria;
 
-    public function __construct($categoria = null) {
+    public function __construct($categoria = null)
+    {
         parent::__construct('formCategoria');
         $this->categoria = $categoria;
     }
 
-    protected function generaCamposFormulario(&$datos) {
+    protected function generaCamposFormulario(&$datos)
+    {
+        $nombre = htmlspecialchars($datos['nombre'] ?? ($this->categoria ? $this->categoria->getNombre() : ''), ENT_QUOTES, 'UTF-8');
+        $descripcion = htmlspecialchars($datos['descripcion'] ?? ($this->categoria ? $this->categoria->getDescripcion() : ''), ENT_QUOTES, 'UTF-8');
 
-        // 🔒 ESCAPAR HTML (IMPORTANTE)
-        $nombre = htmlspecialchars($datos['nombre'] ?? ($this->categoria ? $this->categoria->getNombre() : ''), ENT_QUOTES);
-        $descripcion = htmlspecialchars($datos['descripcion'] ?? ($this->categoria ? $this->categoria->getDescripcion() : ''), ENT_QUOTES);
+        $errores = self::generaErroresCampos(['nombre', 'descripcion'], $this->errores, 'span', ['class' => 'text-danger']);
+        $erroresGlobales = self::generaListaErroresGlobales($this->errores, 'text-danger');
+        $textoBoton = $this->categoria ? 'Actualizar categoría' : 'Crear categoría';
 
-        $html = <<<EOF
+        return <<<HTML
+        {$erroresGlobales}
+
         <p>
-            <label>Nombre:</label><br>
-            <input type="text" name="nombre" value="$nombre" required minlength="3"/>
+            <label for="nombre">Nombre:</label><br>
+            <input id="nombre" type="text" name="nombre" value="{$nombre}" required minlength="3" maxlength="100">
+            {$errores['nombre']}
         </p>
 
         <p>
-            <label>Descripción:</label><br>
-            <textarea name="descripcion" required minlength="3">$descripcion</textarea>
+            <label for="descripcion">Descripción:</label><br>
+            <textarea id="descripcion" name="descripcion" required minlength="3" maxlength="500">{$descripcion}</textarea>
+            {$errores['descripcion']}
         </p>
 
         <p>
-            <button type="submit">Guardar</button>
+            <button type="submit">{$textoBoton}</button>
         </p>
-        EOF;
-
-        return $html;
+        HTML;
     }
 
-    protected function procesaFormulario(&$datos) {
-
+    protected function procesaFormulario(&$datos)
+    {
         $this->errores = [];
 
-        // 🔒 SANITIZAR INPUT
-        $nombre = filter_var(trim($datos['nombre'] ?? ''), FILTER_SANITIZE_SPECIAL_CHARS);
-        $descripcion = filter_var(trim($datos['descripcion'] ?? ''), FILTER_SANITIZE_SPECIAL_CHARS);
+        $nombre = trim((string)($datos['nombre'] ?? ''));
+        $descripcion = trim((string)($datos['descripcion'] ?? ''));
 
-        // ✅ VALIDACIONES
-        if (!$nombre || strlen($nombre) < 3) {
-            $this->errores['nombre'] = "El nombre debe tener al menos 3 caracteres";
+        $nombre = filter_var($nombre, FILTER_SANITIZE_SPECIAL_CHARS);
+        $descripcion = filter_var($descripcion, FILTER_SANITIZE_SPECIAL_CHARS);
+
+        if ($nombre === '' || mb_strlen($nombre) < 3) {
+            $this->errores['nombre'] = 'El nombre debe tener al menos 3 caracteres.';
         }
 
-        if (!$descripcion || strlen($descripcion) < 3) {
-            $this->errores['descripcion'] = "La descripción debe tener al menos 3 caracteres";
+        if ($descripcion === '' || mb_strlen($descripcion) < 3) {
+            $this->errores['descripcion'] = 'La descripción debe tener al menos 3 caracteres.';
         }
 
-        // ❌ SI HAY ERRORES → PARAR
-        if (count($this->errores) > 0) {
+        if (!empty($this->errores)) {
             return;
         }
 
-        // 💾 GUARDAR (crear o editar)
-        if ($this->categoria) {
-            CategoriaService::update(
-                $this->categoria->getId(),
-                $nombre,
-                $descripcion
-            );
-        } else {
-            CategoriaService::create($nombre, $descripcion);
+        $ok = $this->categoria
+            ? \CategoriaService::update($this->categoria->getId(), $nombre, $descripcion)
+            : \CategoriaService::create($nombre, $descripcion);
+
+        if (!$ok) {
+            $this->errores[] = 'No se pudo guardar la categoría.';
+            return;
         }
 
-        // 🔁 REDIRECCIÓN
-        $this->urlRedireccion = "categoriasList.php";
+        $this->urlRedireccion = 'categoriasList.php';
     }
 }
