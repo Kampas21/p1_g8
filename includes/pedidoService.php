@@ -60,7 +60,7 @@ class PedidoService
             $row['total_descuento'],
             $row['cocinero_id']
         );
-        return $stmt->get_result()->fetch_assoc();
+        
     }
 
     public static function addProducto($pedido_id, $producto_id, $precio_unitario)
@@ -131,12 +131,17 @@ class PedidoService
         global $conn;
 
         // Calcular el siguiente número de pedido del día
-        $rs = $conn->query(
-            "SELECT COALESCE(MAX(numero_pedido), 0) + 1 AS siguiente 
+        $stmtNumero = $conn->prepare("
+            SELECT COALESCE(MAX(numero_pedido), 0) + 1 AS siguiente 
             FROM pedidos 
-            WHERE DATE(fecha_hora) = CURDATE() AND estado != 'nuevo'"
-        );
+            WHERE DATE(fecha_hora) = CURDATE() AND estado != 'nuevo'
+        ");
+        $stmtNumero->execute();
+        $rs = $stmtNumero->get_result();
         $numero = $rs->fetch_assoc()['siguiente'];
+        $rs->free();
+        $stmtNumero->close();
+
 
         $estado = ($metodo_pago === 'tarjeta') ? 'en_preparacion' : 'recibido';
 
@@ -179,7 +184,7 @@ class PedidoService
             $row['total_descuento'],
             $row['cocinero_id']
         );
-        return $stmt->get_result()->fetch_assoc();
+        
     }
 
 
@@ -198,23 +203,25 @@ class PedidoService
         $pedidos = [];
 
         while ($fila = $result->fetch_assoc()) {
-            return new Pedido(
-                $fila['id'],
-                $fila['numero_pedido'],
-                $fila['fecha_hora'],
-                $fila['fecha'],
-                $fila['estado'],
-                $fila['tipo'],
-                $fila['metodo_pago'],
-                $fila['usuario_id'],
-                $fila['total_sin_descuentos'],
-                $fila['total_descuento'],
-                $fila['cocinero_id']
+            $pedidos[] = new Pedido(
+            $fila['id'],
+            $fila['numero_pedido'],
+            $fila['fecha_hora'],
+            $fila['fecha'],
+            $fila['estado'],
+            $fila['tipo'],
+            $fila['metodo_pago'],
+            $fila['usuario_id'],
+            $fila['total_sin_descuentos'],
+            $fila['total_descuento'],
+            $fila['cocinero_id']
             );
         }
 
+
         $result->free();
         $stmt->close();
+
 
         return $pedidos;
     }
@@ -282,7 +289,17 @@ class PedidoService
         );
         $stmt->bind_param("s", $estado);
         $stmt->execute();
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        
+        $result = $stmt->get_result();
+        $pedidos = [];
+        while ($fila = $result->fetch_assoc()) {
+            $pedidos[] = $fila;
+        }
+        
+        $result->free();
+        $stmt->close();
+        
+        return $pedidos;
     }
 
 
@@ -321,13 +338,24 @@ class PedidoService
     public static function getPedidosPendientesGerente()
     {
         global $conn;
-        // Cambiamos u.avatar por u.avatar_valor para evitar el error de columna desconocida
         $query = "SELECT p.*, u.nombre AS cocinero_nombre, u.apellidos AS cocinero_apellidos, u.avatar_valor 
                   FROM pedidos p LEFT JOIN usuarios u ON p.cocinero_id = u.id 
                   WHERE p.estado IN ('recibido', 'en_preparacion', 'cocinando', 'listo_cocina', 'terminado')
                   ORDER BY p.fecha_hora ASC";
-        $rs = $conn->query($query);
-        return $rs->fetch_all(MYSQLI_ASSOC);
+                  
+        $stmt = $conn->prepare($query); 
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $pedidos = [];
+        while ($fila = $result->fetch_assoc()) {
+            $pedidos[] = $fila;
+        }
+        
+        $result->free(); 
+        $stmt->close();
+
+        return $pedidos;
     }
 
     /**

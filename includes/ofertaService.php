@@ -151,7 +151,6 @@ class OfertaService
         return $resultado;
     }
 
-    // Ver si la oferta está en uso
     public static function ofertaEnUso($oferta_id)
     {
         global $conn;
@@ -165,10 +164,16 @@ class OfertaService
         $stmt->bind_param("i", $oferta_id);
         $stmt->execute();
 
-        $resultado = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $result = $stmt->get_result();
+        $resultado = [];
+        while ($fila = $result->fetch_assoc()) {
+            $resultado[] = $fila;
+        }
 
+        $result->free();
         $stmt->close();
 
         return $resultado;
     }
+
 }

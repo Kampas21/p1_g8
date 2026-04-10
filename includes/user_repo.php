@@ -52,7 +52,11 @@ function user_find_by_id(int $id, bool $includeInactive = true): ?Usuario {
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
     $stmt->execute();
-    $row = $stmt->get_result()->fetch_assoc();
+    
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $result->free();
+
     $stmt->close();
     $conn->close();
 
@@ -67,7 +71,11 @@ function user_find_by_username_or_email(string $login): ?Usuario {
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ss", $login, $login);
     $stmt->execute();
-    $row = $stmt->get_result()->fetch_assoc();
+    
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $result->free();
+    
     $stmt->close();
     $conn->close();
 
