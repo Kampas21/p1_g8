@@ -17,7 +17,7 @@ if (!$pedido_id) {
 
 $pedido = PedidoService::getPedidoById($pedido_id);
 
-if (!$pedido || (int)$pedido['usuario_id'] !== $usuario_id) {
+if (!$pedido || (int)$pedido->getUsuario_id() !== $usuario_id) {
     http_response_code(403);
     
     $tituloPagina = 'Acceso denegado | Bistro FDI';
@@ -32,7 +32,7 @@ if (!$pedido || (int)$pedido['usuario_id'] !== $usuario_id) {
 $lineas = PedidoService::getProductosPedido($pedido_id);
 
 if (is_post() && ($_POST['accion'] ?? '') === 'cancelar') {
-    if ($pedido['estado'] === 'recibido') {
+    if ($pedido->getEstado() === 'recibido') {
         PedidoService::cancelarPedido($pedido_id);
     }
     flash_set('success', 'Pedido cancelado correctamente.');
@@ -50,7 +50,7 @@ $etiquetas = [
 ];
 
 // ---- EMPIEZA LA VISTA DEL PROYECTO ----
-$tituloPagina = 'Pedido #' . $pedido['numero_pedido'] . ' | Bistro FDI';
+$tituloPagina = 'Pedido #' . $pedido->getNumero_pedido() . ' | Bistro FDI';
 $rutaCSS = RUTA_APP . '/CSS/estilo.css';
 ob_start();
 ?>
@@ -67,29 +67,29 @@ ob_start();
       <a href="listarPedidosCliente.php" class="btn">← Mis pedidos</a>
     </div>
 
-    <h2>Pedido #<?= e($pedido['numero_pedido']) ?></h2>
+    <h2>Pedido #<?= e($pedido->getNumero_pedido()) ?></h2>
 
     <table>
       <tbody>
         <tr>
           <th>Estado</th>
-          <td><strong><?= e($etiquetas[$pedido['estado']] ?? $pedido['estado']) ?></strong></td>
+          <td><strong><?= e($etiquetas[$pedido->getEstado()] ?? $pedido->getEstado()) ?></strong></td>
         </tr>
         <tr>
           <th>Tipo</th>
-          <td><?= $pedido['tipo'] === 'local' ? '🍽️ En local' : '🥡 Para llevar' ?></td>
+          <td><?= $pedido->getTipo() === 'local' ? '🍽️ En local' : '🥡 Para llevar' ?></td>
         </tr>
         <tr>
           <th>Pago</th>
-          <td><?= $pedido['metodo_pago'] === 'tarjeta' ? '💳 Tarjeta' : ($pedido['metodo_pago'] === 'camarero' ? '💵 Al camarero' : '—') ?></td>
+          <td><?= $pedido->getMetodo_pago() === 'tarjeta' ? '💳 Tarjeta' : ($pedido->getMetodo_pago() === 'camarero' ? '💵 Al camarero' : '—') ?></td>
         </tr>
         <tr>
           <th>Fecha</th>
-          <td><?= e($pedido['fecha_hora']) ?></td>
+          <td><?= e($pedido->getFecha_hora()) ?></td>
         </tr>
         <tr>
           <th>Total</th>
-          <td><?= e($pedido['total']) ?> €</td>
+          <td><?= e($pedido->getTotal()) ?> €</td>
         </tr>
       </tbody>
     </table>
@@ -110,24 +110,24 @@ ob_start();
         <tbody>
         <?php foreach ($lineas as $linea): ?>
           <tr>
-            <td><?= e($linea['nombre']) ?></td>
-            <td><?= e($linea['precio_unitario']) ?> €</td>
-            <td><?= (int)$linea['cantidad'] ?></td>
-            <td><?= round($linea['precio_unitario'] * $linea['cantidad'], 2) ?> €</td>
+            <td><?= e($linea->getNombre()) ?></td>
+            <td><?= e($linea->getPrecio()) ?> €</td>
+            <td><?= (int)$linea->getCantidad() ?></td>
+            <td><?= round($linea->getPrecio() * $linea->getCantidad(), 2) ?> €</td>
           </tr>
         <?php endforeach; ?>
         </tbody>
         <tfoot>
           <tr>
             <td colspan="3"><strong>Total</strong></td>
-            <td><strong><?= e($pedido['total']) ?> €</strong></td>
+            <td><strong><?= e($pedido->getTotal()) ?> €</strong></td>
           </tr>
         </tfoot>
       </table>
     </div>
   </div>
 
-  <?php if ($pedido['estado'] === 'recibido'): ?>
+  <?php if ($pedido->getEstado() === 'recibido'): ?>
   <div class="panel" class="panel mt-20 panel-danger-border">
     <div class="mensaje-info" class="mensaje-info mb-12">
       Este pedido aún no ha sido pagado. Puedes cancelarlo si ya no lo necesitas.
