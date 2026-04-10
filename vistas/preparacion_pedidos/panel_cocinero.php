@@ -1,5 +1,5 @@
 <?php
-if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
+
 require_once __DIR__ . '/../../includes/application.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../entities/pedido.php';
@@ -46,17 +46,17 @@ ob_start();
                                 $hayProductos = count($productos) > 0;
 
                                 foreach ($productos as $prod): 
-                                    $esPreparado = ($prod['estado'] === 'preparado');
+                                    $esPreparado = ($prod->getEstado() === 'preparado');
                                     if (!$esPreparado) { $todosPreparados = false; } 
                                 ?>
                                     <li class="item-plato">
-                                        <span><strong><?= $prod['cantidad'] ?>x</strong> <?= htmlspecialchars($prod['nombre']) ?></span>
+                                        <span><strong><?= $prod->getCantidad() ?>x</strong> <?= htmlspecialchars($prod->getNombre()) ?></span>
                                         
                                         <?php if ($esPreparado): ?>
                                             <span class="estado-plato-listo">✅ Preparado</span>
                                         <?php else: 
                                             // Formulario Marcar Plato
-                                            $formPlato = new \es\ucm\fdi\aw\Formulario\FormularioAccionesCocina($pedido_id, 'marcar_plato', $cocinero_id, (int)$prod['producto_id']);
+                                            $formPlato = new \es\ucm\fdi\aw\Formulario\FormularioAccionesCocina($pedido_id, 'marcar_plato', $cocinero_id, (int)$prod->getProductoId() );
                                             echo $formPlato->gestiona();
                                         endif; ?>
                                     </li>
@@ -90,7 +90,7 @@ ob_start();
                 <tr><td class="tabla-panel-vacia">No hay pedidos esperando en la cola.</td></tr>
             <?php else: ?>
                 <?php foreach ($pedidosEnCola as $p): 
-                    $pedido_id = (int)$p['id'];
+                    $pedido_id = (int)$p->getId();
                 ?>
                     <tr class="tabla-panel-fila">
                         <td><strong>Pedido #<?= $pedido_id ?></strong></td>

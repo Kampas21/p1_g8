@@ -62,4 +62,9 @@ class Pedido {
         return $this->cocinero_id;
     }
 
+    public function getTotal() {
+        $total = $this->total_sin_descuentos - $this->total_descuento;
+        return $total > 0 ? (float)$total : 0.0;
+    }
+
 }

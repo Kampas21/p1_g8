@@ -111,7 +111,13 @@ class OfertaService
         $stmt->bind_param("ssssd", $nombre, $descripcion, $fecha_inicio, $fecha_fin, $descuento);
         $stmt->execute();
 
+        // 1. Obtenemos el ID de la oferta recién creada
+        $id_generado = $stmt->insert_id;
+
         $stmt->close();
+
+        // 2. Lo devolvemos
+        return $id_generado;
     }
 
     // Editar oferta existente

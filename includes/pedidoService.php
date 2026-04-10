@@ -3,6 +3,8 @@ require_once __DIR__ . '/../includes/application.php';
 require_once __DIR__ . '/../entities/producto.php';
 require_once __DIR__ . '/../entities/productos_Pedido.php';
 
+require_once __DIR__ . '/../entities/pedido.php';
+
 class PedidoService
 {
 
