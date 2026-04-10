@@ -8,10 +8,10 @@ require_once __DIR__ . '/../../includes/productoService.php';
 require_once __DIR__ . '/../../includes/ofertaService.php';
 require_once __DIR__ . '/../../includes/pedidoService.php';
 
-$user = current_user();
+$user = require_login();
 
 if (!$user) {
-    die("Debes iniciar sesión");
+    redirect('carrito.php');
 }
 
 // 🔹 Detectar si viene de pedido
