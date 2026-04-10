@@ -19,7 +19,7 @@ $pedido = PedidoService::getPedidoNuevo($usuario_id);
 if (!$pedido) {
     redirect('elegirTipo.php');
 }
-$pedido_id = $pedido['id'];
+$pedido_id = $pedido->getId();
 
 // Obtener categoría GET
 $categoria_id = isset($_GET['categoria']) && is_numeric($_GET['categoria'])

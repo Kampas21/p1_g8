@@ -19,10 +19,14 @@ $pedido = PedidoService::getPedidoNuevo($usuario_id);
 if (!$pedido) {
   redirect('elegirTipo.php');
 }
+<<<<<<< HEAD
 
 // 🔥 CORRECCIÓN CLAVE
 $pedido_id = (int)$pedido->getId();
 $tipoPedido = $pedido->getTipo();
+=======
+$pedido_id = (int)$pedido->getId();
+>>>>>>> 5909c886496791a99285c8e3d964836d9ea67fb1
 
 $lineas = PedidoService::getProductosPedido($pedido_id);
 
@@ -34,7 +38,12 @@ $formsEliminarHtml = [];
 foreach ($lineas as $linea) {
   $total += $linea['precio_unitario'] * $linea['cantidad'];
   $prod_id = (int)$linea['producto_id'];
+<<<<<<< HEAD
   
+=======
+
+  // Instanciamos formularios de cada fila
+>>>>>>> 5909c886496791a99285c8e3d964836d9ea67fb1
   $formUpdate = new \es\ucm\fdi\aw\Formulario\FormularioActualizarLineaPedido($pedido_id, $prod_id, (int)$linea['cantidad']);
   $formsActualizarHtml[$prod_id] = $formUpdate->gestiona();
 
@@ -61,7 +70,11 @@ ob_start();
   <div class="panel">
     <h2>Mi carrito
       <span class="text-muted-italic">
+<<<<<<< HEAD
         — pedido <?= e($tipoPedido === 'local' ? '🍽️ en local' : '🥡 para llevar') ?>
+=======
+        — pedido <?= e($pedido->getTipo() === 'local' ? '🍽️ en local' : '🥡 para llevar') ?>
+>>>>>>> 5909c886496791a99285c8e3d964836d9ea67fb1
       </span>
     </h2>
 
@@ -82,7 +95,7 @@ ob_start();
             </tr>
           </thead>
           <tbody>
-            <?php foreach ($lineas as $linea): 
+            <?php foreach ($lineas as $linea):
               $prod_id = (int)$linea['producto_id'];
             ?>
               <tr>
@@ -120,8 +133,18 @@ ob_start();
       </div>
 
       <div class="actions-inline mt-16">
+<<<<<<< HEAD
         <a href="../catalogo.php" class="btn">← Seguir añadiendo</a>
         <a href="../ofertas/ofertaCliente.php" class="btn">Ofertas</a>
+=======
+        <a href="catalogo.php" class="btn">← Seguir añadiendo</a>
+
+        <form action="../ofertas/ofertaCliente.php" method="POST" style="display:inline;">
+          <input type="hidden" name="pedido_id" value="<?= (int)$pedido_id ?>">
+          <button type="submit" class="btn-nuevo">Ofertas</button>
+        </form>
+
+>>>>>>> 5909c886496791a99285c8e3d964836d9ea67fb1
         <a href="pago.php" class="btn primary">Confirmar pedido →</a>
 
         <div class="inline-block">

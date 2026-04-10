@@ -52,9 +52,8 @@ CREATE TABLE IF NOT EXISTS `pedidos`(
     `metodo_pago` ENUM('tarjeta', 'camarero') DEFAULT NULL,
     `usuario_id` INT NOT NULL,
 
-    --`total` DECIMAL(10,2),
     `total_sin_descuentos` DECIMAL(10,2) DEFAULT 0,
-    `total_descuento` DECIMAL(10,2) DEFAULT 0;
+    `total_descuento` DECIMAL(10,2) DEFAULT 0,
 
     `cocinero_id` INT DEFAULT NULL,
 
@@ -75,12 +74,10 @@ CREATE TABLE IF NOT EXISTS `productos_en_pedido` (
     `precio_unitario` DECIMAL(10,2) NOT NULL,
 
     `estado` ENUM('pendiente', 'preparado') DEFAULT 'pendiente',
-
-    -- ON DELETE CASCADE para que si se borra un pedido o un producto, se borren también de esta tabla
+    
     FOREIGN KEY (`pedido_id`) REFERENCES `pedidos`(`id`) ON DELETE CASCADE,
     FOREIGN KEY (`producto_id`) REFERENCES `productos`(`id`) ON DELETE CASCADE,
 
-    -- Para que no se inserte el mismo producto dos veces en el mismo pedido
     UNIQUE (pedido_id, producto_id)
 );
 
