@@ -54,11 +54,12 @@ CREATE TABLE IF NOT EXISTS `pedidos`(
 
     `total_sin_descuentos` DECIMAL(10,2) DEFAULT 0,
     `total_descuento` DECIMAL(10,2) DEFAULT 0,
+    
+    `total` DECIMAL(10,2) GENERATED ALWAYS AS (total_sin_descuentos - total_descuento) STORED,
 
     `cocinero_id` INT DEFAULT NULL,
 
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
-    -- El número de pedido es único para un día concreto
     UNIQUE (`fecha`, `numero_pedido`),      
     FOREIGN KEY (cocinero_id) REFERENCES usuarios(id)
 );
@@ -128,7 +129,5 @@ CREATE TABLE IF NOT EXISTS `ofertas_en_pedido` (
 );
 
 
-CREATE INDEX idx_usuarios_rol ON usuarios(rol);
-CREATE INDEX idx_usuarios_activo ON usuarios(activo);
 
 SET FOREIGN_KEY_CHECKS=1;

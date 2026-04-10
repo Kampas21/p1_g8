@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../includes/application.php';
 require_once __DIR__ . '/../entities/ofertaEnPedido.php';
 
-class OfertaEnPedido
+class OfertaEnPedidoService
 {
     public static function addOferta($pedido_id, $oferta_id, $veces, $descuento_total)
     {
@@ -38,13 +38,10 @@ class OfertaEnPedido
         while ($fila = $result->fetch_assoc()) {
             $ofertas[] = new OfertaEnPedido(
                 $fila['id'],
-                $fila['nombre'],
-                $fila['descripcion'],
-                $fila['categoria_id'],
-                $fila['precio_base'],
-                $fila['iva'],
-                $fila['disponible'],
-                $fila['ofertado']
+                $fila['pedido_id'],
+                $fila['oferta_id'],
+                $fila['veces_aplicada'],
+                $fila['descuento_total']
             );
         }
 
@@ -52,6 +49,15 @@ class OfertaEnPedido
         $stmt->close();
 
         return $ofertas;
+    }
+
+    public static function limpiarOfertasDePedido($pedido_id)
+    {
+        global $conn;
+        $stmt = $conn->prepare("DELETE FROM ofertas_en_pedido WHERE pedido_id = ?");
+        $stmt->bind_param("i", $pedido_id);
+        $stmt->execute();
+        $stmt->close();
     }
 
 }

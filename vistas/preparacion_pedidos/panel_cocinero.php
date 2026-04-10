@@ -1,16 +1,16 @@
 <?php
-if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
+
 require_once __DIR__ . '/../../includes/application.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../entities/pedido.php';
 require_once __DIR__ . '/../../includes/Formulario/FormularioAccionesCocina.php';
 require_once __DIR__ . '/../../includes/pedidoService.php';
-require_once __DIR__ . '/../../includes/pedidoService.php';
+
 
 $user = require_role('cocinero'); 
 $cocinero_id = (int)$user->getId();
 
-$pedidosEnCola = PedidoService::getPedidosPorEstado('en_preparacion');
+$pedidosEnCola = PedidoService::getPedidosPorEstado('en_preparacion'); 
 $misPedidos = PedidoService::getPedidosCocinando($cocinero_id);
 
 // ---- EMPIEZA LA VISTA DEL PROYECTO ----
@@ -46,17 +46,17 @@ ob_start();
                                 $hayProductos = count($productos) > 0;
 
                                 foreach ($productos as $prod): 
-                                    $esPreparado = ($prod['estado'] === 'preparado');
+                                    $esPreparado = ($prod->getEstado() === 'preparado');
                                     if (!$esPreparado) { $todosPreparados = false; } 
                                 ?>
                                     <li class="item-plato">
-                                        <span><strong><?= $prod['cantidad'] ?>x</strong> <?= htmlspecialchars($prod['nombre']) ?></span>
+                                        <span><strong><?= $prod->getCantidad() ?>x</strong> <?= htmlspecialchars($prod->getNombre()) ?></span>
                                         
                                         <?php if ($esPreparado): ?>
                                             <span class="estado-plato-listo">✅ Preparado</span>
                                         <?php else: 
                                             // Formulario Marcar Plato
-                                            $formPlato = new \es\ucm\fdi\aw\Formulario\FormularioAccionesCocina($pedido_id, 'marcar_plato', $cocinero_id, (int)$prod['producto_id']);
+                                            $formPlato = new \es\ucm\fdi\aw\Formulario\FormularioAccionesCocina($pedido_id, 'marcar_plato', $cocinero_id, (int)$prod->getProductoId() );
                                             echo $formPlato->gestiona();
                                         endif; ?>
                                     </li>

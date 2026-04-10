@@ -1,4 +1,10 @@
 <?php
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+
 // ---- PARA LOCAL (XAMPP) ----
 define("DB_HOST", "localhost");
 define("DB_USER", "root");

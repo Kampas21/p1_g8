@@ -1,9 +1,7 @@
 <?php
 require_once __DIR__ . '/../../includes/config.php';
-require_once __DIR__ . '/../../includes/src/entities/Producto.php';
-require_once __DIR__ . '/../../includes/src/services/ProductoService.php';
-
-session_start();
+require_once __DIR__ . '/../../entities/producto.php';
+require_once __DIR__ . '/../../includes/productoService.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -19,8 +17,7 @@ $descripcion = filter_input(INPUT_POST, 'descripcion', FILTER_SANITIZE_SPECIAL_C
 $categoria_id = filter_input(INPUT_POST, 'categoria_id', FILTER_VALIDATE_INT);
 $precio = filter_input(INPUT_POST, 'precio', FILTER_VALIDATE_FLOAT);
 $iva = filter_input(INPUT_POST, 'iva', FILTER_VALIDATE_INT);
-$disponible = filter_input(INPUT_POST, 'disponible', FILTER_VALIDATE_INT) ?? 1;
-$ofertado = filter_input(INPUT_POST, 'ofertado', FILTER_VALIDATE_INT) ?? 1;
+
 
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
@@ -65,33 +62,19 @@ if (!empty($errores)) {
     exit;
 }
 
-/* =========================
-   4. CREAR OBJETO
-========================= */
-
-$producto = new Producto(
-    $id ?: null,
-    $nombre,
-    $descripcion,
-    $categoria_id,
-    $precio,
-    $iva,
-    $disponible,
-    $ofertado
-);
 
 /* =========================
-   5. GUARDAR
+   4. GUARDAR
 ========================= */
 
 if ($id) {
-    ProductoService::update($conn, $producto);
+    ProductoService::update($id, $nombre, $descripcion, $categoria_id, $precio, $iva);
 } else {
-    ProductoService::create($conn, $producto);
+    ProductoService::create($nombre, $descripcion, $categoria_id, $precio, $iva);
 }
 
 /* =========================
-   6. REDIRECCIÓN
+   5. REDIRECCIÓN
 ========================= */
 
 header("Location: ../categorias/categoriasList.php");

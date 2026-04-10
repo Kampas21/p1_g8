@@ -101,13 +101,14 @@ fieldset {
     margin-left: 30px;
 }
 
-/*estilo general del la tabla*/
+/*estilo general de la tabla*/
 table {
     border-collapse: collapse;
-    width: max-content;
-    min-width: 100%;
+    width: 100%;
+    max-width: 100%;
     margin: 20px 0;
     font-size: 0.9em;
+    table-layout: auto;
 }
 
 /* Para el encabezado de la tabla */
@@ -121,6 +122,7 @@ thead tr {
 th,
 td {
     padding: 12px 15px;
+    word-wrap: break-word;
 }
 
 /* Para poner las rayas entre filas */
@@ -138,6 +140,8 @@ tbody tr {
     color: white; 
     background-color: #8b7355; 
     font-weight: bold;
+    white-space: normal;
+    text-align: center;
 }
 
 .editar {
@@ -274,8 +278,9 @@ body {
 
 #zona-central {
     display: grid;
-    grid-template-columns: 220px minmax(0, 1fr) 220px;
+    grid-template-columns: minmax(180px, 220px) minmax(300px, 1fr) minmax(180px, 220px);
 }
+
 
 #sidebar-izq,
 #sidebar-der {
@@ -297,7 +302,10 @@ body {
     padding: 30px;
     background-color: #fdfbf8;
     min-width: 0;
-    overflow-x: auto;
+    max-width: 100%;
+    width: 100%;             
+    box-sizing: border-box;  
+    overflow: hidden;
 }
 
 #pie-web {
@@ -375,20 +383,32 @@ body {
     margin-bottom:10px;
 }
 
-.menu-izq a{
-    display:block;
-    padding:8px 10px;
-    background-color:#5a3e2b;
-    color:white;
-    text-decoration:none;
-    border-radius:6px;
-    font-weight:bold;
-    font-size:13px;
-    text-align:center;
+.menu-izq a,
+#sidebar-der ul a {
+    display: block;
+    padding: 8px 10px;
+    background-color: #5a3e2b;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 13px;
+    text-align: center;
 }
 
-.menu-izq a:hover{
-    background-color:#7a553c;
+.menu-izq a:hover,
+#sidebar-der ul a:hover {
+    background-color: #7a553c;
+}
+
+/* Y quitamos los puntitos de la lista del sidebar derecho */
+#sidebar-der ul {
+    list-style: none;
+    padding: 0;
+}
+
+#sidebar-der li {
+    margin-bottom: 10px;
 }
 
 .tabla-scroll {
@@ -400,14 +420,6 @@ body {
    ESTILOS COMPLEMENTARIOS PARA FORMS Y PERFIL 
    (Extraídos de style.css y adaptados)
    ========================================= */
-
-.panel {
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  background: #fff;
-  padding: 16px;
-  margin-bottom: 18px;
-}
 
 .panel h2, .panel h3 {
   margin-top: 0;
@@ -498,10 +510,6 @@ button:hover, input[type="submit"]:hover {
   gap: 8px;
   flex-wrap: wrap;
   align-items: center;
-}
-
-.table-wrap {
-  overflow-x: auto;
 }
 
 .avatar {
@@ -1014,13 +1022,7 @@ button:hover, input[type="submit"]:hover {
    3. ADAPTACIONES PARA PC (Clientes en escritorio o Gerentes)
 ======================================================== */
 @media screen and (min-width: 1100px) {
-    /* Aquí podemos establecer anchos máximos para que en pantallas gigantes 
-       la web no se estire demasiado y sea difícil de leer */
-    main {
-        max-width: 1200px;
-        margin: 0 auto; /* Centrado */
-    }
-
+   
     .form-grid {
         display: grid;
         grid-template-columns: 1fr 1fr; /* Dividir formularios en 2 columnas */
@@ -1045,18 +1047,32 @@ html, body {
 }
 
 main {
-    max-width: 1200px;
-    margin: 0 auto;
+    width: 100%;
+    max-width: 100%;         
+    box-sizing: border-box;
 }
 
 .panel {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background: #fff;
+    padding: 16px;
+    margin-bottom: 18px;
     width: 100%;
+    max-width: 100%;         
     box-sizing: border-box;
+    overflow-x: auto;        
 }
 
 .table-wrap {
     width: 100%;
     overflow-x: auto;
+    box-sizing: border-box;
+}
+
+.table-wrap table {
+    width: 100%;
+    table-layout: auto; 
 }
 
 .layout, .contenedor, .wrapper {

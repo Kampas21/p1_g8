@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/application.php';
 require_once __DIR__ . '/../../includes/auth.php';
@@ -20,7 +19,7 @@ function renderTarjetas(array $pedidos, string $accion, string $btnLabel): void 
         <p class="text-muted-italic">No hay pedidos.</p>
     <?php else: foreach ($pedidos as $p): 
         $pedido_id = (int)$p['id'];
-        $formObj = new \es\ucm\fdi\aw\Formulario\FormularioEstadoCamarero($pedido_id, $accion, $btnLabel);
+        $formObj = new \es\ucm\fdi\aw\Formulario\FormularioEstadoCamarero($pedido_id, $accion);
         $htmlForm = $formObj->gestiona();
     ?>
         <div class="pedido-card">

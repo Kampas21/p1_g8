@@ -3,9 +3,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+
 
 require_once __DIR__ . '/../../includes/auth.php';
 
@@ -46,8 +44,8 @@ ob_start();
 
 <p><a class="btn-nuevo" href="crearOferta.php">Nueva Oferta</a></p>
 
-<div class="tabla-scroll">
-    <table border="1">
+<div class="panel table-wrap">
+    <table>
         <tr>
             <th>ID</th>
             <th>Nombre</th>

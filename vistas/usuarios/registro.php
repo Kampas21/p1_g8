@@ -1,9 +1,6 @@
 <?php
 declare(strict_types=1);
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
-}
 
 require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/auth.php';
@@ -13,7 +10,7 @@ use es\ucm\fdi\aw\Formulario\FormularioRegistro;
 
 $currentUser = current_user();
 if ($currentUser) {
-    if ($currentUser['rol'] === 'gerente') {
+    if ($currentUser->getRol() === 'gerente') {
         header("Location: ".RUTA_APP."/vistas/usuarios/usuario_form.php?modo=crear");
     } else {
         header("Location: ".RUTA_APP."/vistas/usuarios/perfil.php");

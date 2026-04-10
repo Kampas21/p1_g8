@@ -2,11 +2,12 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-session_start();
+
 
 require_once __DIR__ . '/../../entities/pedido.php';
 require_once __DIR__ . '/../../includes/ofertaService.php';
 require_once __DIR__ . '/../../includes/productoService.php';
+require_once __DIR__ . '/../../includes/ofertaEnPedidoService.php';
 
 $pedido_id = $_POST['pedido_id'];
 $ofertas_seleccionadas = $_POST['ofertas'] ?? [];
@@ -15,21 +16,21 @@ $ofertas_seleccionadas = $_POST['ofertas'] ?? [];
 // 🔹 1. Obtener productos del pedido
 //////////////////////////////////////////////////////
 
-$productos = Pedido::getProductos($pedido_id);
+$productos = PedidoService::getProductosPedido($pedido_id);
 
 $pedido_productos = [];
 $precio_sin_descuento = 0;
 
 foreach ($productos as $p) {
-    $pedido_productos[$p['producto_id']] = $p['cantidad'];
-    $precio_sin_descuento += $p['precio_unitario'] * $p['cantidad'];
+   $pedido_productos[$p->getId()] = $p->getCantidad();
+    $precio_sin_descuento += $p->getPrecio() * $p->getCantidad();
 }
 
 //////////////////////////////////////////////////////
 // 🔹 2. Limpiar ofertas previas (opcional pero recomendado)
 //////////////////////////////////////////////////////
 
-Pedido::limpiarOfertas($pedido_id);
+OfertaEnPedidoService::limpiarOfertasDePedido($pedido_id);
 
 //////////////////////////////////////////////////////
 // 🔹 3. Aplicar ofertas
@@ -73,12 +74,7 @@ foreach ($ofertas_seleccionadas as $oferta_id) {
     $total_descuento += $descuento_total_oferta;
 
     // 🔹 guardar relación
-    Pedido::guardarOferta(
-        $pedido_id,
-        $oferta_id,
-        $veces,
-        $descuento_total_oferta
-    );
+    OfertaEnPedidoService::addOferta($pedido_id, $oferta_id, $veces, $descuento_total_oferta);
 
     // 🔹 RESTAR productos usados
     foreach ($productos_oferta as $po) {
@@ -91,11 +87,7 @@ foreach ($ofertas_seleccionadas as $oferta_id) {
 // 🔹 4. Guardar totales
 //////////////////////////////////////////////////////
 
-Pedido::actualizarTotales(
-    $pedido_id,
-    $precio_sin_descuento,
-    $total_descuento
-);
+PedidoService::actualizarTotales($pedido_id, $precio_sin_descuento, $total_descuento);
 
 //////////////////////////////////////////////////////
 // 🔹 5. Redirigir

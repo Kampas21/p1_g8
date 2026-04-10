@@ -32,20 +32,11 @@ class FormularioPerfil extends Formulario
             $this->errores, 'span', array('class' => 'error')
         );
 
-        
-        $imagenAvatar = $this->user->getAvatarUrl() ?? '';
-        
-        $htmlAvatar = <<<EOF
-        <div class="perfil-avatar">
-            <img src="$imagenAvatar" alt="Avatar" width="80">
-        </div>
-        EOF;
 
         return <<<EOF
         $htmlErroresGlobales
         <fieldset>
             <legend>Datos personales</legend>
-            $htmlAvatar
             <div>
                 <label for="username">Usuario:</label>
                 <input id="username" type="text" name="username" value="$username" />
