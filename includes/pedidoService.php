@@ -58,8 +58,7 @@ class PedidoService
             $row['usuario_id'],
             $row['total_sin_descuentos'],
             $row['total_descuento'],
-            $row['cocinero_id'],
-            $row['total']
+            $row['cocinero_id']
         );
         
     }
