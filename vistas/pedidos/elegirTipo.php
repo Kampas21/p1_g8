@@ -15,7 +15,12 @@ $usuario_id = (int)$user->getId();
 // Si ya tiene un carrito/pedido activo, lo mandamos al carrito
 $pedidoActivo = PedidoService::getPedidoNuevo($usuario_id);
 if ($pedidoActivo) {
-    redirect('carrito.php');
+    // comprobar si tiene productos
+    $lineas = PedidoService::getProductosPedido($pedidoActivo->getId());
+
+    if (!empty($lineas)) {
+        redirect('carrito.php');
+    }
 }
 
 // Instanciamos el nuevo formulario

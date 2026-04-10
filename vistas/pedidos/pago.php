@@ -15,7 +15,7 @@ $pedido = PedidoService::getPedidoNuevo($usuario_id);
 if (!$pedido) {
     redirect('elegirTipo.php');
 }
-$pedido_id = $pedido['id'];
+$pedido_id = $pedido->getId();
 
 $lineas = PedidoService::getProductosPedido($pedido_id);
 if (empty($lineas)) {

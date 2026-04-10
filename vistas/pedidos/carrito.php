@@ -6,7 +6,6 @@ require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/util.php';
 require_once __DIR__ . '/../../entities/pedido.php';
 
-// Requerimos los nuevos formularios
 require_once __DIR__ . '/../../includes/Formulario/FormularioActualizarLineaPedido.php';
 require_once __DIR__ . '/../../includes/Formulario/FormularioEliminarLineaPedido.php';
 require_once __DIR__ . '/../../includes/Formulario/FormularioCancelarPedido.php';
@@ -16,10 +15,14 @@ $user = require_login();
 $usuario_id = (int)$user->getId();
 
 $pedido = PedidoService::getPedidoNuevo($usuario_id);
+
 if (!$pedido) {
   redirect('elegirTipo.php');
 }
-$pedido_id = (int)$pedido['id'];
+
+// 🔥 CORRECCIÓN CLAVE
+$pedido_id = (int)$pedido->getId();
+$tipoPedido = $pedido->getTipo();
 
 $lineas = PedidoService::getProductosPedido($pedido_id);
 
@@ -32,20 +35,18 @@ foreach ($lineas as $linea) {
   $total += $linea['precio_unitario'] * $linea['cantidad'];
   $prod_id = (int)$linea['producto_id'];
   
-  // Instanciamos formularios de cada fila
   $formUpdate = new \es\ucm\fdi\aw\Formulario\FormularioActualizarLineaPedido($pedido_id, $prod_id, (int)$linea['cantidad']);
   $formsActualizarHtml[$prod_id] = $formUpdate->gestiona();
 
   $formRemove = new \es\ucm\fdi\aw\Formulario\FormularioEliminarLineaPedido($pedido_id, $prod_id);
   $formsEliminarHtml[$prod_id] = $formRemove->gestiona();
 }
+
 $total = round($total, 2);
 
-// Instanciamos el de cancelar pedido general
 $formCancelar = new \es\ucm\fdi\aw\Formulario\FormularioCancelarPedido($pedido_id);
 $htmlFormCancelar = $formCancelar->gestiona();
 
-// ---- EMPIEZA LA VISTA ----
 $tituloPagina = 'Mi carrito | Bistro FDI';
 $rutaCSS = RUTA_APP . '/CSS/estilo.css';
 ob_start();
@@ -60,14 +61,13 @@ ob_start();
   <div class="panel">
     <h2>Mi carrito
       <span class="text-muted-italic">
-        — pedido <?= e($pedido['tipo'] === 'local' ? '🍽️ en local' : '🥡 para llevar') ?>
+        — pedido <?= e($tipoPedido === 'local' ? '🍽️ en local' : '🥡 para llevar') ?>
       </span>
     </h2>
 
     <?php if (empty($lineas)): ?>
       <p>El carrito está vacío.</p>
-      <a href="catalogo.php" class="btn">← Volver al catálogo</a>
-
+<a href="../catalogo.php" class="btn">← Volver al catálogo</a>
     <?php else: ?>
       <div class="table-wrap">
         <table>
@@ -96,21 +96,23 @@ ob_start();
 
                 <td><?= e($linea['nombre']) ?></td>
                 <td><?= e($linea['precio_unitario']) ?> €</td>
+
                 <td>
-                  <!-- Formulario Actualizar -->
                   <?= $formsActualizarHtml[$prod_id] ?>
                 </td>
+
                 <td><?= round($linea['precio_unitario'] * $linea['cantidad'], 2) ?> €</td>
+
                 <td>
-                  <!-- Formulario Eliminar -->
                   <?= $formsEliminarHtml[$prod_id] ?>
                 </td>
               </tr>
             <?php endforeach; ?>
           </tbody>
+
           <tfoot>
             <tr>
-              <td colspan="4" class="text-right" class="pr-15"><strong>Total:</strong></td>
+              <td colspan="4" class="text-right pr-15"><strong>Total:</strong></td>
               <td colspan="2"><strong><?= $total ?> €</strong></td>
             </tr>
           </tfoot>
@@ -118,9 +120,7 @@ ob_start();
       </div>
 
       <div class="actions-inline mt-16">
-        <a href="catalogo.php" class="btn">← Seguir añadiendo</a>
-        
-        
+        <a href="../catalogo.php" class="btn">← Seguir añadiendo</a>
         <a href="../ofertas/ofertaCliente.php" class="btn">Ofertas</a>
         <a href="pago.php" class="btn primary">Confirmar pedido →</a>
 
@@ -128,6 +128,7 @@ ob_start();
           <?= $htmlFormCancelar ?>
         </div>
       </div>
+
     <?php endif; ?>
   </div>
 </main>

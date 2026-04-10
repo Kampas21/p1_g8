@@ -10,7 +10,7 @@ require_once __DIR__ . '/../../includes/pedidoService.php';
 $user = require_role('cocinero'); 
 $cocinero_id = (int)$user->getId();
 
-$pedidosEnCola = PedidoService::getPedidosPorState('en_preparacion'); 
+$pedidosEnCola = PedidoService::getPedidosPorEstado('en_preparacion');
 $misPedidos = PedidoService::getPedidosCocinando($cocinero_id);
 
 // ---- EMPIEZA LA VISTA DEL PROYECTO ----

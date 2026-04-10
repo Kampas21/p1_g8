@@ -2,31 +2,42 @@
 namespace es\ucm\fdi\aw\Formulario;
 
 require_once __DIR__ . '/Formulario.php';
-require_once __DIR__ . '/../../entities/pedido.php';
 require_once __DIR__ . '/../../includes/pedidoService.php';
 
 class FormularioElegirTipo extends Formulario {
 
     private $usuario_id;
 
-    public function __construct(int $usuario_id) {
+    public function __construct($usuario_id) {
+        parent::__construct('formElegirTipo');
         $this->usuario_id = $usuario_id;
-        parent::__construct('formTipo', ['urlRedireccion' => 'catalogo.php']);
     }
 
     protected function generaCamposFormulario(&$datos) {
-        return <<<EOF
-        <div class="actions-inline mt-20">
-            <button type="submit" name="tipo" value="local" class="btn primary">Tomar en el local</button>
-            <button type="submit" name="tipo" value="llevar" class="btn primary">Para llevar</button>
+
+    return <<<HTML
+    <form method="POST">
+        <div class="acciones-tipo">
+            <button type="submit" name="tipo" value="local">🍽️ En local</button>
+            <button type="submit" name="tipo" value="llevar">🥡 Para llevar</button>
         </div>
-        EOF;
-    }
+    </form>
+HTML;
+}
 
     protected function procesaFormulario(&$datos) {
-        $tipo = $_POST['tipo'] ?? 'local';
-        
-        $pedido_id = \PedidoService::crearPedido($this->usuario_id, $tipo);
-        $_SESSION['ultimo_pedido_id'] = $pedido_id;
+
+    
+        $tipo = $datos['tipo'] ?? null;
+
+        if (!$tipo || !in_array($tipo, ['local', 'llevar'])) {
+            $this->errores[] = "Tipo de pedido inválido";
+            return;
+        }
+
+        \PedidoService::crearPedido($this->usuario_id, $tipo);
+
+        header("Location: " . RUTA_APP . "/vistas/catalogo.php");
+        exit;
     }
 }
