@@ -32,8 +32,11 @@ function mostrarSaludo(): string {
 
     <nav class="menu-principal">
         <ul>
-            <li><a href="<?= RUTA_APP ?>/miembros.php">Miembros</a></li>
-            <li><a href="<?= RUTA_APP ?>/contacto.php">Contacto</a></li>
+            <?php if (current_user()): ?>
+                <li><a href="<?= RUTA_APP ?>/vistas/pedidos/carrito.php">🛒 Mi Carrito</a></li>
+            <?php endif; ?>
+            <li><a href="<?= RUTA_APP ?>/miembros.php">👥 Miembros</a></li>
+            <li><a href="<?= RUTA_APP ?>/contacto.php">✉️ Contacto</a></li>
         </ul>
     </nav>
 </div>
