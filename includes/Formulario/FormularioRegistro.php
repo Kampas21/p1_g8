@@ -8,8 +8,8 @@ require_once __DIR__ . '/../../includes/auth.php';
 class FormularioRegistro extends Formulario
 {
     public function __construct() {
-        // ID del form y URL donde redirige al terminar (al perfil)
-        parent::__construct('formRegistro', ['urlRedireccion' => RUTA_APP.'/vistas/usuarios/perfil.php']);
+        parent::__construct('formRegistro', [
+        'urlRedireccion' => RUTA_APP.'/vistas/usuarios/perfil.php','enctype' => 'multipart/form-data']);
     }
     
     protected function generaCamposFormulario(&$datos)
@@ -22,7 +22,7 @@ class FormularioRegistro extends Formulario
 
         $htmlErroresGlobales = self::generaListaErroresGlobales($this->errores);
         $erroresCampos = self::generaErroresCampos(
-            ['username', 'email', 'nombre', 'apellidos', 'password', 'password_confirm'], 
+            ['username', 'email', 'nombre', 'apellidos', 'password', 'password_confirm', 'avatar'], 
             $this->errores, 'span', array('class' => 'error')
         );
 
@@ -60,6 +60,11 @@ class FormularioRegistro extends Formulario
                 <input id="password_confirm" type="password" name="password_confirm" required minlength="6" />
                 {$erroresCampos['password_confirm']}
             </div>
+            <div>
+                <label>Foto de Perfil (Opcional):</label>
+                <input type="file" name="avatar_pers" class="input-archivo">
+                {$erroresCampos['avatar']}
+            </div>
             <div class="mt-16">
                 <button type="submit" name="registro_submit" class="btn primary">Registrarme</button>
             </div>
@@ -96,12 +101,31 @@ class FormularioRegistro extends Formulario
         }
 
         if (count($this->errores) === 0) {
-            $clean['rol'] = 'cliente'; // Por defecto, registro de cliente
+            $clean['rol'] = 'cliente';
             $clean['password'] = $pwd1;
             
-            $newId = user_create($clean, ['type' => 'default']);
+            // Replicamos la misma lógica brillante que usasteis en el Perfil
+            $avatarDetails = ['type' => 'default']; 
+            
+            if (isset($_FILES['avatar_pers']) && $_FILES['avatar_pers']['error'] !== UPLOAD_ERR_NO_FILE) {
+                // Truco para que vuestra función core funcione
+                $_POST['avatar_mode'] = 'upload';
+                $_FILES['avatar_upload'] = $_FILES['avatar_pers'];
+                
+                try {
+                    $avatarDetails = \resolve_avatar_choice_from_request([
+                        'avatar_tipo' => 'default',
+                        'avatar_valor' => ''
+                    ], false);           
+                } catch (\RuntimeException $ex) {
+                    $this->errores['avatar'] = $ex->getMessage();
+                    return; // Detenemos el registro si la imagen falla (pesa mucho, etc)
+                }
+            }
+            
+            $newId = user_create($clean, $avatarDetails);
+            
             if ($newId) {
-                // Instanciamos el objeto completo para hacer login
                 $user = user_find_by_id($newId);
                 login_user($user);
             } else {
