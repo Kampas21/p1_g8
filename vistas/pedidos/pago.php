@@ -22,13 +22,28 @@ if (empty($lineas)) {
     redirect('carrito.php');
 }
 
-// $total = 0;
-// foreach ($lineas as $linea) {
-//     $total += $linea->getPrecio() * $linea->getCantidad();
-// }
-// $total = round($total, 2);
+// 1. Calculamos el dinero de los platos puros
+$total_sin_descuentos = 0;
+foreach ($lineas as $linea) {
+    $total_sin_descuentos += $linea->getPrecio() * $linea->getCantidad();
+}
 
-$total=$pedido->getTotal();
+// 2. Comprobamos si tiene ofertas aplicadas en el carrito y se las restamos
+$total_descuento = 0;
+if (method_exists('PedidoService', 'getOfertasDePedido')) {
+    $ofertas_aplicadas = PedidoService::getOfertasDePedido($pedido_id);
+    foreach ($ofertas_aplicadas as $oferta) {
+        $total_descuento += $oferta->descuento_total ?? $oferta['descuento_total'];
+    }
+}
+
+// 3. Calculamos cuánto le toca pagar exactamente al cliente
+$total = max(0, $total_sin_descuentos - $total_descuento);
+$total = round($total, 2);
+
+// [!Opcional pero recomendado!] Guardamos este total de forma oficial en la BD
+PedidoService::actualizarTotales($pedido_id, $total_sin_descuentos, $total_descuento);
+
 
 // Instanciamos el formulario y le pasamos los datos necesarios
 $form = new \es\ucm\fdi\aw\Formulario\FormularioPago($pedido_id, $total);
