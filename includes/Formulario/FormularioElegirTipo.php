@@ -37,7 +37,7 @@ HTML;
 
         \PedidoService::crearPedido($this->usuario_id, $tipo);
 
-        header("Location: " . RUTA_APP . "/vistas/catalogo.php");
+        header("Location: " . RUTA_APP . "/vistas/pedidos/catalogo.php");
         exit;
     }
 }
