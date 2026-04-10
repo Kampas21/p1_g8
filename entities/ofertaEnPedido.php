@@ -1,36 +1,46 @@
 <?php
-require_once __DIR__ . '/../includes/application.php';
 
-class OfertaEnPedido
+class OfertaProducto
 {
-    public static function addOferta($pedido_id, $oferta_id, $veces, $descuento_total)
-    {
-        global $conn;
 
-        $stmt = $conn->prepare(
-            "INSERT INTO ofertas_en_pedido (pedido_id, oferta_id, veces_aplicada, descuento_total)
-             VALUES (?, ?, ?, ?)"
-        );
+    private $id;
+    private $pedido_id;
+    private $oferta_id;
+    private $veces_aplicada;
+    private $descuento_total;
 
-        $stmt->bind_param("iiid", $pedido_id, $oferta_id, $veces, $descuento_total);
-        return $stmt->execute();
+    public function __construct($id, $pedido_id, $oferta_id, $veces_aplicada, $descuento_total) {
+        $this->id = $id;
+        $this->pedido_id = $pedido_id;
+        $this->oferta_id = $oferta_id;
+        $this->veces_aplicada = $veces_aplicada;
+        $this->descuento_total = $descuento_total;
     }
 
-    public static function getOfertasDePedido($pedido_id)
+    // Getters
+    public function getId()
     {
-        global $conn;
-
-        $stmt = $conn->prepare(
-            "SELECT oep.*, o.nombre
-             FROM ofertas_en_pedido oep
-             JOIN ofertas o ON o.id = oep.oferta_id
-             WHERE oep.pedido_id = ?"
-        );
-
-        $stmt->bind_param("i", $pedido_id);
-        $stmt->execute();
-
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        return $this->id;
     }
 
+    public function getPedidoId()
+    {
+        return $this->pedido_id;
+    }
+
+    public function getOfertaId()
+    {
+        return $this->oferta_id;
+    }
+
+    public function getVeces_aplicada()
+    {
+        return $this->veces_aplicada;
+    }
+
+    public function getDescuento_total()
+    {
+        return $this->descuento_total;
+    }
 }
+

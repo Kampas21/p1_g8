@@ -19,7 +19,7 @@ $pedido = PedidoService::getPedidoNuevo($usuario_id);
 if (!$pedido) {
   redirect('elegirTipo.php');
 }
-$pedido_id = (int)$pedido['id'];
+$pedido_id = (int)$pedido->getId();
 
 $lineas = PedidoService::getProductosPedido($pedido_id);
 
@@ -29,11 +29,11 @@ $formsActualizarHtml = [];
 $formsEliminarHtml = [];
 
 foreach ($lineas as $linea) {
-  $total += $linea['precio_unitario'] * $linea['cantidad'];
-  $prod_id = (int)$linea['producto_id'];
-  
+  $total += $linea->getPrecio() * $linea->getCantidad();
+  $prod_id = (int)$linea->getProductoId();
+
   // Instanciamos formularios de cada fila
-  $formUpdate = new \es\ucm\fdi\aw\Formulario\FormularioActualizarLineaPedido($pedido_id, $prod_id, (int)$linea['cantidad']);
+  $formUpdate = new \es\ucm\fdi\aw\Formulario\FormularioActualizarLineaPedido($pedido_id, $prod_id, (int)$linea->getCantidad());
   $formsActualizarHtml[$prod_id] = $formUpdate->gestiona();
 
   $formRemove = new \es\ucm\fdi\aw\Formulario\FormularioEliminarLineaPedido($pedido_id, $prod_id);
@@ -60,7 +60,7 @@ ob_start();
   <div class="panel">
     <h2>Mi carrito
       <span class="text-muted-italic">
-        — pedido <?= e($pedido['tipo'] === 'local' ? '🍽️ en local' : '🥡 para llevar') ?>
+        — pedido <?= e($pedido->getTipo() === 'local' ? '🍽️ en local' : '🥡 para llevar') ?>
       </span>
     </h2>
 
@@ -82,25 +82,25 @@ ob_start();
             </tr>
           </thead>
           <tbody>
-            <?php foreach ($lineas as $linea): 
-              $prod_id = (int)$linea['producto_id'];
+            <?php foreach ($lineas as $linea):
+              $prod_id = (int)$linea->getProductoId();
             ?>
               <tr>
                 <td class="text-center">
-                  <?php if (!empty($linea['imagen'])): ?>
-                    <img src="<?= RUTA_APP . '/' . e($linea['imagen']) ?>" alt="<?= e($linea['nombre']) ?>" class="img-thumbnail">
+                  <?php if (!empty($linea->getImagen())): ?>
+                    <img src="<?= RUTA_APP . '/' . e($linea->getImagen()) ?>" alt="<?= e($linea->getNombre()) ?>" class="img-thumbnail">
                   <?php else: ?>
                     <span class="text-muted-italic">(Sin imagen)</span>
                   <?php endif; ?>
                 </td>
 
-                <td><?= e($linea['nombre']) ?></td>
-                <td><?= e($linea['precio_unitario']) ?> €</td>
+                <td><?= e($linea->getNombre()) ?></td>
+                <td><?= e($linea->getPrecio()) ?> €</td>
                 <td>
                   <!-- Formulario Actualizar -->
                   <?= $formsActualizarHtml[$prod_id] ?>
                 </td>
-                <td><?= round($linea['precio_unitario'] * $linea['cantidad'], 2) ?> €</td>
+                <td><?= round($linea->getPrecio() * $linea->getCantidad(), 2) ?> €</td>
                 <td>
                   <!-- Formulario Eliminar -->
                   <?= $formsEliminarHtml[$prod_id] ?>
@@ -119,9 +119,12 @@ ob_start();
 
       <div class="actions-inline mt-16">
         <a href="catalogo.php" class="btn">← Seguir añadiendo</a>
-        
-        
-        <a href="../ofertas/ofertaCliente.php" class="btn">Ofertas</a>
+
+        <form action="../ofertas/ofertaCliente.php" method="POST" style="display:inline;">
+          <input type="hidden" name="pedido_id" value="<?= (int)$pedido_id ?>">
+          <button type="submit" class="btn-nuevo">Ofertas</button>
+        </form>
+
         <a href="pago.php" class="btn primary">Confirmar pedido →</a>
 
         <div class="inline-block">

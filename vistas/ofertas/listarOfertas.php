@@ -67,8 +67,8 @@ ob_start();
                 <td><?= $oferta->getId() ?></td>
                 <td><?= htmlspecialchars($oferta->getNombre()) ?></td>
                 <td class="descripcion"><?= htmlspecialchars($oferta->getDescripcion()) ?></td>
-                <td><?= htmlspecialchars($oferta->getFechaInicio()) ?></td>
-                <td><?= htmlspecialchars($oferta->getFechaFin()) ?></td>
+                <td><?= htmlspecialchars(date('d/m/Y H:i', strtotime($oferta->getFechaInicio()))) ?></td>
+                <td><?= htmlspecialchars(date('d/m/Y H:i', strtotime($oferta->getFechaFin()))) ?></td>
 
                 <?php
                 $precio_total = 0;
@@ -97,7 +97,7 @@ ob_start();
                 <td><?= htmlspecialchars($precio_des) . '€' ?></td>
 
                 <td>
-                    <?= ($oferta->estaActiva())
+                    <?= (!$oferta->estaActiva())
                         ? '<span class="text-danger">Caducada</span>'
                         : '<span class="text-success">Activa</span>' ?>
                 </td>

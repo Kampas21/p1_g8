@@ -51,14 +51,13 @@ class Oferta
         return $this->descuento;
     }
 
-    // Método útil: saber si la oferta está activa en el momento actual
     public function estaActiva()
     {
-        $ahora = new \DateTimeZone('Europe/Madrid');
+        $ahora = date('Y-m-d H:i');
+
         return $ahora >= $this->fecha_inicio && $ahora <= $this->fecha_fin;
     }
 
-    // Aplicar descuento a un precio
     public function aplicarDescuento(float $precioOriginal)
     {
         return round($precioOriginal * (1 - $this->descuento / 100), 2);

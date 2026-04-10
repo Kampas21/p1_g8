@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/application.php';
 require_once __DIR__ . '/../entities/producto.php';
+require_once __DIR__ . '/../entities/productos_Pedido.php';
 
 class PedidoService
 {
@@ -180,7 +181,7 @@ class PedidoService
     }
 
 
-    public static function getPedidosDeUsuario(int $usuario_id)
+    public static function getPedidosDeUsuario($usuario_id)
     {
         global $conn;
         $stmt = $conn->prepare(
@@ -234,14 +235,34 @@ class PedidoService
     {
         global $conn;
         $stmt = $conn->prepare(
-            "SELECT pep.*, p.nombre, p.imagen, p.iva
+            "SELECT pep.*, p.nombre, p.imagen
              FROM productos_en_pedido pep
              JOIN productos p ON p.id = pep.producto_id
              WHERE pep.pedido_id = ?"
         );
         $stmt->bind_param("i", $pedido_id);
         $stmt->execute();
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        
+
+        $result = $stmt->get_result();
+        $productos = [];
+
+        while ($fila = $result->fetch_assoc()) {
+            $productos[] = new Productos_Pedido(
+                $fila['id'],
+                $fila['nombre'],
+                $fila['pedido_id'],
+                $fila['producto_id'],
+                $fila['precio_unitario'],
+                $fila['cantidad'],
+                $fila['estado']
+            );
+        }
+
+        $result->free();
+        $stmt->close();
+
+        return $productos;
     }
 
     /**

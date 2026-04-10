@@ -2,35 +2,38 @@
 namespace es\ucm\fdi\aw\Formulario;
 
 require_once __DIR__ . '/Formulario.php';
-require_once __DIR__ . '/../../entities/pedido.php';
+require_once __DIR__ . '/../../includes/pedidoService.php';
 
 class FormularioEliminarLineaPedido extends Formulario {
 
     private $pedido_id;
     private $producto_id;
 
-    public function __construct(int $pedido_id, int $producto_id) {
+    public function __construct($pedido_id, $producto_id) {
+        parent::__construct('formRemoveLinea_' . $producto_id);
         $this->pedido_id = $pedido_id;
         $this->producto_id = $producto_id;
-        
-        parent::__construct("formRemoveLinea_{$producto_id}", [
-            'urlRedireccion' => 'carrito.php',
-            'class' => 'inline-form'
-        ]);
     }
 
     protected function generaCamposFormulario(&$datos) {
-        return <<<EOF
-            <input type="hidden" name="producto_id" value="{$this->producto_id}">
-            <button type="submit" class="btn danger small">Eliminar</button>
-        EOF;
+
+        return <<<HTML
+        <input type="hidden" name="producto_id" value="{$this->producto_id}">
+        <button type="submit">Eliminar</button>
+HTML;
     }
 
     protected function procesaFormulario(&$datos) {
-        $prod_id = (int)($datos['producto_id'] ?? 0);
-        if ($prod_id > 0) {
-            \Pedido::removeProducto($this->pedido_id, $prod_id);
-            flash_set('success', 'Producto eliminado.');
+
+        $producto_id = filter_var($datos['producto_id'], FILTER_VALIDATE_INT);
+
+        if (!$producto_id) {
+            return;
         }
+
+        \PedidoService::removeProducto($this->pedido_id, $producto_id);
+
+        header("Location: " . RUTA_APP . "/vistas/pedidos/carrito.php");
+        exit;
     }
 }

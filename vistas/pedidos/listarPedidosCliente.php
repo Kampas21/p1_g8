@@ -63,13 +63,13 @@ ob_start();
           <tbody>
           <?php foreach ($pedidos as $p): ?>
             <tr>
-              <td><strong>#<?= e($p['numero_pedido']) ?></strong></td>
-              <td><?= e(substr($p['fecha_hora'], 0, 16)) ?></td>
-              <td><?= $p['tipo'] === 'local' ? '🍽️ Local' : '🥡 Llevar' ?></td>
-              <td><?= e($etiquetas[$p['estado']] ?? $p['estado']) ?></td>
-              <td><?= e($p['total']) ?> €</td>
+              <td><strong>#<?= e($p->getNumero_pedido()) ?></strong></td>
+              <td><?= e(substr($p->getFecha_hora(), 0, 16)) ?></td>
+              <td><?= $p->getTipo() === 'local' ? '🍽️ Local' : '🥡 Llevar' ?></td>
+              <td><?= e($etiquetas[$p->getEstado()] ?? $p->getEstado()) ?></td>
+              <td><?= e($p->getTotal()) ?> €</td>
               <td>
-                <a href="estadoPedido.php?id=<?= (int)$p['id'] ?>" class="btn small">
+                <a href="estadoPedido.php?id=<?= (int)$p->getId() ?>" class="btn small">
                   Ver detalle
                 </a>
               </td>

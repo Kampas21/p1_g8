@@ -1,6 +1,5 @@
-<?php
+<?php 
 ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -8,41 +7,35 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/productoService.php';
+require_once __DIR__ . '/../../includes/ofertaService.php';
+require_once __DIR__ . '/../../entities/pedido.php';
 
 $user = current_user();
 
 if (!$user) {
-    $tituloPagina = 'Acceso bloqueado';
-    $rutaCSS = '../../CSS/estilo.css';
-
-    ob_start();
-
-?>
-    <div class="panel">
-        <h1>Acceso bloqueado</h1>
-        <p>Debes iniciar sesión para ver las ofertas.</p>
-        <p><a class="btn-volver" href="../../index.php">Volver al inicio</a></p>
-    </div>
-<?php
-    $contenidoPrincipal = ob_get_clean();
-    require __DIR__ . '/../../includes/plantilla.php';
-    exit;
+    die("Debes iniciar sesión");
 }
 
-//require_once __DIR__ . '/../../entities/oferta.php';
-//require_once __DIR__ . '/../../entities/producto.php';
-require_once __DIR__ . '/../../includes/productoService.php';
-require_once __DIR__ . '/../../includes/ofertaService.php';
-
-
-$pedido_id = $_POST['pedido_id'] ?? null;
+// 🔹 Detectar si viene de pedido
+$pedido_id = $_GET['pedido_id'] ?? null;
 $modoSeleccion = $pedido_id !== null;
 
+// 🔹 Obtener productos del pedido
+$pedido_productos = [];
 
+if ($modoSeleccion) {
+    $productos = PedidoService::getProductosPedido($pedido_id);
+
+    foreach ($productos as $p) {
+        $pedido_productos[$p->getProductoId()] = $p->getCantidad();
+    }
+}
+
+// 🔹 Ofertas activas
 $ofertas = OfertaService::getAllActivas();
 
 $tituloPagina = 'Ofertas disponibles';
-$rutaCSS = '../../CSS/estilo.css';
 ob_start();
 ?>
 
@@ -53,76 +46,90 @@ ob_start();
     <input type="hidden" name="pedido_id" value="<?= $pedido_id ?>">
 <?php endif; ?>
 
-    <div class="panel table-wrap">
-        <table>
+<div class="panel table-wrap">
+    <table>
+        <tr>
+            <?php if ($modoSeleccion): ?>
+                <th>Seleccionar</th>
+            <?php endif; ?>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Productos</th>
+            <th>Precio pack</th>
+            <th>Descuento</th>
+            <th>Precio final</th>
+            <?php if ($modoSeleccion): ?>
+                <th>Aplicable</th>
+            <?php endif; ?>
+        </tr>
+
+        <?php foreach ($ofertas as $oferta): ?>
+            <?php
+            $precio_total = 0;
+            $productos = ProductoService::getProductosDeOferta($oferta->getId());
+
+            $lista = array_map(function ($p) use (&$precio_total) {
+                $precio = $p->getPrecioFinal();
+                $cantidad = $p->cantidad;
+                $precio_cant = $precio * $cantidad;
+
+                $precio_total += $precio_cant;
+
+                return $p->getNombre() . " ($cantidad) " . round($precio_cant, 2) . '€';
+            }, $productos);
+
+            $precio_final = $oferta->aplicarDescuento($precio_total);
+
+            $aplicable = true;
+
+            if ($modoSeleccion) {
+                foreach ($productos as $p) {
+                    $id = $p->getId();
+                    if (!isset($pedido_productos[$id]) || $pedido_productos[$id] < $p->cantidad) {
+                        $aplicable = false;
+                        break;
+                    }
+                }
+            }
+            ?>
+
             <tr>
                 <?php if ($modoSeleccion): ?>
-                    <th>Seleccionar</th>
-                <?php endif; ?>
-                <th>Nombre</th>
-                <th>Descripción</th>
-                <th>Productos</th>
-                <th>Precio total</th>
-                <th>Descuento</th>
-                <th>Precio final</th>
-            </tr>
-
-            <?php foreach ($ofertas as $oferta): ?>
-                <tr>
-
-                    <!-- CHECKBOX -->
-                    <?php if ($modoSeleccion): ?>
-                        <td>
-                            <input type="checkbox" name="ofertas[]" value="<?= $oferta->getId() ?>">
-                        </td>
-                    <?php endif; ?>
-
-                    <td><?= htmlspecialchars($oferta->getNombre()) ?></td>
-                    <td><?= htmlspecialchars($oferta->getDescripcion()) ?></td>
-
-                    <?php
-                    $precio_total = 0;
-                    $productos = ProductoService::getProductosDeOferta($oferta->getId());
-
-                    $lista = array_map(function ($p) use (&$precio_total) {
-                        $precio = $p->getPrecioFinal();
-                        $precio_cant = $precio * $p->cantidad;
-                        $precio_total += $precio_cant;
-                        return $p->getNombre() . ' (' . $p->cantidad . ') ' . round($precio_cant, 2) . '€';
-                    }, $productos);
-                    ?>
-
                     <td>
-                        <?php
-                        foreach (array_chunk($lista, 2) as $grupo) {
-                            echo htmlspecialchars(implode(', ', $grupo)) . "<br>";
-                        }
-                        ?>
+                        <input type="checkbox"
+                               name="ofertas[]"
+                               value="<?= $oferta->getId() ?>"
+                               <?= !$aplicable ? 'disabled' : '' ?>>
                     </td>
+                <?php endif; ?>
 
-                    <td><?= round($precio_total, 2) . '€' ?></td>
-                    <td><?= $oferta->getDescuento() . '%' ?></td>
+                <td><?= htmlspecialchars($oferta->getNombre()) ?></td>
+                <td><?= htmlspecialchars($oferta->getDescripcion()) ?></td>
 
-                    <?php
-                    $precio_final = $oferta->aplicarDescuento($precio_total);
-                    ?>
+                <td><?= implode(', ', $lista) ?></td>
 
-                    <td><?= $precio_final . '€' ?></td>
+                <td><?= round($precio_total, 2) ?>€</td>
+                <td><?= $oferta->getDescuento() ?>%</td>
+                <td><?= round($precio_final, 2) ?>€</td>
 
-                </tr>
-            <?php endforeach; ?>
-        </table>
-    </div>
+                <?php if ($modoSeleccion): ?>
+                    <td>
+                        <?= $aplicable 
+                            ? '<span style="color:green">Sí</span>' 
+                            : '<span style="color:red">No</span>' ?>
+                    </td>
+                <?php endif; ?>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+</div>
 
-    <br>
+<br>
 
-
-    <?php if ($modoSeleccion): ?>
-        <button type="submit" class="btn-nuevo">Aplicar ofertas</button>
+<?php if ($modoSeleccion): ?>
+    <button type="submit">Aplicar ofertas</button>
 </form>
 <?php endif; ?>
-
-</form>
 
 <p>
     <a class="btn-volver" href="../../index.php">Volver</a>
@@ -131,3 +138,4 @@ ob_start();
 <?php
 $contenidoPrincipal = ob_get_clean();
 require __DIR__ . '/../../includes/plantilla.php';
+?>

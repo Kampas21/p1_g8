@@ -1040,3 +1040,26 @@ button:hover, input[type="submit"]:hover {
 .text-gray { color: gray; }
 .pr-15 { padding-right: 15px; }
 
+html, body {
+    overflow-x: hidden;
+}
+
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.panel {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.layout, .contenedor, .wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+}

@@ -248,11 +248,11 @@ function user_create(array $data, array $avatarChoice): int {
 }
 
 function user_update(int $id, array $data, array $opts = []): void {
-    $conn = crearConexion();
+    global $conn;
+
     $existing = user_find_by_id($id);
 
     if (!$existing) {
-        $conn->close();
         throw new RuntimeException('Usuario no encontrado.');
     }
 
@@ -261,48 +261,57 @@ function user_update(int $id, array $data, array $opts = []): void {
         'email = ?',
         'nombre = ?',
         'apellidos = ?',
-        'updated_at = NOW()',
+        'updated_at = NOW()'
     ];
 
     $params = [
         $data['username'],
         $data['email'],
         $data['nombre'],
-        $data['apellidos'],
+        $data['apellidos']
     ];
 
     $types = 'ssss';
 
+    
     if (($opts['allow_role'] ?? false) === true) {
         $set[] = 'rol = ?';
         $params[] = $data['rol'];
         $types .= 's';
     }
 
+   
     if (!empty($data['password'])) {
         $set[] = 'password_hash = ?';
         $params[] = password_hash($data['password'], PASSWORD_DEFAULT);
         $types .= 's';
     }
 
+    
     if (isset($opts['avatar_choice'])) {
         $avatarChoice = $opts['avatar_choice'];
+
         $set[] = 'avatar_tipo = ?';
         $set[] = 'avatar_valor = ?';
+
         $params[] = $avatarChoice['type'] ?? 'default';
         $params[] = $avatarChoice['value'] ?? null;
+
         $types .= 'ss';
 
-        if (($existing['avatar_tipo'] ?? '') === 'custom') {
-            $old = (string)($existing['avatar_valor'] ?? '');
-            $new = (string)($avatarChoice['value'] ?? '');
-            if ($old !== '' && $old !== $new) {
+        
+        if ($existing->getAvatarTipo() === 'custom') {
+            $old = $existing->getAvatarValor() ?? '';
+            $new = $avatarChoice['value'] ?? '';
+
+            if ($old && $old !== $new) {
                 delete_custom_avatar_file($old);
             }
         }
     }
 
-    $sql = 'UPDATE usuarios SET ' . implode(', ', $set) . ' WHERE id = ?';
+    
+    $sql = "UPDATE usuarios SET " . implode(', ', $set) . " WHERE id = ?";
     $params[] = $id;
     $types .= 'i';
 
@@ -310,8 +319,6 @@ function user_update(int $id, array $data, array $opts = []): void {
     $stmt->bind_param($types, ...$params);
     $stmt->execute();
     $stmt->close();
-
-    $conn->close();
 }
 
 function user_soft_delete(int $id): void {

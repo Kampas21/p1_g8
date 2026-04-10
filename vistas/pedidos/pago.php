@@ -15,7 +15,7 @@ $pedido = PedidoService::getPedidoNuevo($usuario_id);
 if (!$pedido) {
     redirect('elegirTipo.php');
 }
-$pedido_id = $pedido['id'];
+$pedido_id = $pedido->getId();
 
 $lineas = PedidoService::getProductosPedido($pedido_id);
 if (empty($lineas)) {
@@ -24,7 +24,7 @@ if (empty($lineas)) {
 
 $total = 0;
 foreach ($lineas as $linea) {
-    $total += $linea['precio_unitario'] * $linea['cantidad'];
+    $total += $linea->getPrecio() * $linea->getCantidad();
 }
 $total = round($total, 2);
 
