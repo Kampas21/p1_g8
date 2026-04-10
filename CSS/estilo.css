@@ -427,6 +427,35 @@ body {
     overflow-x: auto;
 }
 
+.info-ofertas {
+    background-color: #eef6ff;
+    border: 1px solid #b6d4fe;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.info-ofertas-titulo {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.info-ofertas-lista {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+.info-ofertas-lista li {
+    margin-bottom: 6px;
+}
+
+.info-ofertas-ejemplo {
+    margin-top: 10px;
+    font-style: italic;
+}
+
 /* =========================================
    ESTILOS COMPLEMENTARIOS PARA FORMS Y PERFIL
    ========================================= */
@@ -1235,6 +1264,7 @@ main {
     max-width: 1200px;
     margin: 0 auto;
 }
+
 
 /* =======================================================
    RESPONSIVE TABLET

@@ -39,6 +39,23 @@ ob_start();
 <h1>Ofertas disponibles</h1>
 
 <?php if ($modoSeleccion): ?>
+    <div class="info-ofertas">
+        <strong class="info-ofertas-titulo">ℹ️ Información importante sobre las ofertas:</strong>
+        
+        <ul class="info-ofertas-lista">
+            <li>Puedes seleccionar una o varias ofertas y aplicarlas al pedido actual.</li>
+            <li><strong>Debes seleccionar todas las ofertas que quieras usar antes de pulsar "Aplicar ofertas".</strong></li>
+            <li>Cada oferta indica los productos y cantidades necesarias para poder aplicarse.</li>
+            <li>Una oferta solo se aplicará si tu pedido contiene todos los productos requeridos en la cantidad suficiente.</li>
+            <li>Las ofertas pueden aplicarse varias veces si se cumplen las condiciones (por ejemplo, varios packs).</li>
+            <li>Un mismo producto no puede utilizarse en más de una oferta al mismo tiempo.</li>
+            <li>Podrás ver el precio original del pedido y el ahorro total aplicado gracias a las ofertas.</li>
+        </ul>
+
+    </div>
+<?php endif; ?>
+
+<?php if ($modoSeleccion): ?>
     <form method="POST" action="../../scripts/ofertas/aplicarOfertas.php">
         <input type="hidden" name="pedido_id" value="<?= $pedido_id ?>">
 <?php endif; ?>

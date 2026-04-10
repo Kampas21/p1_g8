@@ -218,7 +218,7 @@ ob_start();
 
       <div class="actions-inline">
 
-        <a href="catalogo.php" class="btn">Seguir comprando</a>
+        <a href="catalogo.php" class="btn">← Seguir comprando</a>
 
         <form action="../ofertas/ofertaCliente.php" method="POST">
           <input type="hidden" name="pedido_id" value="<?= $pedido_id ?>">
