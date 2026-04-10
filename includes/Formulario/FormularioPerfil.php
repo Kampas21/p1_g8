@@ -105,8 +105,11 @@ class FormularioPerfil extends Formulario
         if (count($this->errores) === 0) {
             try {
                 
-                $avatarChoice = \resolve_avatar_choice_from_request($this->user, false);
-            } catch (\RuntimeException $ex) {
+         $avatarChoice = \resolve_avatar_choice_from_request([
+         'avatar_tipo' => $this->user->getAvatarTipo(),
+         'avatar_valor' => $this->user->getAvatarValor()
+], false);           
+         } catch (\RuntimeException $ex) {
                 $this->errores['avatar'] = $ex->getMessage();
                 return;
             }
