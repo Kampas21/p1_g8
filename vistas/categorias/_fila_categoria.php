@@ -16,12 +16,12 @@
             <a href="../productos/mostrarProductosCategoria.php?id=<?= (int)$cat->getId() ?>" class="btn small prod">Productos</a>
 
             <?php if ($cat->isActiva()): ?>
-                <form method="post" action="borrarCategoria.php" onsubmit="return confirm('¿Desactivar categoría?');" class="d-inline">
+                <form method="post" action="../../scripts/categorias/borrarCategoria.php" onsubmit="return confirm('¿Desactivar categoría?');" class="d-inline">
                     <input type="hidden" name="id" value="<?= (int)$cat->getId() ?>">
                     <button class="btn small danger" type="submit">Desactivar</button>
                 </form>
             <?php else: ?>
-                <form method="post" action="activarCategoria.php" class="d-inline">
+                <form method="post" action="../../scripts/categorias/activarCategoria.php" class="d-inline">
                     <input type="hidden" name="id" value="<?= (int)$cat->getId() ?>">
                     <button class="btn small" type="submit">Activar</button>
                 </form>

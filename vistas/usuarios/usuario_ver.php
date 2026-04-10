@@ -56,7 +56,7 @@ ob_start();
       <a class="btn primary" href="usuario_form.php?id=<?= $user->getId() ?>">Editar usuario</a>
 
       <?php if ($user->isActivo()): ?>
-        <form method="post" action="usuario_eliminar.php" onsubmit="return confirm('¿Desactivar este usuario?');" class="d-inline">
+        <form method="post" action="../../scripts/usuarios/usuario_eliminar.php" onsubmit="return confirm('¿Desactivar este usuario?');" class="d-inline">
           <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
           <input type="hidden" name="id" value="<?= $user->getId() ?>">
           <button class="btn danger" type="submit" <?= $user->getId() === $admin->getId() ? 'disabled' : '' ?>>Borrar (desactivar)</button>

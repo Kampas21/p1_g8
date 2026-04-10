@@ -71,13 +71,13 @@ ob_start();
                                         <a class="btn small primary" href="usuario_form.php?id=<?= $u->getId() ?>">Editar</a>
 
                                         <?php if ($u->isActivo()): ?>
-                                            <form method="post" action="usuario_eliminar.php" onsubmit="return confirm('¿Desactivar este usuario?');" class="d-inline">
+                                            <form method="post" action="../../scripts/usuarios/usuario_eliminar.php" onsubmit="return confirm('¿Desactivar este usuario?');" class="d-inline">
                                                 <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
                                                 <input type="hidden" name="id" value="<?= $u->getId() ?>">
                                                 <button class="btn small danger" type="submit" <?= $u->getId() === $admin->getId() ? 'disabled title="No puedes desactivarte a ti mismo"' : '' ?>>Borrar</button>
                                             </form>
                                         <?php else: ?>
-                                            <form method="post" action="usuario_reactivar.php" class="d-inline">
+                                            <form method="post" action="../../scripts/usuarios/usuario_reactivar.php" class="d-inline">
                                                 <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
                                                 <input type="hidden" name="id" value="<?= $u->getId() ?>">
                                                 <button class="btn small" type="submit">Reactivar</button>

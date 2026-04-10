@@ -55,9 +55,9 @@ if (!empty($errores)) {
     $_SESSION['errores_producto'] = $errores;
 
     if ($id) {
-        header("Location: ../editarProducto.php?id=$id");
+        header("Location: ../../vistas/productos/editarProducto.php?id=$id");
     } else {
-        header("Location: ../crearProducto.php");
+        header("Location: ../../vistas/productos/crearProducto.php");
     }
     exit;
 }
@@ -77,5 +77,5 @@ if ($id) {
    5. REDIRECCIÓN
 ========================= */
 
-header("Location: ../categorias/categoriasList.php");
+header("Location: ../../vistas/categorias/categoriasList.php");
 exit;

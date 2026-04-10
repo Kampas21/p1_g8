@@ -30,7 +30,7 @@ $categoria_id = isset($_GET['categoria']) && is_numeric($_GET['categoria'])
 $formHtmls = [];
 
 if ($categoria_id) {
-    $productos = ProductoService::getAllByCategoria($categoria_id);
+    $productos = ProductoService::getAllActivosByCategoria($categoria_id);
     $categoria = CategoriaService::getById($categoria_id);
     
     // Instanciamos un formulario por cada producto para que intercepte si hubo POST

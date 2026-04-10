@@ -26,12 +26,12 @@ $rol = $user ? $user->getRol() : 'No autenticado';
                 <li><a href="<?= RUTA_APP ?>/vistas/usuarios/usuarios.php">Listado de usuarios</a></li>
                 <li><a href="<?= RUTA_APP ?>/vistas/usuarios/usuario_form.php?modo=crear">Registrar trabajador</a></li>
                 <li><a href="<?= RUTA_APP ?>/vistas/usuarios/perfil.php">Mi perfil</a></li>
-                <li><a href="<?= RUTA_APP ?>/vistas/usuarios/logout.php">Cerrar sesión</a></li>
+                <li><a href="<?= RUTA_APP ?>/scripts/usuarios/logout.php">Cerrar sesión</a></li>
                 
             <?php elseif ($user): ?>
                 
                 <li><a href="<?= RUTA_APP ?>/vistas/usuarios/perfil.php">Mi perfil</a></li>
-                <li><a href="<?= RUTA_APP ?>/vistas/usuarios/logout.php">Cerrar sesión</a></li>
+                <li><a href="<?= RUTA_APP ?>/scripts/usuarios/logout.php">Cerrar sesión</a></li>
                 
             <?php else: ?>
                 

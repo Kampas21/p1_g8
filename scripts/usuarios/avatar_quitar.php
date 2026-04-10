@@ -6,10 +6,10 @@ require_once __DIR__ . '/../../includes/auth.php';
 $user = require_login();
 
 if (!is_post()) {
-    redirect('perfil.php');
+    redirect('../../vistas/usuarios/perfil.php');
 }
 require_csrf();
 
 user_remove_custom_avatar((int)$user->getId());
 flash_set('success', 'Avatar personalizado eliminado. Se ha restaurado el avatar por defecto.');
-redirect('perfil.php');
+redirect('../../vistas/usuarios/perfil.php');

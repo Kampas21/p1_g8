@@ -27,5 +27,5 @@ if (!$ok) {
     die('Error al activar la categoría.');
 }
 
-header('Location: categoriasList.php');
+header('Location: ../../vistas/categorias/categoriasList.php');
 exit;
