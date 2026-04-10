@@ -10,14 +10,14 @@ INSERT INTO `categorias` (`nombre`, `descripcion`, `imagen`) VALUES
 ('Bebidas','Bebidas frías y calientes, alcohólicas y no alcohólicas','bebidas.jpg');
 
 INSERT INTO `productos` (`nombre`, `descripcion`, `categoria_id`, `precio_base`, `iva`, `disponible`, `ofertado`, `imagen`) VALUES
-('Pizza Margherita','Pizza clásica con tomate, mozzarella y albahaca',1,8.50,10,1,0,'img/img_productos/pizza-margarita.jpg'),
+('Pizza Margherita','Pizza clásica con tomate, mozzarella y albahaca',1,8.50,10,1,1,'img/img_productos/pizza-margarita.jpg'),
 ('Spaghetti Carbonara','Pasta con salsa carbonara y panceta',1,9.75,10,1,0, 'img/img_productos/1773418057_espaguetticarbonara.jpg'),
 ('Ensalada César','Lechuga, pollo, crutones y salsa César',2,7.00,10,1,1, 'img/img_productos/1773420571_ensaladacesar.jpg'),
 ('Hamburguesa Gourmet','Hamburguesa de ternera con queso cheddar y bacon',1,11.50,10,1,0, 'img/img_productos/1773419302_hamburguesagourmet.jpg'),
 ('Sopa de Tomate','Sopa casera de tomate y albahaca',2,5.00,10,1,0, 'img/img_productos/1773420583_sopatomate.jpg'),
 ('Tarta de Queso','Tarta de queso con base de galleta y coulis de frambuesa',3,4.50,10,1,1, NULL),
 ('Agua Mineral','Botella de agua mineral 500ml',4,1.50,10,1,0, NULL),
-('Refresco Cola','Bebida carbonatada de cola 330ml',4,2.00,10,1,0, NULL),
+('Refresco Cola','Bebida carbonatada de cola 330ml',4,2.00,10,1,1, NULL),
 ('Café Expreso','Café negro intenso, 50ml',4,1.80,10,1,1, NULL),
 ('Helado Vainilla','Cucurucho de helado de vainilla',3,3.50,10,1,0, NULL),
 ('Pizza Pepperoni','Pizza con pepperoni y extra queso',1,9.50,10,1,1, 'img/img_productos/1773419361_pizzapepperoni.jpg'),
