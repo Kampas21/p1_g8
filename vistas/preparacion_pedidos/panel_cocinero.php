@@ -90,7 +90,7 @@ ob_start();
                 <tr><td class="tabla-panel-vacia">No hay pedidos esperando en la cola.</td></tr>
             <?php else: ?>
                 <?php foreach ($pedidosEnCola as $p): 
-                    $pedido_id = (int)$p->getId();
+                    $pedido_id = (int)$p['id'];
                 ?>
                     <tr class="tabla-panel-fila">
                         <td><strong>Pedido #<?= $pedido_id ?></strong></td>
