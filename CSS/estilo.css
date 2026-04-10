@@ -3,27 +3,24 @@ h1 {
 }
 
 h2 {
-    margin-left: 20px;
+    margin: 0 0 16px 0;
 }
 
 h3 {
-    margin-top: 30px;
-    margin-left: 30px;
+    margin: 20px 0 12px 0;
 }
 
 h4 {
-    margin-top: 30px;
-    margin-left: 40px;
+    margin: 20px 0 12px 0;
 }
 
 p {
-    margin-left: 40px;
-    margin-right: 70px;
+    margin: 0 0 16px 0;
 }
 
 fieldset {
-    margin-left: 40px;
-    margin-right: 70px;
+    margin: 0 0 16px 0;
+    min-width: 0;
 }
 
 .foto_centrada {
@@ -48,13 +45,13 @@ fieldset {
     object-fit: cover;
     border-radius: 12px;
     border: 1px solid #ddd;
-    margin-left: 40px;
-    margin-right: 5px;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 .boceto {
-    margin-top: 60px;
-    margin-left: 30px;
+    margin-top: 40px;
+    margin-left: 0;
 }
 
 .miembro {
@@ -97,8 +94,8 @@ fieldset {
 }
 
 .flujos {
-    margin-top: 80px;
-    margin-left: 30px;
+    margin-top: 40px;
+    margin-left: 0;
 }
 
 /*estilo general de la tabla*/
@@ -137,16 +134,18 @@ tbody tr {
     font-size: 13px;
     text-decoration: none;
     border-radius: 3px;
-    color: white; 
-    background-color: #8b7355; 
+    color: white;
+    background-color: #8b7355;
     font-weight: bold;
     white-space: normal;
     text-align: center;
+    box-sizing: border-box;
 }
 
 .editar {
     background-color: #3a7ca5;
 }
+
 .prod {
     background-color: #c05621;
 }
@@ -168,6 +167,7 @@ tbody tr {
     text-decoration: none;
     border-radius: 5px;
     font-weight: bold;
+    box-sizing: border-box;
 }
 
 .btn-aceptar {
@@ -179,6 +179,7 @@ tbody tr {
     text-decoration: none;
     border-radius: 5px;
     font-weight: bold;
+    box-sizing: border-box;
 }
 
 .btn-volver {
@@ -190,6 +191,7 @@ tbody tr {
     text-decoration: none;
     border-radius: 5px;
     font-weight: bold;
+    box-sizing: border-box;
 }
 
 .btn:hover,
@@ -219,6 +221,7 @@ body {
     background-color: #f7f3ee;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
 }
 
 #cabecera-web {
@@ -239,12 +242,14 @@ body {
     display: flex;
     align-items: center;
     gap: 16px;
+    min-width: 0;
 }
 
 .logo-cabecera {
     width: 60px;
     height: auto;
     border-radius: 6px;
+    flex-shrink: 0;
 }
 
 .cabecera-brand h1 {
@@ -278,9 +283,10 @@ body {
 
 #zona-central {
     display: grid;
-    grid-template-columns: minmax(180px, 220px) minmax(300px, 1fr) minmax(180px, 220px);
+    grid-template-columns: 220px minmax(0, 1fr) 220px;
+    width: 100%;
+    min-width: 0;
 }
-
 
 #sidebar-izq,
 #sidebar-der {
@@ -288,6 +294,7 @@ body {
     padding: 20px;
     height: 100%;
     box-sizing: border-box;
+    min-width: 0;
 }
 
 #sidebar-izq {
@@ -303,8 +310,8 @@ body {
     background-color: #fdfbf8;
     min-width: 0;
     max-width: 100%;
-    width: 100%;             
-    box-sizing: border-box;  
+    width: 100%;
+    box-sizing: border-box;
     overflow: hidden;
 }
 
@@ -327,21 +334,24 @@ body {
     height: auto;
 }
 
-.caja-acceso{
-    background:#f5f1ea;
-    border:1px solid #d8cbb8;
-    border-radius:10px;
-    padding:25px;
-    max-width:350px;
-    margin:30px auto;
-    text-align:center;
+.caja-acceso {
+    background: #f5f1ea;
+    border: 1px solid #d8cbb8;
+    border-radius: 10px;
+    padding: 25px;
+    max-width: 350px;
+    width: 100%;
+    margin: 30px auto;
+    text-align: center;
+    box-sizing: border-box;
 }
 
-.botones-acceso{
+.botones-acceso {
     display: flex;
     justify-content: center;
     gap: 15px;
     margin-top: 15px;
+    flex-wrap: wrap;
 }
 
 .boton-enlace {
@@ -353,34 +363,35 @@ body {
     font-weight: bold;
     background: #f7f7f7;
     color: #222;
+    box-sizing: border-box;
 }
 
 .boton-enlace:hover {
     background: #ececec;
 }
 
-.contenido-index{
-    max-width:700px;
-    margin:0 auto;
-    text-align:left;
+.contenido-index {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: left;
 }
 
-.lista-caracteristicas{
-    margin-top:20px;
-    margin-bottom:30px;
+.lista-caracteristicas {
+    margin-top: 20px;
+    margin-bottom: 30px;
 }
 
-.lista-caracteristicas li{
-    margin-bottom:15px;
+.lista-caracteristicas li {
+    margin-bottom: 15px;
 }
 
-.menu-izq{
-    list-style:none;
-    padding:0;
+.menu-izq {
+    list-style: none;
+    padding: 0;
 }
 
-.menu-izq li{
-    margin-bottom:10px;
+.menu-izq li {
+    margin-bottom: 10px;
 }
 
 .menu-izq a,
@@ -417,266 +428,320 @@ body {
 }
 
 /* =========================================
-   ESTILOS COMPLEMENTARIOS PARA FORMS Y PERFIL 
-   (Extraídos de style.css y adaptados)
+   ESTILOS COMPLEMENTARIOS PARA FORMS Y PERFIL
    ========================================= */
 
-.panel h2, .panel h3 {
-  margin-top: 0;
+.panel h2,
+.panel h3 {
+    margin-top: 0;
 }
 
 .notice {
-  padding: 10px 12px;
-  border-radius: 8px;
-  margin: 12px 0;
-  border: 1px solid;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin: 12px 0;
+    border: 1px solid;
 }
+
 .notice.error {
-  background: #fff0f0;
-  border-color: #f0b4b4;
-  color: #a70000;
+    background: #fff0f0;
+    border-color: #f0b4b4;
+    color: #a70000;
 }
+
 .notice.success {
-  background: #f0fff2;
-  border-color: #b7ebc0;
-  color: #0a6b2e;
+    background: #f0fff2;
+    border-color: #b7ebc0;
+    color: #0a6b2e;
 }
+
 .notice.info {
-  background: #f6f8ff;
-  border-color: #c9d2ff;
-  color: #33408f;
+    background: #f6f8ff;
+    border-color: #c9d2ff;
+    color: #33408f;
 }
 
 .form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 16px;
+    min-width: 0;
 }
-.form-grid .full { grid-column: 1 / -1; }
+
+.form-grid .full {
+    grid-column: 1 / -1;
+}
 
 label {
-  display: block;
-  margin-bottom: 4px;
-  font-weight: bold;
+    display: block;
+    margin-bottom: 4px;
+    font-weight: bold;
 }
 
 input[type="text"],
 input[type="email"],
 input[type="password"],
 select {
-  width: 100%;
-  padding: 8px 10px;
-  border: 1px solid #bbb;
-  border-radius: 6px;
-  font-size: 14px;
+    width: 100%;
+    max-width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
 }
 
 input[type="file"] {
-  width: 100%;
-  font-size: 14px;
+    width: 100%;
+    max-width: 100%;
+    font-size: 14px;
+    box-sizing: border-box;
 }
 
-button, input[type="submit"] {
-  display: inline-block;
-  border: 1px solid #999;
-  background: #f6f6f6;
-  padding: 8px 12px;
-  border-radius: 6px;
-  text-decoration: none;
-  color: #222;
-  cursor: pointer;
-  font-size: 14px;
+button,
+input[type="submit"] {
+    display: inline-block;
+    border: 1px solid #999;
+    background: #f6f6f6;
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #222;
+    cursor: pointer;
+    font-size: 14px;
+    box-sizing: border-box;
 }
-button:hover, input[type="submit"]:hover {
-  background: #ececec;
+
+button:hover,
+input[type="submit"]:hover {
+    background: #ececec;
 }
-.btn.primary, button.primary {
-  background: #fff4d4;
-  border-color: #e1be53;
-  color: #222;
+
+.btn.primary,
+button.primary {
+    background: #fff4d4;
+    border-color: #e1be53;
+    color: #222;
 }
-.btn.danger, button.danger {
-  background: #fff0f0;
-  border-color: #d8a1a1;
-  color: #a70000;
+
+.btn.danger,
+button.danger {
+    background: #fff0f0;
+    border-color: #d8a1a1;
+    color: #a70000;
 }
-.btn.small, button.small {
-  padding: 5px 9px;
-  font-size: 12px;
+
+.btn.small,
+button.small {
+    padding: 5px 9px;
+    font-size: 12px;
 }
 
 .actions-inline {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  align-items: center;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
 .avatar {
-  width: 90px;
-  height: 90px;
-  border-radius: 12px;
-  object-fit: cover;
-  border: 1px solid #ddd;
-  background: #fff;
+    width: 90px;
+    height: 90px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    background: #fff;
 }
+
 .avatar.lg {
-  width: 150px;
-  height: 150px;
+    width: 150px;
+    height: 150px;
 }
+
 .avatar.sm {
-  width: 48px;
-  height: 48px;
-  border-radius: 10px;
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
 }
 
 .avatar-option-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
 }
 
 .avatar-option {
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 8px;
-  width: 120px;
-  text-align: center;
-  display: inline-block;
-  vertical-align: top;
-  margin: 10px 14px 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 8px;
+    width: 120px;
+    text-align: center;
+    display: inline-block;
+    vertical-align: top;
+    margin: 10px 14px 10px 0;
+    box-sizing: border-box;
 }
+
 .avatar-option input[type="radio"] {
-  margin-bottom: 6px;
+    margin-bottom: 6px;
 }
+
 .avatar-option img {
-  width: 72px;
-  height: 72px;
-  border-radius: 10px;
-  object-fit: cover;
-  border: 1px solid #ddd;
-  background: #fff;
-  display: block;
-  margin: 0 auto 8px;
+    width: 72px;
+    height: 72px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    background: #fff;
+    display: block;
+    margin: 0 auto 8px;
 }
 
 .two-columns {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
 }
 
 .auth-card {
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  padding: 16px;
-  background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    padding: 16px;
+    background: #fff;
+    min-width: 0;
 }
+
 .auth-card h2 {
-  margin-top: 0;
-  font-size: 22px;
+    margin-top: 0;
+    font-size: 22px;
 }
+
 .auth-layout {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 22px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 22px;
 }
+
 .auth-card .form-grid {
-  grid-template-columns: 1fr;
+    grid-template-columns: 1fr;
 }
+
 .auth-actions {
-  margin-top: 10px;
+    margin-top: 10px;
 }
+
 .auth-help {
-  font-size: 13px;
-  color: #555;
+    font-size: 13px;
+    color: #555;
 }
 
 .profile-layout {
-  display: grid;
-  grid-template-columns: 430px 1fr;
-  gap: 18px;
-  align-items: start;
-}
-.profile-card .profile-top {
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
-}
-.profile-card dl {
-  margin: 0;
-}
-.profile-card dt {
-  font-weight: bold;
-  margin-top: 8px;
-}
-.profile-card dd {
-  margin: 2px 0 0 0;
-}
-.progress-card .pedido-linea {
-  border: 1px solid #ddd;
-  border-radius: 18px;
-  padding: 14px;
-  margin-top: 10px;
-}
-.progress-steps {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  margin-top: 12px;
-}
-.progress-step {
-  text-align: center;
-  font-size: 13px;
-}
-.progress-step .dot {
-  width: 20px;
-  height: 20px;
-  margin: 0 auto 6px;
-  border-radius: 999px;
-  border: 2px solid #999;
-  background: #fff;
-}
-.progress-step.done .dot {
-  background: #dff3e5;
-  border-color: #2c8a4b;
-}
-.progress-step.active .dot {
-  background: #fff6cf;
-  border-color: #d0a311;
+    display: grid;
+    grid-template-columns: minmax(280px, 430px) minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
 }
 
-.muted { color: #666; font-size: 14px; }
+.profile-card .profile-top {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.profile-card dl {
+    margin: 0;
+}
+
+.profile-card dt {
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+.profile-card dd {
+    margin: 2px 0 0 0;
+}
+
+.progress-card .pedido-linea {
+    border: 1px solid #ddd;
+    border-radius: 18px;
+    padding: 14px;
+    margin-top: 10px;
+}
+
+.progress-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.progress-step {
+    text-align: center;
+    font-size: 13px;
+}
+
+.progress-step .dot {
+    width: 20px;
+    height: 20px;
+    margin: 0 auto 6px;
+    border-radius: 999px;
+    border: 2px solid #999;
+    background: #fff;
+}
+
+.progress-step.done .dot {
+    background: #dff3e5;
+    border-color: #2c8a4b;
+}
+
+.progress-step.active .dot {
+    background: #fff6cf;
+    border-color: #d0a311;
+}
+
+.muted {
+    color: #666;
+    font-size: 14px;
+}
 
 @media (max-width: 900px) {
-  .two-columns { grid-template-columns: 1fr; }
-  .profile-layout { grid-template-columns: 1fr; }
+    .two-columns {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-layout {
+        grid-template-columns: 1fr;
+    }
 }
 
 .user-detail-list {
-  display: grid;
-  grid-template-columns: 140px 1fr;
-  gap: 10px 16px;
-  margin: 0;
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 10px 16px;
+    margin: 0;
 }
+
 .user-detail-list dt,
 .user-detail-list dd {
-  margin: 0;
+    margin: 0;
 }
+
 .user-detail-list dt {
-  font-weight: 700;
+    font-weight: 700;
 }
+
 .user-detail-list dd {
-  color: #333;
+    color: #333;
 }
 
 .hidden {
-  display: none;
+    display: none;
 }
 
 .avatar-panel-box {
-  margin-top: 16px;
+    margin-top: 16px;
 }
 
 .input-archivo {
@@ -689,7 +754,9 @@ button:hover, input[type="submit"]:hover {
     border-radius: 4px;
     font-family: inherit;
     cursor: pointer;
+    box-sizing: border-box;
 }
+
 .input-archivo::file-selector-button {
     background-color: #8b7355;
     color: white;
@@ -700,10 +767,10 @@ button:hover, input[type="submit"]:hover {
     cursor: pointer;
     font-weight: bold;
 }
+
 .input-archivo::file-selector-button:hover {
     background-color: #725e44;
 }
-
 
 /* =========================================
    ESTILOS PARA TABLAS DE PANELES (GERENTE Y COCINERO)
@@ -741,6 +808,7 @@ button:hover, input[type="submit"]:hover {
     display: flex;
     align-items: center;
     gap: 12px;
+    flex-wrap: wrap;
 }
 
 /* --- Badges (Píldoras) de Estados --- */
@@ -754,11 +822,26 @@ button:hover, input[type="submit"]:hover {
 }
 
 /* Colores para cada estado del pedido */
-.estado-recibido { background-color: #ffc107; color: #000; }
-.estado-en_preparacion { background-color: #17a2b8; }
-.estado-cocinando { background-color: #fd7e14; }
-.estado-listo_cocina { background-color: #28a745; }
-.estado-terminado { background-color: #6c757d; }
+.estado-recibido {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.estado-en_preparacion {
+    background-color: #17a2b8;
+}
+
+.estado-cocinando {
+    background-color: #fd7e14;
+}
+
+.estado-listo_cocina {
+    background-color: #28a745;
+}
+
+.estado-terminado {
+    background-color: #6c757d;
+}
 
 /* --- Avatares y textos en tablas --- */
 .avatar-empleado {
@@ -766,7 +849,7 @@ button:hover, input[type="submit"]:hover {
     height: 35px;
     border-radius: 50%;
     object-fit: cover;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .avatar-placeholder {
@@ -788,7 +871,6 @@ button:hover, input[type="submit"]:hover {
     color: gray;
     font-style: italic;
 }
-
 
 /* =========================================
    ESTILOS PARA EL PANEL DEL COCINERO
@@ -828,6 +910,8 @@ button:hover, input[type="submit"]:hover {
     align-items: center;
     padding: 8px 0;
     border-bottom: 1px dashed #ccc;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 .estado-plato-listo {
@@ -843,6 +927,7 @@ button:hover, input[type="submit"]:hover {
     width: 100%;
     font-size: 1.1em;
     padding: 10px;
+    box-sizing: border-box;
 }
 
 .btn-bloque-disabled {
@@ -852,6 +937,7 @@ button:hover, input[type="submit"]:hover {
     cursor: not-allowed;
     padding: 10px;
     border: none;
+    box-sizing: border-box;
 }
 
 .productos-container {
@@ -861,17 +947,19 @@ button:hover, input[type="submit"]:hover {
 }
 
 .producto-card {
-    border: 2px solid #8b5e3c;   
-    border-radius: 15px;        
+    border: 2px solid #8b5e3c;
+    border-radius: 15px;
     padding: 15px;
     margin-bottom: 15px;
     background-color: #ffffff;
+    box-sizing: border-box;
 }
 
 .producto-card:hover {
     transform: scale(1.01);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
+
 .producto-info h3 {
     margin-bottom: 8px;
 }
@@ -901,37 +989,94 @@ button:hover, input[type="submit"]:hover {
 }
 
 /* Espaciados y márgenes */
-.mb-12 { margin-bottom: 12px; }
-.mt-10 { margin-top: 10px; }
-.mt-16 { margin-top: 16px; }
-.mt-20 { margin-top: 20px; }
-.m-0 { margin: 0; }
+.mb-12 {
+    margin-bottom: 12px;
+}
+
+.mt-10 {
+    margin-top: 10px;
+}
+
+.mt-16 {
+    margin-top: 16px;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+.m-0 {
+    margin: 0;
+}
 
 /* Alineaciones y Flexbox */
-.text-right { text-align: right; }
-.text-center { text-align: center; }
-.flex-between { display: flex; justify-content: space-between; align-items: center; }
-.flex-end { justify-content: flex-end; }
-.flex-wrap-gap { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+.text-right {
+    text-align: right;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.flex-end {
+    justify-content: flex-end;
+}
+
+.flex-wrap-gap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+}
 
 /* Visualizaciones en línea */
-.inline-block { display: inline-block; }
-.form-inline-action { display: inline; margin: 0; padding: 0; }
+.inline-block {
+    display: inline-block;
+}
+
+.form-inline-action {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
 
 /* Estados y Textos */
-.text-danger { color: #e74c3c; /* Rojo oscuro */ }
-.text-success { color: #2ecc71; /* Verde esmeralda */ }
-.text-muted-italic { color: #666; font-style: italic; font-size: 0.95em; }
+.text-danger {
+    color: #e74c3c;
+}
+
+.text-success {
+    color: #2ecc71;
+}
+
+.text-muted-italic {
+    color: #666;
+    font-style: italic;
+    font-size: 0.95em;
+}
 
 /* Alertas especiales */
-.panel-danger-border { border-left: 4px solid #f44336; }
-.panel-info-border { padding: 10px; background-color: #e7f3fe; border-left: 4px solid #2196F3; }
+.panel-danger-border {
+    border-left: 4px solid #f44336;
+}
+
+.panel-info-border {
+    padding: 10px;
+    background-color: #e7f3fe;
+    border-left: 4px solid #2196F3;
+}
 
 /* Imágenes en miniaturas de tablas  */
 .img-thumbnail {
-    width: 50px; 
-    height: 50px; 
-    object-fit: cover; 
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
     border-radius: 4px;
 }
 
@@ -944,112 +1089,120 @@ button:hover, input[type="submit"]:hover {
 /* =======================================================
    ESTILOS PANEL CAMARERO (gestionCamarero.php)
 ======================================================== */
-.tablet-grid { 
-    display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px; 
-}
-.columna { 
-    flex: 1; min-width: 250px; background: #fff; border-radius: 8px; overflow: hidden; border: 1px solid #ddd; 
-}
-.columna-header { 
-    padding: 12px; font-weight: bold; font-size: 1.1em; color: white; display: flex; justify-content: space-between; align-items: center; 
-}
-.columna-header.recibido { background-color: #f44336; }
-.columna-header.listo { background-color: #2196F3; }
-.columna-header.terminado { background-color: #4CAF50; }
-.columna-body { 
-    padding: 15px; display: flex; flex-direction: column; gap: 15px; background: #f9f9f9; min-height: 200px; 
-}
-.pedido-card { 
-    background: white; padding: 15px; border-radius: 6px; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
-}
-.pedido-card-header { 
-    display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; 
-}
-.pedido-card-body p { margin: 5px 0; }
-.pedido-num { font-size: 1.2em; font-weight: bold; color: #333; }
-.badge { background: rgba(0,0,0,0.2); padding: 3px 10px; border-radius: 20px; font-size: 0.9em; }
-
-
-/* =======================================================
-   ADAPTACIONES PARA MÓVIL (Clientes en vertical)
-======================================================== */
-@media screen and (max-width: 768px) {
-    /* Convertir cosas que estén en fila a columnas  */
-    .form-grid, .actions-inline {
-        flex-direction: column !important;
-        align-items: stretch !important;
-    }
-    
-    /* Los botones deberán ocupar todo el ancho en móvil para pulsarlos mejor */
-    .btn {
-        width: 100%;
-        text-align: center;
-        margin-bottom: 8px;
-    }
-
-    /* Permitir que las tablas del carrito no se salgan de la pantalla sino que hagan scroll horizontal */
-    .table-wrap {
-        overflow-x: auto;
-        display: block;
-        width: 100%;
-    }
+.tablet-grid {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 20px;
 }
 
-
-/* =======================================================
-   2. ADAPTACIONES PARA TABLET APAISADA (Camareros / Cocineros)
-======================================================== */
-@media screen and (min-width: 768px) and (max-width: 1100px) and (orientation: landscape) {
-    /* Aquí forzamos que el grid del camarero y cocinero se divida perfectamente en 3 o 2 columnas */
-    .tablet-grid {
-        display: flex;
-        flex-direction: row;
-        gap: 15px;
-    }
-
-    .columna {
-        flex: 1; /* Esto hace que formen columnas iguales en la tablet */
-    }
-
-    /* Reducimos un poco el texto para que quepan las tarjetas en tablet */
-    .pedido-card-body p {
-        font-size: 0.9em;
-    }
+.columna {
+    flex: 1;
+    min-width: 250px;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #ddd;
 }
 
+.columna-header {
+    padding: 12px;
+    font-weight: bold;
+    font-size: 1.1em;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-/* =======================================================
-   3. ADAPTACIONES PARA PC (Clientes en escritorio o Gerentes)
-======================================================== */
-@media screen and (min-width: 1100px) {
-   
-    .form-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr; /* Dividir formularios en 2 columnas */
-        gap: 20px;
-    }
+.columna-header.recibido {
+    background-color: #f44336;
+}
 
-    .full {
-        grid-column: span 2; /* Algunos campos que ocupen todo en PC */
-    }
+.columna-header.listo {
+    background-color: #2196F3;
+}
+
+.columna-header.terminado {
+    background-color: #4CAF50;
+}
+
+.columna-body {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background: #f9f9f9;
+    min-height: 200px;
+}
+
+.pedido-card {
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.pedido-card-header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.pedido-card-body p {
+    margin: 5px 0;
+}
+
+.pedido-num {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+}
+
+.badge {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.9em;
 }
 
 /* Para inputs numericos en las tablas */
-.input-cantidad { width: 54px; padding: 4px; text-align: center; }
-
+.input-cantidad {
+    width: 54px;
+    padding: 4px;
+    text-align: center;
+}
 
 /* Textos y padding extra */
-.text-gray { color: gray; }
-.pr-15 { padding-right: 15px; }
+.text-gray {
+    color: gray;
+}
 
-html, body {
+.pr-15 {
+    padding-right: 15px;
+}
+
+html,
+body {
     overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
 }
 
 main {
     width: 100%;
-    max-width: 100%;         
+    max-width: 100%;
     box-sizing: border-box;
+    min-width: 0;
 }
 
 .panel {
@@ -1059,9 +1212,10 @@ main {
     padding: 16px;
     margin-bottom: 18px;
     width: 100%;
-    max-width: 100%;         
+    max-width: 100%;
     box-sizing: border-box;
-    overflow-x: auto;        
+    overflow-x: auto;
+    min-width: 0;
 }
 
 .table-wrap {
@@ -1072,10 +1226,224 @@ main {
 
 .table-wrap table {
     width: 100%;
-    table-layout: auto; 
+    table-layout: auto;
 }
 
-.layout, .contenedor, .wrapper {
+.layout,
+.contenedor,
+.wrapper {
     max-width: 1200px;
     margin: 0 auto;
+}
+
+/* =======================================================
+   RESPONSIVE TABLET
+======================================================== */
+@media screen and (max-width: 1024px) {
+    #contenedor-web {
+        width: 95%;
+        margin: 15px auto;
+    }
+
+    #zona-central {
+        grid-template-columns: 200px minmax(0, 1fr);
+    }
+
+    #sidebar-der {
+        display: none;
+    }
+
+    #contenido-web {
+        padding: 20px;
+    }
+
+    .profile-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =======================================================
+   RESPONSIVE MOVIL
+======================================================== */
+@media screen and (max-width: 768px) {
+    #contenedor-web {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        border: none;
+    }
+
+    #cabecera-web {
+        padding: 16px;
+    }
+
+    .cabecera-superior {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .cabecera-brand {
+        width: 100%;
+        align-items: flex-start;
+    }
+
+    .cabecera-brand h1 {
+        font-size: 1.8rem;
+    }
+
+    .menu-principal ul {
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+
+    #zona-central {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #sidebar-izq,
+    #sidebar-der {
+        width: 100%;
+        border: none;
+        padding: 15px;
+    }
+
+    #contenido-web {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .menu-izq a,
+    #sidebar-der ul a {
+        width: 100%;
+    }
+
+    .miembro-contenido {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .datos-miembro {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .foto-miembro {
+        width: 140px;
+        height: 140px;
+    }
+
+    .foto_boceto {
+        max-width: 100%;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .actions-inline {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .botones-acceso {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .boton-enlace,
+    .btn,
+    .btn-nuevo,
+    .btn-volver,
+    .btn-aceptar,
+    button,
+    input[type="submit"] {
+        width: 100%;
+        text-align: center;
+    }
+
+    .caja-acceso,
+    .contenido-index,
+    .auth-card,
+    .panel,
+    .producto-card {
+        max-width: 100%;
+    }
+
+    .two-columns,
+    .profile-layout,
+    .user-detail-list {
+        grid-template-columns: 1fr;
+    }
+
+    .progress-steps {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .tablet-grid {
+        flex-direction: column;
+    }
+
+    .columna {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .pedido-card-header,
+    .item-plato,
+    .flex-between {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .table-wrap,
+    .tabla-scroll {
+        overflow-x: auto;
+    }
+
+    table {
+        min-width: 600px;
+    }
+
+    .table-wrap table,
+    .tabla-scroll table,
+    .tabla-panel {
+        min-width: 600px;
+    }
+}
+
+/* =======================================================
+   TABLET APAISADA
+======================================================== */
+@media screen and (min-width: 768px) and (max-width: 1100px) and (orientation: landscape) {
+    .tablet-grid {
+        display: flex;
+        flex-direction: row;
+        gap: 15px;
+    }
+
+    .columna {
+        flex: 1;
+    }
+
+    .pedido-card-body p {
+        font-size: 0.9em;
+    }
+}
+
+/* =======================================================
+   PC
+======================================================== */
+@media screen and (min-width: 1100px) {
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .full {
+        grid-column: span 2;
+    }
 }
