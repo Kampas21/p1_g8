@@ -217,7 +217,7 @@ class PedidoService
             $fila['total_sin_descuentos'],
             $fila['total_descuento'],
             $fila['cocinero_id'],
-            $row['total'] ?? null
+            $fila['total'] ?? null
             );
         }
 
