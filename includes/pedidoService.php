@@ -58,7 +58,8 @@ class PedidoService
             $row['usuario_id'],
             $row['total_sin_descuentos'],
             $row['total_descuento'],
-            $row['cocinero_id']
+            $row['cocinero_id'],
+            $row['total']
         );
         
     }
@@ -182,7 +183,8 @@ class PedidoService
             $row['usuario_id'],
             $row['total_sin_descuentos'],
             $row['total_descuento'],
-            $row['cocinero_id']
+            $row['cocinero_id'],
+            $row['total']
         );
         
     }
@@ -214,7 +216,8 @@ class PedidoService
             $fila['usuario_id'],
             $fila['total_sin_descuentos'],
             $fila['total_descuento'],
-            $fila['cocinero_id']
+            $fila['cocinero_id'],
+            $fila['total']
             );
         }
 

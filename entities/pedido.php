@@ -13,8 +13,9 @@ class Pedido {
     private $total_sin_descuentos;
     private $total_descuento;
     private $cocinero_id;
+    private $total;
 
-    public function __construct($id,$numero_pedido,$fecha_hora,$fecha,$estado,$tipo,$metodo_pago,$usuario_id,$total_sin_descuentos,$total_descuento,$cocinero_id) {
+    public function __construct($id,$numero_pedido,$fecha_hora,$fecha,$estado,$tipo,$metodo_pago,$usuario_id,$total_sin_descuentos,$total_descuento,$cocinero_id, $total) {
         $this->id = $id;
         $this->numero_pedido = $numero_pedido;
         $this->fecha_hora = $fecha_hora;
@@ -26,6 +27,7 @@ class Pedido {
         $this->total_sin_descuentos = $total_sin_descuentos;
         $this->total_descuento = $total_descuento;
         $this->cocinero_id = $cocinero_id;
+        $this->total = $total;
     }
 
     public function getId() {
@@ -63,6 +65,10 @@ class Pedido {
     }
 
     public function getTotal() {
+        return $this->total;
+    }
+
+    public function setTotal() {
         $total = $this->total_sin_descuentos - $this->total_descuento;
         return $total > 0 ? (float)$total : 0.0;
     }

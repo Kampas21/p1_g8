@@ -89,7 +89,7 @@ ob_start();
         </tr>
         <tr>
           <th>Total</th>
-          <td><?= e($pedido->getTotal()) ?> €</td>
+          <td><?= e($pedido->setTotal()) ?> €</td>
         </tr>
       </tbody>
     </table>
@@ -120,7 +120,7 @@ ob_start();
         <tfoot>
           <tr>
             <td colspan="3"><strong>Total</strong></td>
-            <td><strong><?= e($pedido->getTotal()) ?> €</strong></td>
+            <td><strong><?= e($pedido->setTotal()) ?> €</strong></td>
           </tr>
         </tfoot>
       </table>
