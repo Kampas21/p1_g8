@@ -10,7 +10,7 @@ class OfertaService
         global $conn;
 
         $stmt = $conn->prepare("
-            SELECT id, titulo AS nombre, descripcion, fecha_inicio, fecha_fin, descuento 
+            SELECT id, nombre, descripcion, fecha_inicio, fecha_fin, descuento 
             FROM ofertas 
             ORDER BY fecha_inicio DESC
         ");
@@ -71,7 +71,7 @@ class OfertaService
         global $conn;
 
         $stmt = $conn->prepare("
-            SELECT id, titulo AS nombre, descripcion, fecha_inicio, fecha_fin, descuento 
+            SELECT id, nombre, descripcion, fecha_inicio, fecha_fin, descuento 
             FROM ofertas 
             WHERE id = ?
         ");
@@ -104,7 +104,7 @@ class OfertaService
         global $conn;
 
         $stmt = $conn->prepare("
-            INSERT INTO ofertas (titulo, descripcion, fecha_inicio, fecha_fin, descuento)
+            INSERT INTO ofertas (nombre, descripcion, fecha_inicio, fecha_fin, descuento)
             VALUES (?, ?, ?, ?, ?)
         ");
 
@@ -121,7 +121,7 @@ class OfertaService
 
         $stmt = $conn->prepare("
             UPDATE ofertas 
-            SET titulo = ?, descripcion = ?, fecha_inicio = ?, fecha_fin = ?, descuento = ?
+            SET nombre = ?, descripcion = ?, fecha_inicio = ?, fecha_fin = ?, descuento = ?
             WHERE id = ?
         ");
 
