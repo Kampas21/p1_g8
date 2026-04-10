@@ -46,8 +46,8 @@ ob_start();
 
 <p><a class="btn-nuevo" href="crearOferta.php">Nueva Oferta</a></p>
 
-<div class="tabla-scroll">
-    <table border="1">
+<div class="panel table-wrap">
+    <table>
         <tr>
             <th>ID</th>
             <th>Nombre</th>

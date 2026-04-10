@@ -53,8 +53,8 @@ ob_start();
     <input type="hidden" name="pedido_id" value="<?= $pedido_id ?>">
 <?php endif; ?>
 
-    <div class="tabla-scroll">
-        <table border="1">
+    <div class="panel table-wrap">
+        <table>
             <tr>
                 <?php if ($modoSeleccion): ?>
                     <th>Seleccionar</th>
