@@ -39,7 +39,7 @@ ob_start();
 <h1>Ofertas disponibles</h1>
 
 <?php if ($modoSeleccion): ?>
-<form method="POST" action="aplicarOfertas.php">
+<form method="POST" action="../../scripts/ofertas/aplicarOfertas.php">
     <input type="hidden" name="pedido_id" value="<?= $pedido_id ?>">
 <?php endif; ?>
 

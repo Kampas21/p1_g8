@@ -11,4 +11,4 @@ if (is_post()) {
 }
 logout_user();
 flash_set('success', 'Sesión cerrada correctamente.');
-redirect('acceso.php');
+redirect('../../index.php');

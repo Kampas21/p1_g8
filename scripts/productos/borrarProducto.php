@@ -31,5 +31,5 @@ if (!$ok) {
     die("Error al desactivar el producto");
 }
 
-header("Location: ../productos/mostrarProductosCategoria.php?id=" . $categoria_id);
+header("Location: ../../vistas/productos/mostrarProductosCategoria.php?id=" . $categoria_id);
 exit;

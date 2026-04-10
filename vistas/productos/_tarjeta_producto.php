@@ -18,13 +18,13 @@
         <a class="btn primary" href="editarProducto.php?id=<?= (int)$p->getId() ?>&categoria_id=<?= (int)$categoria_id ?>">Editar</a>
 
         <?php if ($p->isOfertado()): ?>
-            <form method="post" action="borrarProducto.php" onsubmit="return confirm('¿Desactivar producto?');" class="d-inline">
+            <form method="post" action="../../scripts/productos/borrarProducto.php" onsubmit="return confirm('¿Desactivar producto?');" class="d-inline">
                 <input type="hidden" name="id" value="<?= (int)$p->getId() ?>">
                 <input type="hidden" name="categoria_id" value="<?= (int)$categoria_id ?>">
                 <button class="btn danger" type="submit">Desactivar</button>
             </form>
         <?php else: ?>
-            <form method="post" action="activarProducto.php" class="d-inline">
+            <form method="post" action="../../scripts/productos/activarProducto.php" class="d-inline">
                 <input type="hidden" name="id" value="<?= (int)$p->getId() ?>">
                 <input type="hidden" name="categoria_id" value="<?= (int)$categoria_id ?>">
                 <button class="btn" type="submit">Activar</button>

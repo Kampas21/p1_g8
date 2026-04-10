@@ -93,5 +93,5 @@ PedidoService::actualizarTotales($pedido_id, $precio_sin_descuento, $total_descu
 // 🔹 5. Redirigir
 //////////////////////////////////////////////////////
 
-header("Location: verPedido.php?id=" . $pedido_id);
+header("Location: ../../vistas/pedidos/carrito.php");
 exit;

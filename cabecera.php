@@ -14,7 +14,7 @@ function mostrarSaludo(): string {
         // Ahora usamos los getters del objeto
         $nombre = $user->getNombre() ?: $user->getUsername();
         return "Bienvenido, " . htmlspecialchars($nombre) .
-            " <a href='" . RUTA_APP . "/vistas/usuarios/logout.php'>(salir)</a>";
+            " <a href='" . RUTA_APP . "/scripts/usuarios/logout.php'>(salir)</a>";
     }
 
     return "Usuario desconocido. <a href='" . RUTA_APP . "/vistas/usuarios/acceso.php#login'>Login</a>";
