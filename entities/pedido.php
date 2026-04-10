@@ -13,9 +13,9 @@ class Pedido {
     private $total_sin_descuentos;
     private $total_descuento;
     private $cocinero_id;
-    private $total; 
+    private $total; // AÑADIDO: Guardar el total físico de la BD
 
-    
+    // AÑADIDO: Variables auxiliares para JOINs (Opcionales)
     public $cliente_nombre;
     public $username;
     public $cocinero_nombre;
@@ -25,7 +25,7 @@ class Pedido {
     public function __construct(
         $id, $numero_pedido, $fecha_hora, $fecha, $estado, $tipo, 
         $metodo_pago, $usuario_id, $total_sin_descuentos, $total_descuento, 
-        $cocinero_id, $total = null 
+        $cocinero_id, $total = null // AÑADIDO (es opcional con = null)
     ) {
         $this->id = $id;
         $this->numero_pedido = $numero_pedido;
@@ -61,8 +61,13 @@ class Pedido {
     public function getTotal_descuento() { return $this->total_descuento; }
     public function getCocinero_id() { return $this->cocinero_id; }
 
-   
+    // MODIFICADO: Ahora tira de la variable física
     public function getTotal() { 
         return $this->total; 
+    }
+
+    public function setTotal() {
+        $this->total= $this->total_sin_descuentos - $this->total_descuento;
+        return $this->total > 0 ? (float)$this->total : 0.0;
     }
 }

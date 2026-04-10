@@ -22,11 +22,13 @@ if (empty($lineas)) {
     redirect('carrito.php');
 }
 
-$total = 0;
-foreach ($lineas as $linea) {
-    $total += $linea->getPrecio() * $linea->getCantidad();
-}
-$total = round($total, 2);
+// $total = 0;
+// foreach ($lineas as $linea) {
+//     $total += $linea->getPrecio() * $linea->getCantidad();
+// }
+// $total = round($total, 2);
+
+$total=$pedido->getTotal();
 
 // Instanciamos el formulario y le pasamos los datos necesarios
 $form = new \es\ucm\fdi\aw\Formulario\FormularioPago($pedido_id, $total);

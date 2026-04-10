@@ -44,7 +44,7 @@ ob_start();
         
         <ul class="info-ofertas-lista">
             <li>Puedes seleccionar una o varias ofertas y aplicarlas al pedido actual.</li>
-            <li><strong>Debes seleccionar todas las ofertas que quieras usar antes de pulsar "Aplicar ofertas".</strong></li>
+            <li><strong>Debes seleccionar todas las ofertas que quieras usar antes de pulsar "Aplicar ofertas", sino solo se seleccionaran de solo una oferta.</strong></li>
             <li>Cada oferta indica los productos y cantidades necesarias para poder aplicarse.</li>
             <li>Una oferta solo se aplicará si tu pedido contiene todos los productos requeridos en la cantidad suficiente.</li>
             <li>Las ofertas pueden aplicarse varias veces si se cumplen las condiciones (por ejemplo, varios packs).</li>
@@ -141,7 +141,7 @@ ob_start();
     <br>
 
     <?php if ($modoSeleccion): ?>
-        <button type="submit">Aplicar ofertas</button>
+        <button class="btn-aceptar" type="submit">Aplicar ofertas</button>
     </form>
 <?php endif; ?>
 

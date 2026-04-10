@@ -67,7 +67,7 @@ ob_start();
               <td><?= e(substr($p->getFecha_hora(), 0, 16)) ?></td>
               <td><?= $p->getTipo() === 'local' ? '🍽️ Local' : '🥡 Llevar' ?></td>
               <td><?= e($etiquetas[$p->getEstado()] ?? $p->getEstado()) ?></td>
-              <td><?= e($p->getTotal()) ?> €</td>
+              <td><?= e($p->setTotal()) ?> €</td>
               <td>
                 <a href="estadoPedido.php?id=<?= (int)$p->getId() ?>" class="btn small">
                   Ver detalle
