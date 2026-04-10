@@ -3,7 +3,6 @@ require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/src/entities/Producto.php';
 require_once __DIR__ . '/../../includes/src/services/ProductoService.php';
 
-session_start();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);

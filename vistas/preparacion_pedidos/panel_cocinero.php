@@ -5,7 +5,7 @@ require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../entities/pedido.php';
 require_once __DIR__ . '/../../includes/Formulario/FormularioAccionesCocina.php';
 require_once __DIR__ . '/../../includes/pedidoService.php';
-require_once __DIR__ . '/../../includes/pedidoService.php';
+
 
 $user = require_role('cocinero'); 
 $cocinero_id = (int)$user->getId();

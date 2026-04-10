@@ -101,11 +101,10 @@ fieldset {
     margin-left: 30px;
 }
 
-/*estilo general del la tabla*/
+/*estilo general de la tabla*/
 table {
     border-collapse: collapse;
-    width: max-content;
-    min-width: 100%;
+    width: 100%; 
     margin: 20px 0;
     font-size: 0.9em;
 }
@@ -121,6 +120,7 @@ thead tr {
 th,
 td {
     padding: 12px 15px;
+    word-wrap: break-word;
 }
 
 /* Para poner las rayas entre filas */
@@ -138,6 +138,8 @@ tbody tr {
     color: white; 
     background-color: #8b7355; 
     font-weight: bold;
+    white-space: normal;
+    text-align: center;
 }
 
 .editar {

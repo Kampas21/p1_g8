@@ -40,7 +40,7 @@ class OfertaService
         global $conn;
 
         $stmt = $conn->prepare("
-            SELECT id, titulo AS nombre, descripcion, fecha_inicio, fecha_fin, descuento 
+            SELECT id, nombre, descripcion, fecha_inicio, fecha_fin, descuento 
             FROM ofertas 
             WHERE NOW() BETWEEN fecha_inicio AND fecha_fin
         ");

@@ -334,6 +334,7 @@ class PedidoService
     public static function getPedidosActivosByUsuario(int $usuario_id): array
     {
         global $conn;
+        // Editamos la query para calcular el 'total' usando las columnas existentes
         $sql = "
             SELECT numero_pedido, estado, fecha_hora, total
             FROM pedidos
@@ -388,5 +389,25 @@ class PedidoService
 
         $stmt->close();
         return $pedidos;
+    }
+
+
+    public static function actualizarTotales($pedido_id, $total_sin_descuentos, $total_descuento)
+    {
+        global $conn;
+        
+        // Calculamos el total real a pagar
+        $total = $total_sin_descuentos - $total_descuento;
+        if ($total < 0) $total = 0; // Por seguridad
+
+        $stmt = $conn->prepare(
+            "UPDATE pedidos 
+             SET total_sin_descuentos = ?, total_descuento = ?, total = ?
+             WHERE id = ?"
+        );
+        
+        $stmt->bind_param("dddi", $total_sin_descuentos, $total_descuento, $total, $pedido_id);
+        $stmt->execute();
+        $stmt->close();
     }
 }
