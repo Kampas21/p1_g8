@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../entities/Oferta.php';
+require_once __DIR__ . '/../entities/oferta.php';
 require_once __DIR__ . '/../includes/application.php';
 
 class OfertaService

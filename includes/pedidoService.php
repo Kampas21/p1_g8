@@ -244,7 +244,7 @@ class PedidoService
         );
         $stmt->bind_param("i", $pedido_id);
         $stmt->execute();
-        
+
 
         $result = $stmt->get_result();
         $productos = [];
@@ -397,7 +397,7 @@ class PedidoService
     public static function actualizarTotales($pedido_id, $total_sin_descuentos, $total_descuento)
     {
         global $conn;
-        
+
         // Calculamos el total real a pagar
         $total = $total_sin_descuentos - $total_descuento;
         if ($total < 0) $total = 0; // Por seguridad
@@ -407,9 +407,56 @@ class PedidoService
              SET total_sin_descuentos = ?, total_descuento = ?, total = ?
              WHERE id = ?"
         );
-        
+
         $stmt->bind_param("dddi", $total_sin_descuentos, $total_descuento, $total, $pedido_id);
         $stmt->execute();
         $stmt->close();
+    }
+
+    public static function limpiarOfertas($pedido_id)
+    {
+        global $conn;
+
+        $stmt = $conn->prepare(
+            "DELETE FROM ofertas_en_pedido WHERE pedido_id = ?"
+        );
+
+        $stmt->bind_param("i", $pedido_id);
+        $stmt->execute();
+        $stmt->close();
+    }
+
+    public static function getOfertasDePedido($pedido_id)
+    {
+        global $conn;
+
+        $stmt = $conn->prepare(
+            "SELECT oep.*, o.nombre
+         FROM ofertas_en_pedido oep
+         JOIN ofertas o ON o.id = oep.oferta_id
+         WHERE oep.pedido_id = ?"
+        );
+
+        $stmt->bind_param("i", $pedido_id);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        $ofertas = [];
+
+        while ($fila = $result->fetch_assoc()) {
+            $ofertas[] = (object)[
+                'id' => $fila['id'],
+                'pedido_id' => $fila['pedido_id'],
+                'oferta_id' => $fila['oferta_id'],
+                'nombre' => $fila['nombre'],
+                'veces_aplicada' => $fila['veces_aplicada'],
+                'descuento_total' => $fila['descuento_total']
+            ];
+        }
+
+        $stmt->close();
+
+        return $ofertas;
     }
 }
