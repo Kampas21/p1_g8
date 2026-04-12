@@ -38,7 +38,7 @@ INSERT INTO `productos` (`nombre`, `descripcion`, `categoria_id`, `precio_base`,
 ('Pollo al Horno','Pollo asado con hierbas',1,12.00,10,1,0,'img/img_productos/1773420043_polloalhorno.jpg'),
 ('Bistec de Ternera','Filete de ternera a la plancha',1,15.50,10,1,0,'img/img_productos/1773420053_bistecternera.jpg'),
 ('Ensalada Griega','Lechuga, tomate, pepino, aceitunas negras y feta',2,7.00,10,1,1,'img/img_productos/ensaladagriega.jpg'),
-('Crema de Champiñones','Sopa cremosa de champiñones',2,5.50,10,1,0,'img/img_productos/cremachampiñones.jpg'),
+('Crema de Champiñones','Sopa cremosa de champiñones',2,5.50,10,1,0,'img/img_productos/cremachampinones.jpg'),
 ('Flan Casero','Flan de huevo con caramelo',3,3.75,10,1,0,'img/img_productos/flancasero.jpg'),
 ('Mousse Chocolate','Mousse ligera de chocolate negro',3,4.25,10,1,1,'img/img_productos/moussechocolate.jpg'),
 ('Zumo Manzana','Zumo natural de manzana',4,2.50,10,1,0,'img/img_productos/zumomanzana.jpg'),
@@ -57,7 +57,7 @@ INSERT INTO `productos` (`nombre`, `descripcion`, `categoria_id`, `precio_base`,
 ('Sopa de Verduras','Sopa casera con verduras frescas',2,5.50,10,1,0,'img/img_productos/sopaverduras.jpg'),
 ('Brownie Caramelo','Brownie con caramelo salado',3,4.00,10,1,1,'img/img_productos/browniecaramelo.jpg'),
 ('Helado Limón','Cucurucho de helado de limón',3,3.50,10,1,0,'img/img_productos/heladolimon.jpg'),
-('Zumo Piña','Zumo natural de piña',4,2.50,10,1,0,'img/img_productos/zumopiña.jpg'),
+('Zumo Piña','Zumo natural de piña',4,2.50,10,1,0,'img/img_productos/zumopina.jpg'),
 ('Cerveza Roja','Cerveza ale 330ml',4,3.00,10,1,0,'img/img_productos/cervezaroja.jpg');
 
 
