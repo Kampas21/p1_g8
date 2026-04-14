@@ -147,11 +147,11 @@ class PedidoService
         $estado = ($metodo_pago === 'tarjeta') ? 'en_preparacion' : 'recibido';
 
         $stmt = $conn->prepare(
-            "UPDATE pedidos
-            SET estado = ?, numero_pedido = ?, metodo_pago = ?, total = ?, fecha_hora = CURRENT_TIMESTAMP 
+            "UPDATE pedidos 
+            SET estado = ?, numero_pedido = ?, metodo_pago = ?, fecha_hora = CURRENT_TIMESTAMP 
             WHERE id = ?"
         );
-        $stmt->bind_param("sisdi", $estado, $numero, $metodo_pago, $total, $pedido_id);
+        $stmt->bind_param("sisi", $estado, $numero, $metodo_pago, $pedido_id);
         return $stmt->execute();
     }
 
@@ -425,21 +425,17 @@ class PedidoService
     }
 
 
-    public static function actualizarTotales($pedido_id, $total_sin_descuentos, $total_descuento)
+   public static function actualizarTotales($pedido_id, $total_sin_descuentos, $total_descuento)
     {
         global $conn;
 
-        // Calculamos el total real a pagar
-        $total = $total_sin_descuentos - $total_descuento;
-        if ($total < 0) $total = 0; // Por seguridad
-
         $stmt = $conn->prepare(
             "UPDATE pedidos 
-             SET total_sin_descuentos = ?, total_descuento = ?, total = ?
+             SET total_sin_descuentos = ?, total_descuento = ?
              WHERE id = ?"
         );
 
-        $stmt->bind_param("dddi", $total_sin_descuentos, $total_descuento, $total, $pedido_id);
+        $stmt->bind_param("ddi", $total_sin_descuentos, $total_descuento, $pedido_id);
         $stmt->execute();
         $stmt->close();
     }
