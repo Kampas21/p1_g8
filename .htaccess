@@ -1,10 +1,10 @@
 # Evitar que la gente pueda listar los archivos de una carpeta (como img o includes)
-Options -Indexes
+# Options -Indexes
 
 # Bloquear el acceso directo a los archivos .sql y tu configuración
-<FilesMatch "\.(sql|ini|log)$|config\.php">
-    Require all denied
-</FilesMatch>
+# <FilesMatch "\.(sql|ini|log)$|config\.php">
+#    Require all denied
+# </FilesMatch>
 
 # forzar UTF-8 por defecto
-AddDefaultCharset UTF-8
+# AddDefaultCharset UTF-8
