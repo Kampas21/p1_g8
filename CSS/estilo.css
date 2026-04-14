@@ -1279,9 +1279,6 @@ main {
         grid-template-columns: 200px minmax(0, 1fr);
     }
 
-    #sidebar-der {
-        display: none;
-    }
 
     #contenido-web {
         padding: 20px;
@@ -1335,6 +1332,7 @@ main {
 
     #sidebar-izq,
     #sidebar-der {
+        display: block;
         width: 100%;
         border: none;
         padding: 15px;

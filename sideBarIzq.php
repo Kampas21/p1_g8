@@ -1,7 +1,4 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 
 $user = function_exists('current_user') ? current_user() : null;
 ?>
