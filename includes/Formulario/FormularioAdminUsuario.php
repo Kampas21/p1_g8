@@ -2,7 +2,7 @@
 namespace es\ucm\fdi\aw\Formulario;
 
 require_once __DIR__ . '/Formulario.php';
-require_once __DIR__ . '/../../includes/user_repo.php';
+require_once __DIR__ . '/../../includes/UsuarioDAO.php';
 require_once __DIR__ . '/../../includes/util.php';
 
 class FormularioAdminUsuario extends Formulario
@@ -61,9 +61,9 @@ class FormularioAdminUsuario extends Formulario
         
         // Generador de opciones de rol dinámicas
         $htmlRoles = "";
-        foreach (\valid_roles() as $r) {
+        foreach (\UsuarioDAO::valid_roles() as $r) {
             $sel = ($r === $rol) ? 'selected' : '';
-            $lbl = \role_label($r);
+            $lbl = \UsuarioDAO::role_label($r);
             $htmlRoles .= "<option value=\"$r\" $sel>$lbl</option>";
         }
 
@@ -160,7 +160,7 @@ class FormularioAdminUsuario extends Formulario
 
         $ignoreId = $this->isCreate ? null : (int)$this->userToEdit->getId()    ;
         
-        list($clean, $erroresValidacion) = \user_validate_data($_POST, $this->isCreate, $ignoreId, true);
+        list($clean, $erroresValidacion) = \UsuarioDAO::user_validate_data($_POST, $this->isCreate, $ignoreId, true);
         
         if (count($erroresValidacion) > 0) {
             $this->errores = $erroresValidacion;
@@ -168,17 +168,17 @@ class FormularioAdminUsuario extends Formulario
 
         if (count($this->errores) === 0) {
             try {
-                $avatarChoice = \resolve_avatar_choice_from_request($this->userToEdit ?? [], $this->isCreate);
+                $avatarChoice = \UsuarioDAO::resolve_avatar_choice_from_request($this->userToEdit, $this->isCreate);
             } catch (\RuntimeException $ex) {
                 $this->errores['avatar'] = $ex->getMessage();
                 return;
             }
 
             if ($this->isCreate) {
-                \user_create($clean, $avatarChoice);
+                \UsuarioDAO::user_create($clean, $avatarChoice);
                 \flash_set('success', 'Usuario creado con éxito.');
             } else {
-                \user_update((int)$this->userToEdit->getId(), $clean, [
+                \UsuarioDAO::user_update((int)$this->userToEdit->getId(), $clean, [
                     'avatar_choice' => $avatarChoice,
                     'allow_role' => true
                 ]); 

@@ -1474,4 +1474,50 @@ main {
     .full {
         grid-column: span 2;
     }
+
+
+
+
+
+    /* =========================================================================
+   ACCIONES CON ICONOS (TABLAS DE ADMINISTRACIÓN)
+   ========================================================================= */
+
+    .icon-actions {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap; /* Evita que se rompa en pantallas muy pequeñas */
+    }
+
+    /* Base para tamaño consistente en los botones de icono */
+    .icon-actions .icon-btn {
+        padding: 5px 10px;
+        font-size: 1.1rem; /* Iconos un poco más grandes para que se vean bien */
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        min-width: 38px;  /* Asegura un ancho mínimo para simetría */
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    /* Color y efecto particular para el nuevo botón "Reactivar/Success" */
+    .icon-actions .btn.success {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .icon-actions .btn.success:hover {
+        background-color: #218838;
+    }
+
+    /* Arreglo útil para formularios en línea que no deben tener margen residual */
+    .icon-actions form.m-0 {
+        margin: 0;
+    }
+
+
 }

@@ -2,7 +2,7 @@
 namespace es\ucm\fdi\aw\Formulario;
 
 require_once __DIR__ . '/Formulario.php';
-require_once __DIR__ . '/../../includes/user_repo.php';
+require_once __DIR__ . '/../../includes/UsuarioDAO.php';
 require_once __DIR__ . '/../../includes/auth.php';
 
 class FormularioRegistro extends Formulario
@@ -83,7 +83,7 @@ class FormularioRegistro extends Formulario
         $datos['apellidos'] = filter_var($datos['apellidos'] ?? '', FILTER_SANITIZE_SPECIAL_CHARS);
 
         // Validación y delegación en la función core
-        list($clean, $erroresValidacion) = user_validate_data($datos, true, null, false);
+        list($clean, $erroresValidacion) = \UsuarioDAO::user_validate_data($datos, true, null, false);
         
         if (count($erroresValidacion) > 0) {
             $this->errores = $erroresValidacion;
@@ -113,20 +113,18 @@ class FormularioRegistro extends Formulario
                 $_FILES['avatar_upload'] = $_FILES['avatar_pers'];
                 
                 try {
-                    $avatarDetails = \resolve_avatar_choice_from_request([
-                        'avatar_tipo' => 'default',
-                        'avatar_valor' => ''
-                    ], false);           
+                    // Como el usuario no existe aún, pasamos 'null'
+                    $avatarDetails = \UsuarioDAO::resolve_avatar_choice_from_request(null, false);           
                 } catch (\RuntimeException $ex) {
                     $this->errores['avatar'] = $ex->getMessage();
                     return; // Detenemos el registro si la imagen falla (pesa mucho, etc)
                 }
             }
             
-            $newId = user_create($clean, $avatarDetails);
+            $newId = \UsuarioDAO::user_create($clean, $avatarDetails);
             
             if ($newId) {
-                $user = user_find_by_id($newId);
+                $user = \UsuarioDAO::user_find_by_id($newId);
                 login_user($user);
             } else {
                 $this->errores['global'] = "Error interno al crear el usuario en la BD.";

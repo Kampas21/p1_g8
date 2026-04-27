@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/auth.php';
-require_once __DIR__ . '/../../includes/user_repo.php';
+require_once __DIR__ . '/../../includes/UsuarioDAO.php';
 require_once __DIR__ . '/../../entities/pedido.php'; // Incluimos la Entidad Pedido
 require_once __DIR__ . '/../../includes/Formulario/FormularioPerfil.php';
 require_once __DIR__ . '/../../includes/pedidoService.php';
@@ -15,7 +15,7 @@ $user = require_login();
 // Si piden quitar el avatar (POST)
 if (is_post() && ($_POST['accion'] ?? '') === 'quitar_avatar') {
     require_csrf();
-    user_remove_custom_avatar($user->getId());
+    UsuarioDAO::user_remove_custom_avatar($user->getId());
     flash_set('success', 'Avatar personalizado eliminado.');
     header("Location: perfil.php");
     exit();
@@ -30,19 +30,25 @@ $pedidosActivos = [];
 $pedidosHistorico = [];
 $pedidosDisponibles = false;
 
-$conn = crearConexion();
-$checkTable = $conn->query("SHOW TABLES LIKE 'pedidos'");
+$uid = $user->getId();
+$tab = $_GET['tab'] ?? 'datos'; // Saber en qué pestaña estamos
 
-if ($checkTable && $checkTable->num_rows > 0) {
-    $pedidosDisponibles = true;
-    $uid = $user->getId();
+try {
+    if ($tab === 'activos') {
+        // cargamos solo los pedidos activos si el usuario está en la pestaña activos
+        $pedidosActivos = PedidoService::getPedidosActivosByUsuario($uid);
+    } 
+    elseif ($tab === 'historico') {
+        // cargamos solo el histórico si el usuario está en la pestaña historico
+        $pedidosHistorico = PedidoService::getPedidosHistoricoByUsuario($uid);
+    }
     
-    $pedidosActivos = PedidoService::getPedidosActivosByUsuario($uid);
-    $pedidosHistorico = PedidoService::getPedidosHistoricoByUsuario($uid);
+    $numPedidosActivos = PedidoService::contarPedidosActivosByUsuario($uid);
+    $pedidosDisponibles = true;
+} catch (\Exception $e) {
+    $pedidosDisponibles = false;
 }
-$conn->close();
 
-$tab = $_GET['tab'] ?? 'datos'; // 'datos' será la pestaña por defecto
 $tituloPagina = 'Perfil | Bistro FDI';
 $rutaCSS = RUTA_APP . '/CSS/estilo.css';
 
@@ -55,7 +61,7 @@ ob_start();
     <!-- Menú de Pestañas (Submenú rápido) -->
     <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
         <a href="perfil.php?tab=datos" class="btn <?= $tab === 'datos' ? 'editar' : '' ?>">👤 Configuración de Perfil</a>
-        <a href="perfil.php?tab=activos" class="btn <?= $tab === 'activos' ? 'editar' : '' ?>">⏳ Pedidos Activos (<?= count($pedidosActivos) ?>)</a>
+        <a href="perfil.php?tab=activos" class="btn <?= $tab === 'activos' ? 'editar' : '' ?>">⏳ Pedidos Activos (<?= $numPedidosActivos ?>)</a>
         <a href="perfil.php?tab=historico" class="btn <?= $tab === 'historico' ? 'editar' : '' ?>">📜 Histórico de Pedidos</a>
     </div>
 
@@ -89,7 +95,7 @@ ob_start();
                 <p><strong>Usuario:</strong> <?= e($user->getUsername()) ?></p>
                 <p><strong>Email:</strong> <?= e($user->getEmail()) ?></p>
                 <p><strong>Nombre y apellidos:</strong> <?= e($user->getNombre()) ?> <?= e($user->getApellidos()) ?></p>
-                <p><strong>Rol:</strong> <?= e(role_label((string)$user->getRol())) ?></p>
+                <p><strong>Rol:</strong> <?= e(UsuarioDAO::role_label((string)$user->getRol())) ?></p>
             </div>
         </div>
         

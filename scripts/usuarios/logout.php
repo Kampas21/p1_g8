@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 
 
-require_once __DIR__ . '/../../includes/user_repo.php';
+require_once __DIR__ . '/../../includes/UsuarioDAO.php';
 require_once __DIR__ . '/../../includes/auth.php';
 
 if (is_post()) {

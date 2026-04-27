@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 
 
-require_once __DIR__ . '/../../includes/user_repo.php';
+require_once __DIR__ . '/../../includes/UsuarioDAO.php';
 require_once __DIR__ . '/../../includes/auth.php';
 
 $admin = require_role('gerente');
 $id = (int)($_GET['id'] ?? 0);
-$user = $id > 0 ? user_find_by_id($id) : null;
+$user = $id > 0 ? UsuarioDAO::user_find_by_id($id) : null;
 
 if (!$user) {
     flash_set('error', 'Usuario no encontrado.');
@@ -44,7 +44,7 @@ ob_start();
           <p><strong>Email:</strong> <?= e($user->getEmail()) ?></p>
           <p><strong>Nombre:</strong> <?= e($user->getNombre()) ?></p>
           <p><strong>Apellidos:</strong> <?= e($user->getApellidos()) ?></p>
-          <p><strong>Rol:</strong> <?= e(role_label((string)$user->getRol())) ?></p>
+          <p><strong>Rol:</strong> <?= e(UsuarioDAO::role_label((string)$user->getRol())) ?></p>
           <p><strong>Estado:</strong> <?= $user->isActivo() ? '<span class="texto-exito">Activo</span>' : '<span class="texto-error">Inactivo</span>' ?></p>
           <p><strong>Actualizado:</strong> <?= e($user->getUpdatedAt()) ?></p>
         </dl>

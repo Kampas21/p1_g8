@@ -486,4 +486,35 @@ class PedidoService
 
         return $ofertas;
     }
+
+    /**
+     * Cuenta los pedidos activos de un usuario para no cargar los datos completos en el perfil solo para ver el número
+     */
+    public static function contarPedidosActivosByUsuario(int $usuario_id): int
+    {
+        global $conn;
+        
+        $sql = "
+            SELECT COUNT(*) as num_activos
+            FROM pedidos
+            WHERE usuario_id = ?
+               AND estado IN ('en_preparacion', 'cocinando', 'listo_cocina', 'terminado')
+        ";
+        
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            return 0;
+        }
+
+        $stmt->bind_param("i", $usuario_id);
+        $stmt->execute();
+        
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        
+        $result->free();
+        $stmt->close();
+
+        return (int)($row['num_activos'] ?? 0);
+    }
 }

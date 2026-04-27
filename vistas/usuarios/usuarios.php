@@ -2,14 +2,14 @@
 declare(strict_types=1);
 
 
-require_once __DIR__ . '/../../includes/user_repo.php';
+require_once __DIR__ . '/../../includes/UsuarioDAO.php';
 require_once __DIR__ . '/../../includes/auth.php';
 
 $admin = require_role('gerente');
 
 $search = trim((string)($_GET['q'] ?? ''));
 $includeInactive = (string)($_GET['ver'] ?? '') === 'todo';
-$users = user_list(['search' => $search, 'include_inactive' => $includeInactive]);
+$users = UsuarioDAO::user_list(['search' => $search, 'include_inactive' => $includeInactive]);
 
 $tituloPagina = 'Listado de usuarios | Bistro FDI';
 $rutaCSS = RUTA_APP . '/CSS/estilo.css';
@@ -61,26 +61,26 @@ ob_start();
                                 <td><?= e($u->getUsername()) ?></td>
                                 <td><?= e($u->getEmail()) ?></td>
                                 <td><?= e($u->getNombreCompleto()) ?></td>
-                                <td><?= e(role_label((string)$u->getRol())) ?></td>
+                                <td><?= e(UsuarioDAO::role_label((string)$u->getRol())) ?></td>
                                 <td>
                                     <?= $u->isActivo() ? '<span class="texto-exito">Activo</span>' : '<span class="texto-error">Inactivo</span>' ?>
                                 </td>
                                 <td>
-                                    <div class="actions-inline">
-                                        <a class="btn small" href="usuario_ver.php?id=<?= $u->getId() ?>">Ver</a>
-                                        <a class="btn small primary" href="usuario_form.php?id=<?= $u->getId() ?>">Editar</a>
+                                    <div class="actions-inline icon-actions">
+                                        <a class="btn small icon-btn" href="usuario_ver.php?id=<?= $u->getId() ?>" title="Ver Detalles">👁️</a>
+                                        <a class="btn small primary icon-btn" href="usuario_form.php?id=<?= $u->getId() ?>" title="Editar Usuario">✏️</a>
 
                                         <?php if ($u->isActivo()): ?>
-                                            <form method="post" action="../../scripts/usuarios/usuario_eliminar.php" onsubmit="return confirm('¿Desactivar este usuario?');" class="d-inline">
+                                            <form method="post" action="../../scripts/usuarios/usuario_eliminar.php" onsubmit="return confirm('¿Desactivar este usuario?');" class="d-inline m-0">
                                                 <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
                                                 <input type="hidden" name="id" value="<?= $u->getId() ?>">
-                                                <button class="btn small danger" type="submit" <?= $u->getId() === $admin->getId() ? 'disabled title="No puedes desactivarte a ti mismo"' : '' ?>>Borrar</button>
+                                                <button class="btn small danger icon-btn" type="submit" title="Desactivar Usuario" <?= $u->getId() === $admin->getId() ? 'disabled' : '' ?>>🗑️</button>
                                             </form>
                                         <?php else: ?>
-                                            <form method="post" action="../../scripts/usuarios/usuario_reactivar.php" class="d-inline">
+                                            <form method="post" action="../../scripts/usuarios/usuario_reactivar.php" class="d-inline m-0">
                                                 <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
                                                 <input type="hidden" name="id" value="<?= $u->getId() ?>">
-                                                <button class="btn small" type="submit">Reactivar</button>
+                                                <button class="btn small success icon-btn" type="submit" title="Reactivar Usuario">♻️</button>
                                             </form>
                                         <?php endif; ?>
                                     </div>

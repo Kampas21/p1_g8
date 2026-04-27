@@ -2,7 +2,7 @@
 namespace es\ucm\fdi\aw\Formulario;
 
 require_once __DIR__ . '/Formulario.php';
-require_once __DIR__ . '/../../includes/user_repo.php';
+require_once __DIR__ . '/../../includes/UsuarioDAO.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/util.php'; 
 
@@ -87,7 +87,7 @@ class FormularioPerfil extends Formulario
             $_POST['avatar_mode'] = 'keep';
         }
         
-        list($clean, $erroresValidacion) = \user_validate_data($_POST, false, $this->user->getId(), false);
+        list($clean, $erroresValidacion) = \UsuarioDAO::user_validate_data($_POST, false, $this->user->getId(), false);
         
         if (count($erroresValidacion) > 0) {
             $this->errores = $erroresValidacion;
@@ -95,23 +95,20 @@ class FormularioPerfil extends Formulario
 
         if (count($this->errores) === 0) {
             try {
-                
-         $avatarChoice = \resolve_avatar_choice_from_request([
-         'avatar_tipo' => $this->user->getAvatarTipo(),
-         'avatar_valor' => $this->user->getAvatarValor()
-], false);           
-         } catch (\RuntimeException $ex) {
+                // Pasamos directamente el objeto $this->user (que es el usuario real)
+                $avatarChoice = \UsuarioDAO::resolve_avatar_choice_from_request($this->user, false);           
+            } catch (\RuntimeException $ex) {
                 $this->errores['avatar'] = $ex->getMessage();
                 return;
             }
 
             
-            \user_update($this->user->getId(), $clean, [
+            \UsuarioDAO::user_update($this->user->getId(), $clean, [
                 'avatar_choice' => $avatarChoice,
                 'allow_role' => false
             ]);
             
-            \login_user(\user_find_by_id((int)$this->user->getId()));
+            \login_user(\UsuarioDAO::user_find_by_id((int)$this->user->getId()));
         }
     }
 }
