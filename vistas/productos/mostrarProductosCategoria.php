@@ -2,7 +2,7 @@
 
 
 require_once __DIR__ . '/../../includes/auth.php';
-require_once __DIR__ . '/../../includes/categoriaService.php';
+require_once __DIR__ . '/../../includes/CategoriaDAO.php';
 
 $user = current_user();
 if (!$user || !user_has_role($user, 'gerente')) {
@@ -16,13 +16,14 @@ if (!$categoria_id) {
     die('Categoría inválida');
 }
 
-$categoria = CategoriaService::getById($categoria_id);
+$categoria = CategoriaDAO::getById($categoria_id);
 if (!$categoria) {
     http_response_code(404);
     die('Categoría no encontrada');
 }
 
-require_once __DIR__ . '/../../scripts/productos/cargarProductosCategoria.php';
+require_once __DIR__ . '/../../includes/ProductoDAO.php';
+$productos = ProductoDAO::getAllByCategoria($categoria_id);
 
 $tituloPagina = 'Productos';
 $rutaCSS = '../../CSS/estilo.css';

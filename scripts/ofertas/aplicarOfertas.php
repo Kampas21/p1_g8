@@ -6,7 +6,7 @@ session_start();
 
 require_once __DIR__ . '/../../includes/pedidoService.php';
 require_once __DIR__ . '/../../includes/ofertaService.php';
-require_once __DIR__ . '/../../includes/productoService.php';
+require_once __DIR__ . '/../../includes/ProductoDAO.php';
 require_once __DIR__ . '/../../includes/ofertaEnPedidoService.php';
 
 $pedido_id = $_POST['pedido_id'] ?? null;
@@ -43,7 +43,7 @@ $total_descuento = 0;
 foreach ($ofertas_seleccionadas as $oferta_id) {
 
     $oferta = OfertaService::getById($oferta_id);
-    $productos_oferta = ProductoService::getProductosDeOferta($oferta_id);
+    $productos_oferta = ProductoDAO::getProductosDeOferta($oferta_id);
 
     if (!$oferta) {
         $errores_ofertas[] = "La oferta $oferta_id no existe";

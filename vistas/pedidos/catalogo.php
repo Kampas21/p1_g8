@@ -4,8 +4,8 @@ require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/application.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/util.php';
-require_once __DIR__ . '/../../includes/categoriaService.php';
-require_once __DIR__ . '/../../includes/productoService.php';
+require_once __DIR__ . '/../../includes/CategoriaDAO.php';
+require_once __DIR__ . '/../../includes/ProductoDAO.php';
 require_once __DIR__ . '/../../entities/pedido.php';
 require_once __DIR__ . '/../../entities/producto.php';
 require_once __DIR__ . '/../../entities/categoria.php';
@@ -30,8 +30,8 @@ $categoria_id = isset($_GET['categoria']) && is_numeric($_GET['categoria'])
 $formHtmls = [];
 
 if ($categoria_id) {
-    $productos = ProductoService::getAllActivosByCategoria($categoria_id);
-    $categoria = CategoriaService::getById($categoria_id);
+    $productos = ProductoDAO::getAllActivosByCategoria($categoria_id);
+    $categoria = CategoriaDAO::getById($categoria_id);
     
     // Instanciamos un formulario por cada producto para que intercepte si hubo POST
     if (!empty($productos)) {
@@ -42,7 +42,7 @@ if ($categoria_id) {
         }
     }
 } else {
-    $categorias = CategoriaService::getAll();
+    $categorias = CategoriaDAO::getAll();
 }
 
 $titulo = $categoria_id && isset($categoria)

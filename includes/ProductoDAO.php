@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../entities/producto.php';
 require_once __DIR__ . '/application.php';
 
-class ProductoService {
+class ProductoDAO {
 
     public static function getAllByCategoria($categoria_id) {
         global $conn;

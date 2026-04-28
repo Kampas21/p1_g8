@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../entities/producto.php';
-require_once __DIR__ . '/../../includes/productoService.php';
+require_once __DIR__ . '/../../includes/ProductoDAO.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -68,9 +68,9 @@ if (!empty($errores)) {
 ========================= */
 
 if ($id) {
-    ProductoService::update($id, $nombre, $descripcion, $categoria_id, $precio, $iva);
+    ProductoDAO::update($id, $nombre, $descripcion, $categoria_id, $precio, $iva);
 } else {
-    ProductoService::create($nombre, $descripcion, $categoria_id, $precio, $iva);
+    ProductoDAO::create($nombre, $descripcion, $categoria_id, $precio, $iva);
 }
 
 /* =========================

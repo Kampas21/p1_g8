@@ -13,7 +13,7 @@ require_once __DIR__ . '/../../includes/Formulario/FormularioEliminarLineaPedido
 require_once __DIR__ . '/../../includes/Formulario/FormularioCancelarPedido.php';
 
 require_once __DIR__ . '/../../includes/pedidoService.php';
-require_once __DIR__ . '/../../includes/productoService.php';
+require_once __DIR__ . '/../../includes/ProductoDAO.php';
 
 $user = require_login();
 $usuario_id = (int)$user->getId();
@@ -137,7 +137,7 @@ ob_start();
 
                   <?php
                  
-                  $productos_oferta = ProductoService::getProductosDeOferta(
+                  $productos_oferta = ProductoDAO::getProductosDeOferta(
                     $o->oferta_id
                   );
 

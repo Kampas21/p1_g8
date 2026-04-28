@@ -3,7 +3,7 @@
 
 
 require_once __DIR__ . '/../../includes/auth.php';
-require_once __DIR__ . '/../../includes/categoriaService.php';
+require_once __DIR__ . '/../../includes/CategoriaDAO.php';
 
 $user = current_user();
 
@@ -18,7 +18,7 @@ $categoria = null;
 $errores = [];
 
 if ($modo === 'editar') {
-    $categoria = CategoriaService::getById($id);
+    $categoria = CategoriaDAO::getById($id);
 
     if (!$categoria) {
         die("Categoría no encontrada");
@@ -41,9 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($errores)) {
 
         if ($modo === 'crear') {
-            CategoriaService::create($nombre, $descripcion);
+            CategoriaDAO::create($nombre, $descripcion);
         } else {
-            CategoriaService::update($id, $nombre, $descripcion);
+            CategoriaDAO::update($id, $nombre, $descripcion);
         }
 
         header("Location: categoriasList.php");

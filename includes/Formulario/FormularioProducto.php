@@ -2,7 +2,7 @@
 namespace es\ucm\fdi\aw\Formulario;
 
 require_once __DIR__ . '/Formulario.php';
-require_once __DIR__ . '/../productoService.php';
+require_once __DIR__ . '/../ProductoDAO.php';
 
 class FormularioProducto extends Formulario
 {
@@ -143,8 +143,8 @@ class FormularioProducto extends Formulario
         }
 
         $ok = $this->isCreate
-            ? \ProductoService::create($nombre, $descripcion, $categoria_id, (float)$precio, $iva)
-            : \ProductoService::update($this->producto->getId(), $nombre, $descripcion, $categoria_id, (float)$precio, $iva);
+            ? \ProductoDAO::create($nombre, $descripcion, $categoria_id, (float)$precio, $iva)
+            : \ProductoDAO::update($this->producto->getId(), $nombre, $descripcion, $categoria_id, (float)$precio, $iva);
 
         if (!$ok) {
             $this->errores[] = 'No se pudo guardar el producto.';

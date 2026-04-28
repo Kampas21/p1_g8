@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../../includes/ofertaService.php';
-require_once __DIR__ . '/../../includes/ofertaProductoService.php';
+require_once __DIR__ . '/../../includes/OfertaProductoDAO.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die('La oferta está en uso y no se puede borrar.');
     }
 
-    OfertaProductoService::removeProductosDeOferta((int)$id);
+    OfertaProductoDAO::removeProductosDeOferta((int)$id);
     OfertaService::borrarOferta((int)$id);
 
     header("Location: ../../vistas/ofertas/listarOfertas.php");

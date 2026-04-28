@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 
 require_once __DIR__ . '/../../includes/auth.php';
-require_once __DIR__ . '/../../includes/productoService.php';
+require_once __DIR__ . '/../../includes/ProductoDAO.php';
 require_once __DIR__ . '/../../includes/Formulario/FormularioProducto.php';
 
 use es\ucm\fdi\aw\Formulario\FormularioProducto;
@@ -27,7 +27,7 @@ $isCreate = ($modo === 'crear') || ($id <= 0);
 $productoToEdit = null;
 
 if (!$isCreate) {
-    $productoToEdit = \ProductoService::getById($id);
+    $productoToEdit = \ProductoDAO::getById($id);
     if (!$productoToEdit) {
         header("Location: mostrarProductosCategoria.php?id=" . $categoria_id);
     }

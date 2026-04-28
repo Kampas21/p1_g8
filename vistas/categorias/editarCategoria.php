@@ -2,7 +2,7 @@
 
 
 require_once __DIR__ . '/../../includes/auth.php';
-require_once __DIR__ . '/../../includes/categoriaService.php';
+require_once __DIR__ . '/../../includes/CategoriaDAO.php';
 require_once __DIR__ . '/../../includes/Formulario/FormularioCategoria.php';
 
 use es\ucm\fdi\aw\Formulario\FormularioCategoria;
@@ -19,7 +19,7 @@ if (!$id) {
     die('ID inválido');
 }
 
-$categoria = CategoriaService::getById($id);
+$categoria = CategoriaDAO::getById($id);
 if (!$categoria) {
     http_response_code(404);
     die('Categoría no encontrada');

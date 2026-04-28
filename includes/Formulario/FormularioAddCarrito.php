@@ -3,7 +3,7 @@ namespace es\ucm\fdi\aw\Formulario;
 
 require_once __DIR__ . '/Formulario.php';
 require_once __DIR__ . '/../../entities/pedido.php';
-require_once __DIR__ . '/../../includes/productoService.php';
+require_once __DIR__ . '/../../includes/ProductoDAO.php';
 require_once __DIR__ . '/../../includes/util.php';
 require_once __DIR__ . '/../../includes/pedidoService.php';
 
@@ -39,7 +39,7 @@ class FormularioAddCarrito extends Formulario {
         $prod_id = (int)($datos['producto_id'] ?? 0);
         
         if ($prod_id > 0) {
-            $producto = \ProductoService::getById($prod_id);
+            $producto = \ProductoDAO::getById($prod_id);
             if ($producto) {
                 $precio = $producto->getPrecioFinal();
                 \PedidoService::addProducto($this->pedido_id, $prod_id, $precio);

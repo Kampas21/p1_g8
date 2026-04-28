@@ -28,7 +28,7 @@ if (!$user || !user_has_role($user, 'gerente')) {
 
 require_once __DIR__ . '/../../entities/oferta.php';
 //require_once __DIR__ . '/../../entities/producto.php';
-require_once __DIR__ . '/../../includes/productoService.php';
+require_once __DIR__ . '/../../includes/ProductoDAO.php';
 require_once __DIR__ . '/../../includes/ofertaService.php';
 
 $ofertas = OfertaService::getAll();
@@ -70,7 +70,7 @@ ob_start();
 
                 <?php
                 $precio_total = 0;
-                $productos = ProductoService::getProductosDeOferta($oferta->getId()); // devuelve un array de productos con cantidad
+                $productos = ProductoDAO::getProductosDeOferta($oferta->getId()); // devuelve un array de productos con cantidad
                 $lista = array_map(function ($p) use (&$precio_total) {
                     $precio = $p->getPrecioFinal();
                     $precio_cant = $precio * $p->cantidad;

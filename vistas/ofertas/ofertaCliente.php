@@ -4,7 +4,7 @@ error_reporting(E_ALL);
 
 
 require_once __DIR__ . '/../../includes/auth.php';
-require_once __DIR__ . '/../../includes/productoService.php';
+require_once __DIR__ . '/../../includes/ProductoDAO.php';
 require_once __DIR__ . '/../../includes/ofertaService.php';
 require_once __DIR__ . '/../../includes/pedidoService.php';
 
@@ -80,7 +80,7 @@ ob_start();
             <?php foreach ($ofertas as $oferta): ?>
                 <?php
                 $precio_total = 0;
-                $productos = ProductoService::getProductosDeOferta($oferta->getId());
+                $productos = ProductoDAO::getProductosDeOferta($oferta->getId());
 
                 $lista = array_map(function ($p) use (&$precio_total) {
                     $precio = $p->getPrecioFinal();

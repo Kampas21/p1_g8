@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 
 require_once __DIR__ . '/../../includes/auth.php';
-require_once __DIR__ . '/../../includes/productoService.php';
+require_once __DIR__ . '/../../includes/ProductoDAO.php';
 require_once __DIR__ . '/../../includes/Formulario/FormularioProducto.php';
 
 use es\ucm\fdi\aw\Formulario\FormularioProducto;
@@ -23,7 +23,7 @@ if (!$id || !$categoria_id) {
     die('Datos inválidos.');
 }
 
-$productoToEdit = ProductoService::getById($id);
+$productoToEdit = ProductoDAO::getById($id);
 if (!$productoToEdit) {
     http_response_code(404);
     die('Producto no encontrado.');

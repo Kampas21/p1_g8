@@ -9,7 +9,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require_once __DIR__ . '/../../includes/ofertaService.php';
-require_once __DIR__ . '/../../includes/ofertaProductoService.php';
+require_once __DIR__ . '/../../includes/OfertaProductoDAO.php';
 require_once __DIR__ . '/../../includes/config.php';
 
 $id = $_GET['id'] ?? null;
@@ -52,10 +52,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $cantidad = (int)$cantidad;
 
             if ($cantidad > 0) {
-                OfertaProductoService::addProducto($id, $producto_id, $cantidad);
+                OfertaProductoDAO::addProducto($id, $producto_id, $cantidad);
             }
             else{
-                OfertaProductoService::removeProducto($id, $producto_id);
+                OfertaProductoDAO::removeProducto($id, $producto_id);
             }
         }
 

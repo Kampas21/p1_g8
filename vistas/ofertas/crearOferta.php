@@ -10,7 +10,7 @@ error_reporting(E_ALL);
 
 require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/ofertaService.php';
-require_once __DIR__ . '/../../includes/ofertaProductoService.php';
+require_once __DIR__ . '/../../includes/OfertaProductoDAO.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $cantidad = (int)$cantidad;
 
             if ($cantidad > 0) {
-                ofertaProductoService::addProducto($id, $producto_id, $cantidad);
+                OfertaProductoDAO::addProducto($id, $producto_id, $cantidad);
             }
         }
 

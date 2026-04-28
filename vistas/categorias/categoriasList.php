@@ -2,7 +2,9 @@
 
 
 require_once __DIR__ . '/../../includes/auth.php';
-require_once __DIR__ . '/../../scripts/categorias/cargarCategorias.php';
+require_once __DIR__ . '/../../includes/CategoriaDAO.php';
+
+$categorias = CategoriaDAO::getAll();
 
 $user = current_user();
 if (!$user || !user_has_role($user, 'gerente')) {

@@ -2,7 +2,7 @@
 namespace es\ucm\fdi\aw\Formulario;
 
 require_once __DIR__ . '/Formulario.php';
-require_once __DIR__ . '/../categoriaService.php';
+require_once __DIR__ . '/../CategoriaDAO.php';
 
 class FormularioCategoria extends Formulario
 {
@@ -67,8 +67,8 @@ class FormularioCategoria extends Formulario
         }
 
         $ok = $this->categoria
-            ? \CategoriaService::update($this->categoria->getId(), $nombre, $descripcion)
-            : \CategoriaService::create($nombre, $descripcion);
+            ? \CategoriaDAO::update($this->categoria->getId(), $nombre, $descripcion)
+            : \CategoriaDAO::create($nombre, $descripcion);
 
         if (!$ok) {
             $this->errores[] = 'No se pudo guardar la categoría.';

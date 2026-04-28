@@ -5,7 +5,7 @@ require_once __DIR__ . '/../../includes/application.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/pedidoService.php';
 require_once __DIR__ . '/../../entities/pedido.php';
-require_once __DIR__ . '/../../includes/productoService.php';
+require_once __DIR__ . '/../../includes/ProductoDAO.php';
 
 $user = require_login();
 $usuario_id = (int)$user->getId();
@@ -27,7 +27,7 @@ if (!$producto_id || !$cantidad || $cantidad < 1) {
     exit;
 }
 
-$producto = ProductoService::getById($producto_id);
+$producto = ProductoDAO::getById($producto_id);
 
 if (!$producto) {
     header("Location: ../../vistas/catalogo.php");

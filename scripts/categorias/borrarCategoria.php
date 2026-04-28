@@ -2,7 +2,7 @@
 
 
 require_once __DIR__ . '/../../includes/auth.php';
-require_once __DIR__ . '/../../includes/categoriaService.php';
+require_once __DIR__ . '/../../includes/CategoriaDAO.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -21,7 +21,7 @@ if (!$id) {
     die('ID de categoría no válido.');
 }
 
-$ok = CategoriaService::desactivar($id);
+$ok = CategoriaDAO::desactivar($id);
 if (!$ok) {
     http_response_code(500);
     die('Error al desactivar la categoría.');
