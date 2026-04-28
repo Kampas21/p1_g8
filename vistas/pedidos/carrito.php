@@ -113,6 +113,12 @@ ob_start();
     <?php if (empty($lineas)): ?>
       <p>El carrito está vacío.</p>
 
+      <div class="actions-inline">
+
+        <a href="catalogo.php" class="btn">← Seguir comprando</a>
+
+      </div>
+
     <?php else: ?>
 
 
@@ -164,6 +170,7 @@ ob_start();
 
           <thead>
             <tr>
+              <th>Imagen</th>
               <th>Producto</th>
               <th>Precio</th>
               <th>Cantidad</th>
@@ -179,13 +186,21 @@ ob_start();
 
               <tr>
 
-                <td><?= e($linea->getNombre()) ?></td>
+                <td>
+                  <img src="<?= e(RUTA_APP . '/' . $linea->getImagen()) ?>" class="img-thumbnail" alt="<?= e($linea->getNombre()) ?>">
+                </td>
 
-                <td><?= e($linea->getPrecio()) ?> €</td>
+                <td>
+                  <a href="<?= RUTA_APP ?>/vistas/productos/detalle_producto.php?id=<?= $linea->getProductoId() ?>" style="font-weight: bold; text-decoration: none;">
+                    <?= e($linea->getNombre()) ?>
+                  </a>
+                </td>
+
+                <td class="col-precio"><?= e($linea->getPrecio()) ?> €</td>
 
                 <td><?= $formsActualizarHtml[$prod_id] ?></td>
 
-                <td><?= round($linea->getPrecio() * $linea->getCantidad(), 2) ?> €</td>
+                <td class="col-precio"><?= round($linea->getPrecio() * $linea->getCantidad(), 2) ?> €</td>
 
               </tr>
 
@@ -196,18 +211,18 @@ ob_start();
           <tfoot>
 
             <tr>
-              <td colspan="3"><strong>Total:</strong></td>
-              <td><strong><?= $total ?> €</strong></td>
+              <td colspan="4"><strong>Total:</strong></td>
+              <td class="col-precio"><strong><?= $total ?> €</strong></td>
             </tr>
 
             <tr>
-              <td colspan="3"><strong>Descuento:</strong></td>
-              <td><strong>-<?= round($descuento_total, 2) ?> €</strong></td>
+              <td colspan="4"><strong>Descuento:</strong></td>
+              <td class="col-precio"><strong>-<?= round($descuento_total, 2) ?> €</strong></td>
             </tr>
 
             <tr>
-              <td colspan="3"><strong>Total final:</strong></td>
-              <td><strong><?= round($total_final, 2) ?> €</strong></td>
+              <td colspan="4"><strong>Total final:</strong></td>
+              <td class="col-precio"><strong><?= round($total_final, 2) ?> €</strong></td>
             </tr>
 
           </tfoot>

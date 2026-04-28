@@ -267,7 +267,8 @@ class PedidoService
                 $fila['producto_id'],
                 $fila['precio_unitario'],
                 $fila['cantidad'],
-                $fila['estado']
+                $fila['estado'],
+                $fila['imagen']
             );
         }
 

@@ -37,15 +37,7 @@ ob_start();
     <a class="btn-nuevo" href="crearProducto.php?categoria_id=<?= (int)$categoria_id ?>">+ Nuevo producto</a>
 </p>
 
-<?php if (empty($productos)): ?>
-    <p>No hay productos en esta categoría.</p>
-<?php else: ?>
-    <div class="productos-container">
-        <?php foreach ($productos as $p): ?>
-            <?php require __DIR__ . '/_tarjeta_producto.php'; ?>
-        <?php endforeach; ?>
-    </div>
-<?php endif; ?>
+<?php require __DIR__ . '/../../scripts/productos/pintarProductosCategoria.php'; ?>
 
 <p class="mt-20">
     <a class="btn-volver" href="../categorias/categoriasList.php">← Volver a categorías</a>

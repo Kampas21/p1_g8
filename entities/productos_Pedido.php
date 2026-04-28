@@ -9,12 +9,10 @@ class Productos_Pedido {
     private $precio;
     private $cantidad;
     private $estado;
+    private $imagen;   
+         
 
-    private $imagen;
-
-    
-
-    public function __construct($id, $nombre, $pedido_id, $producto_id, $precio, $cantidad, $estado) {
+    public function __construct($id, $nombre, $pedido_id, $producto_id, $precio, $cantidad, $estado, $imagen) {
         $this->id = $id;
         $this->nombre = $nombre;
         $this->pedido_id = $pedido_id;
@@ -22,6 +20,7 @@ class Productos_Pedido {
         $this->precio = $precio;
         $this->cantidad = $cantidad;
         $this->estado = $estado;
+        $this->imagen = $imagen;
     }
 
     public function getId() {
@@ -53,6 +52,6 @@ class Productos_Pedido {
     }
 
     public function getImagen(){
-        return null;
+        return $this->imagen;
     }
 }

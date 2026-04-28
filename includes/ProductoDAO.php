@@ -23,7 +23,8 @@ class ProductoDAO {
                 $fila['precio_base'],
                 $fila['iva'],
                 $fila['disponible'],
-                $fila['ofertado']
+                $fila['ofertado'],
+                $fila['imagen'] ?? null
             );
         }
 
@@ -52,7 +53,8 @@ class ProductoDAO {
                 $fila['precio_base'],
                 $fila['iva'],
                 $fila['disponible'],
-                $fila['ofertado']
+                $fila['ofertado'],
+                $fila['imagen'] ?? null
             );
         }
 
@@ -80,7 +82,8 @@ class ProductoDAO {
                 $fila['precio_base'],
                 $fila['iva'],
                 $fila['disponible'],
-                $fila['ofertado']
+                $fila['ofertado'],
+                $fila['imagen'] ?? null
             );
         }
 
@@ -113,7 +116,8 @@ class ProductoDAO {
             $row['precio_base'],
             $row['iva'],
             $row['disponible'],
-            $row['ofertado']
+            $row['ofertado'],
+            $row['imagen'] ?? null
         );
     }
 
@@ -217,7 +221,8 @@ class ProductoDAO {
                 $fila['precio_base'],
                 $fila['iva'],
                 $fila['disponible'],
-                $fila['ofertado']
+                $fila['ofertado'],
+                $fila['imagen'] ?? null
             );
 
             $producto->cantidad = $fila['cantidad'];

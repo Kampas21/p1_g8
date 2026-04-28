@@ -79,7 +79,6 @@ class FormularioPago extends Formulario {
 
     protected function procesaFormulario(&$datos) {
         $metodo = $datos['metodo_pago'] ?? '';
-        $errores = [];
 
         if ($metodo === 'camarero') {
             \PedidoService::confirmarPedido($this->pedido_id, 'camarero', $this->total);
@@ -94,24 +93,22 @@ class FormularioPago extends Formulario {
             $cvv       = trim($datos['cvv']            ?? '');
 
             if (!preg_match('/^\d{16}$/', preg_replace('/\s+/', '', $numero))) {
-                $errores['numero_tarjeta'] = 'El número de tarjeta debe tener 16 dígitos.';
+                $this->errores['numero_tarjeta'] = 'El número de tarjeta debe tener 16 dígitos.';
             }
             if ($nombre === '') {
-                $errores['nombre_tarjeta'] = 'Introduce el nombre del titular.';
+                $this->errores['nombre_tarjeta'] = 'Introduce el nombre del titular.';
             }
             if (!preg_match('/^(0[1-9]|1[0-2])\/\d{2}$/', $caducidad)) {
-                $errores['caducidad'] = 'Formato de caducidad inválido (MM/AA).';
+                $this->errores['caducidad'] = 'Formato de caducidad inválido (MM/AA).';
             }
             if (!preg_match('/^\d{3,4}$/', $cvv)) {
-                $errores['cvv'] = 'El CVV debe tener 3 o 4 dígitos.';
+                $this->errores['cvv'] = 'El CVV debe tener 3 o 4 dígitos.';
             }
 
-            if (count($errores) === 0) {
+            if (count($this->errores) === 0) {
                 \PedidoService::confirmarPedido($this->pedido_id, 'tarjeta', $this->total);
                 $_SESSION['ultimo_pedido_id'] = $this->pedido_id;
                 return;
-            } else {
-                return $errores;
             }
         }
 

@@ -15,7 +15,7 @@
     </p>
 
     <div class="actions-inline mt-14">
-        <a class="btn primary" href="editarProducto.php?id=<?= (int)$p->getId() ?>&categoria_id=<?= (int)$categoria_id ?>">Editar</a>
+        <a class="btn primary" href="crearProducto.php?id=<?= (int)$p->getId() ?>&categoria_id=<?= (int)$categoria_id ?>">Editar</a>
 
         <?php if ($p->isOfertado()): ?>
             <form method="post" action="../../scripts/productos/borrarProducto.php" onsubmit="return confirm('¿Desactivar producto?');" class="d-inline">

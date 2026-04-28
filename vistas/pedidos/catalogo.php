@@ -77,6 +77,7 @@ ob_start();
           <table>
             <thead>
               <tr>
+                <th>Imagen</th>
                 <th>Nombre</th>
                 <th>Descripción</th>
                 <th>Precio</th>
@@ -86,10 +87,19 @@ ob_start();
             <tbody>
             <?php foreach ($productos as $p): ?>
               <tr>
-                <td><?= e($p->getNombre()) ?></td>
-                <td><?= e($p->getDescripcion()) ?></td>
-                <td><?= $p->getPrecioFinal() ?> €</td>
                 <td>
+                  <?php if ($p->getImagen()): ?>
+                    <img src="<?= e(RUTA_APP . '/' . $p->getImagen()) ?>" class="img-thumbnail" alt="<?= e($p->getNombre()) ?>">
+                  <?php endif; ?>
+                </td>
+                <td>
+                  <a href="<?= RUTA_APP ?>/vistas/productos/detalle_producto.php?id=<?= $p->getId() ?>" style="font-weight: bold; text-decoration: none;">
+                    <?= e($p->getNombre()) ?>
+                  </a>
+                </td>
+                <td><?= e($p->getDescripcion()) ?></td>
+                <td class="col-precio"><?= $p->getPrecioFinal() ?> €</td>
+                <td class="col-boton">
                   <!-- Aquí imprimimos la vista generada del formulario que instanciamos arriba -->
                   <?= $formHtmls[$p->getId()] ?>
                 </td>

@@ -1069,6 +1069,24 @@ button.small {
     display: inline-block;
 }
 
+.col-precio {
+    white-space: nowrap;
+    font-weight: bold;
+    min-width: 80px;
+}
+
+.col-boton {
+    min-width: 110px;
+    text-align: center;
+}
+
+.col-boton button {
+    white-space: nowrap !important;
+    width: auto !important;
+    padding: 6px 14px !important;
+    display: inline-block !important;
+}
+
 .form-inline-action {
     display: inline;
     margin: 0;
@@ -1107,6 +1125,33 @@ button.small {
     height: 50px;
     object-fit: cover;
     border-radius: 4px;
+}
+
+/* =======================================================
+   ESTILOS DETALLE PRODUCTO
+======================================================== */
+.producto-detalle-contenedor {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.producto-imagen img {
+    width: 300px;
+    height: 200px; 
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.producto-info {
+    flex: 1;
+}
+
+.producto-info .precio-final {
+    font-size: 1.2em;
+    font-weight: bold;
 }
 
 /* Botones categorizados */
