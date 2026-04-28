@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS `productos` (
     `disponible` BOOLEAN,
     `ofertado` BOOLEAN,
     `imagen` VARCHAR(255) DEFAULT NULL,
+    `se_cocina` BOOLEAN DEFAULT 1,
     FOREIGN KEY (`categoria_id`) REFERENCES `categorias`(`id`)
 );
 

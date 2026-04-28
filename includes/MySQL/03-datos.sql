@@ -99,3 +99,4 @@ INSERT INTO `oferta_productos` (`oferta_id`, `producto_id`, `cantidad`) VALUES
 INSERT INTO `oferta_productos` (`oferta_id`, `producto_id`, `cantidad`) VALUES
 (5, 3, 1),
 (5, 16, 1);
+UPDATE productos SET se_cocina = 0 WHERE categoria_id = 4;

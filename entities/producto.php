@@ -11,10 +11,11 @@ class Producto {
     private $disponible;
     private $ofertado;
     private $imagen;
+    private $se_cocina;
 
     public $cantidad = 0;
 
-    public function __construct($id, $nombre, $descripcion, $categoria_id, $precio, $iva, $disponible, $ofertado, $imagen = null) {
+    public function __construct($id, $nombre, $descripcion, $categoria_id, $precio, $iva, $disponible, $ofertado, $imagen = null, $se_cocina = 1) {
         $this->id = $id;
         $this->nombre = $nombre;
         $this->descripcion = $descripcion;
@@ -24,6 +25,7 @@ class Producto {
         $this->disponible = $disponible;
         $this->ofertado = $ofertado;
         $this->imagen = $imagen;
+        $this->se_cocina = $se_cocina;
     }
 
     public function getId() {
@@ -64,5 +66,9 @@ class Producto {
 
     public function getImagen() {
         return $this->imagen;
+    }
+
+    public function getSeCocina() {
+        return $this->se_cocina;
     }
 }
