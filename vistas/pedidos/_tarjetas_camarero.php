@@ -22,6 +22,22 @@ else:
                 <p><strong>Total:</strong> <?= e($p['total']) ?> €</p>
             </div>
 
+            <?php
+                // Mostrar solo los productos que no se cocinan (barra)
+                $productos = 
+                    \PedidoService::getProductosPedido($pedido_id);
+                $productos_barra = array_filter($productos, function($pr){ return !$pr->getSeCocina(); });
+                if (!empty($productos_barra)): ?>
+                <div class="pedido-card-body">
+                    <p><strong>Para preparar (barra):</strong></p>
+                    <ul>
+                        <?php foreach ($productos_barra as $pb): ?>
+                            <li><?= (int)$pb->getCantidad() ?>x <?= htmlspecialchars($pb->getNombre()) ?> <?= $pb->getEstado() === 'preparado' ? '✅' : '⏳' ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
+
             <?= $htmlForm ?>
         </div>
 <?php 

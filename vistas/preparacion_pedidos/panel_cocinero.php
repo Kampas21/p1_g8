@@ -51,6 +51,8 @@ ob_start();
                                 <ul class="lista-platos">
                                     <?php 
                                     $productos = PedidoService::getProductosPedido($pedido_id);
+                                    // Filtrar solo los productos que deben cocinarse
+                                    $productos = array_filter($productos, function($pr){ return $pr->getSeCocina(); });
                                     $todosPreparados = true; 
                                     $hayProductos = count($productos) > 0;
 

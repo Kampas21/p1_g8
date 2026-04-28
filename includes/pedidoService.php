@@ -146,6 +146,21 @@ class PedidoService
 
         $estado = ($metodo_pago === 'tarjeta') ? 'en_preparacion' : 'recibido';
 
+        // Si el pedido no contiene ningún producto que se cocine, lo saltamos directamente
+        $stmtCheck = $conn->prepare(
+            "SELECT COUNT(*) AS cnt FROM productos_en_pedido pep JOIN productos p ON p.id = pep.producto_id WHERE pep.pedido_id = ? AND p.se_cocina = 1"
+        );
+        $stmtCheck->bind_param("i", $pedido_id);
+        $stmtCheck->execute();
+        $rsCheck = $stmtCheck->get_result();
+        $rowCheck = $rsCheck->fetch_assoc();
+        $stmtCheck->close();
+
+        if (($rowCheck['cnt'] ?? 0) == 0) {
+            // No hay nada que cocinar → pasar directamente a la cola de reparto/terminado
+            $estado = 'terminado';
+        }
+
         $stmt = $conn->prepare(
             "UPDATE pedidos 
             SET estado = ?, numero_pedido = ?, metodo_pago = ?, fecha_hora = CURRENT_TIMESTAMP 
@@ -247,7 +262,7 @@ class PedidoService
     {
         global $conn;
         $stmt = $conn->prepare(
-            "SELECT pep.*, p.nombre, p.imagen
+            "SELECT pep.*, p.nombre, p.imagen, p.se_cocina
              FROM productos_en_pedido pep
              JOIN productos p ON p.id = pep.producto_id
              WHERE pep.pedido_id = ?"
@@ -268,7 +283,8 @@ class PedidoService
                 $fila['precio_unitario'],
                 $fila['cantidad'],
                 $fila['estado'],
-                $fila['imagen']
+                $fila['imagen'],
+                $fila['se_cocina'] ?? 1
             );
         }
 

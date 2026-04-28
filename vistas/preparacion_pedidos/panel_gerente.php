@@ -27,6 +27,7 @@ ob_start();
                     <th>ID</th>
                     <th>Estado</th>
                     <th>Cocinero Asignado</th>
+                    <th>Productos</th>
                 </tr>
             </thead>
             <tbody>
@@ -36,6 +37,7 @@ ob_start();
                 </tr>
             <?php else: ?>
                 <?php foreach ($pedidos as $p): ?>
+                    <?php $pedido_id = (int)$p['id']; $productos = \PedidoService::getProductosPedido($pedido_id); ?>
                     <tr class="tabla-panel-fila">
                         <td><strong>#<?= (int)$p['id'] ?></strong></td>
                         <td>
@@ -64,6 +66,17 @@ ob_start();
                                 </div>
                                 <span class="texto-gris-cursiva">Sin asignar</span>
                             <?php endif; ?>
+                        </td>
+                        <td>
+                            <ul>
+                                <?php foreach ($productos as $prod): ?>
+                                    <li>
+                                        <?= (int)$prod->getCantidad() ?>x <?= e($prod->getNombre()) ?>
+                                        <?= $prod->getSeCocina() ? '👨‍🍳' : '🤵' ?>
+                                        <?= $prod->getEstado() === 'preparado' ? '✅' : '⏳' ?>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
                         </td>
                     </tr>
                 <?php endforeach; ?>

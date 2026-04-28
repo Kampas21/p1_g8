@@ -57,7 +57,7 @@ ob_start();
         <div class="columna-body" style="flex-direction: row; flex-wrap: wrap;">
             <?php 
                 $pedidos = $listos_cocina; 
-                $accion = 'entregar'; 
+                $accion = 'terminar'; 
                 include __DIR__ . '/_tarjetas_camarero.php'; 
             ?>
         </div>

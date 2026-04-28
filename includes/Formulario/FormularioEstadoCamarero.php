@@ -22,7 +22,7 @@ class FormularioEstadoCamarero extends Formulario {
         <input type='hidden' name='pedido_id' value='{$this->pedido_id}'>
         <input type='hidden' name='accion' value='{$this->accion}'>
         <button type='submit' class='btn primary'>
-            " . ($this->accion === 'cobrar' ? '💰 Cobrar' : '📦 Entregar') . "
+            " . ($this->accion === 'cobrar' ? '💰 Cobrar' : ($this->accion === 'terminar' ? '📦 Preparar y terminar' : '📦 Entregar')) . "
         </button>
     ";
 }
@@ -40,6 +40,11 @@ class FormularioEstadoCamarero extends Formulario {
 
     if ($accion === 'cobrar') {
         \PedidoService::cambiarEstado($pedido_id, 'en_preparacion');
+    }
+
+    if ($accion === 'terminar') {
+        // Pasar a estado 'terminado' (lista para entregar)
+        \PedidoService::cambiarEstado($pedido_id, 'terminado');
     }
 
     if ($accion === 'entregar') {
