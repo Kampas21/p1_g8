@@ -125,7 +125,7 @@ class ProductoDAO {
         );
     }
 
-    public static function create($nombre, $descripcion, $categoria_id, $precio, $iva) {
+    public static function create($nombre, $descripcion, $categoria_id, $precio, $iva, $se_cocina = 1) {
         global $conn;
 
         $disponible = 1;
@@ -133,8 +133,35 @@ class ProductoDAO {
 
         $stmt = $conn->prepare("
             INSERT INTO productos
-            (nombre, descripcion, categoria_id, precio_base, iva, disponible, ofertado)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            (nombre, descripcion, categoria_id, precio_base, iva, disponible, ofertado, se_cocina)
+            VALUES (?, ?, ?, ?, ?, ?, ? ,?)
+        ");
+
+        $stmt->bind_param(
+            "ssidiiii",
+            $nombre,
+            $descripcion,
+            $categoria_id,
+            $precio,
+            $iva,
+            $disponible,
+            $ofertado,
+            $se_cocina
+        );
+
+        $ok = $stmt->execute();
+        $stmt->close();
+
+        return $ok;
+    }
+
+    public static function update($id, $nombre, $descripcion, $categoria_id, $precio, $iva, $se_cocina = 1) {
+        global $conn;
+
+        $stmt = $conn->prepare("
+            UPDATE productos
+            SET nombre = ?, descripcion = ?, categoria_id = ?, precio_base = ?, iva = ?, se_cocina = ?
+            WHERE id = ?
         ");
 
         $stmt->bind_param(
@@ -144,32 +171,7 @@ class ProductoDAO {
             $categoria_id,
             $precio,
             $iva,
-            $disponible,
-            $ofertado
-        );
-
-        $ok = $stmt->execute();
-        $stmt->close();
-
-        return $ok;
-    }
-
-    public static function update($id, $nombre, $descripcion, $categoria_id, $precio, $iva) {
-        global $conn;
-
-        $stmt = $conn->prepare("
-            UPDATE productos
-            SET nombre = ?, descripcion = ?, categoria_id = ?, precio_base = ?, iva = ?
-            WHERE id = ?
-        ");
-
-        $stmt->bind_param(
-            "ssidii",
-            $nombre,
-            $descripcion,
-            $categoria_id,
-            $precio,
-            $iva,
+            $se_cocina,
             $id
         );
 

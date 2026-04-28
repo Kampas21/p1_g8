@@ -37,6 +37,7 @@ class FormularioProducto extends Formulario
         $selected4 = $iva === 4 ? 'selected' : '';
         $selected10 = $iva === 10 ? 'selected' : '';
         $selected21 = $iva === 21 ? 'selected' : '';
+        $seCocinaChecked = ($this->producto && method_exists($this->producto, 'getSeCocina') && $this->producto->getSeCocina()) ? 'checked' : '';
 
         return <<<HTML
         {$erroresGlobales}
@@ -74,6 +75,12 @@ class FormularioProducto extends Formulario
             <span id="precioFinal">{$precioFinal}</span> €
         </p>
 
+        <p>
+            <label for="se_cocina">
+                <input id="se_cocina" type="checkbox" name="se_cocina" value="1" {$seCocinaChecked}>
+                Se prepara en cocina (si no está marcado, lo prepara el camarero)
+            </label>
+        </p>
         <input type="hidden" name="categoria_id" value="{$this->categoria_id}">
 
         <p>
@@ -142,9 +149,11 @@ class FormularioProducto extends Formulario
             return;
         }
 
+        $se_cocina = isset($datos['se_cocina']) ? 1 : 0;
+
         $ok = $this->isCreate
-            ? \ProductoDAO::create($nombre, $descripcion, $categoria_id, (float)$precio, $iva)
-            : \ProductoDAO::update($this->producto->getId(), $nombre, $descripcion, $categoria_id, (float)$precio, $iva);
+            ? \ProductoDAO::create($nombre, $descripcion, $categoria_id, (float)$precio, $iva, $se_cocina)
+            : \ProductoDAO::update($this->producto->getId(), $nombre, $descripcion, $categoria_id, (float)$precio, $iva, $se_cocina);
 
         if (!$ok) {
             $this->errores[] = 'No se pudo guardar el producto.';
