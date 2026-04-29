@@ -61,11 +61,11 @@ INSERT INTO `productos` (`nombre`, `descripcion`, `categoria_id`, `precio_base`,
 ('Cerveza Roja','Cerveza ale 330ml',4,3.00,10,1,0,'img/img_productos/cervezaroja.jpg',0);
 
 
-INSERT INTO `usuarios`(`username`, `email`, `nombre`, `apellidos`, `password_hash`, `rol`, `avatar_tipo`, `avatar_valor`, `activo`, `deleted_at`, `created_at`, `updated_at`) VALUES
-('gerente','gerente@bistrofdi.local','Gema','García','$2y$10$I2vqnj3l34w4TkDp2vhwcO3nB2GvNN8.CtzPg1aoW1QsGTAalMYyy','gerente','preset','preset_manager',1,NULL,NOW(),NOW()),
-('cocinero','cocinero@bistrofdi.local','Carlos','Lucas','$2y$10$Utc.tEtSUnEs3K30JRuOSOPBrXLHFsL/YsyVaIbfcHePq7sFUqRYy','cocinero','preset','preset_chef',1,NULL,NOW(),NOW()),
-('camarero','camarero@bistrofdi.local','Clara','Gómez','$2y$10$R5/GSm23GKVSrK82tILtzeoh7HVuIn2tRWnODNjKTnGnbsagFBPDe','camarero','preset','preset_waiter',1,NULL,NOW(),NOW()),
-('cliente','cliente@bistrofdi.local','Lucía','Lopez','$2y$10$1PE57AaW9hYc45FOd0RA/ebfNdQ4vaOsxRGO3HRJvHiLryxt8I2b.','cliente','default',NULL,1,NULL,NOW(),NOW());
+INSERT INTO `usuarios`(`username`, `email`, `nombre`, `apellidos`, `password_hash`, `rol`, `avatar_tipo`, `avatar_valor`, `activo`, `deleted_at`, `created_at`, `updated_at`, `bistrocoins`) VALUES
+('gerente','gerente@bistrofdi.local','Gema','García','$2y$10$I2vqnj3l34w4TkDp2vhwcO3nB2GvNN8.CtzPg1aoW1QsGTAalMYyy','gerente','preset','preset_manager',1,NULL,NOW(),NOW(),350),
+('cocinero','cocinero@bistrofdi.local','Carlos','Lucas','$2y$10$Utc.tEtSUnEs3K30JRuOSOPBrXLHFsL/YsyVaIbfcHePq7sFUqRYy','cocinero','preset','preset_chef',1,NULL,NOW(),NOW(),120),
+('camarero','camarero@bistrofdi.local','Clara','Gómez','$2y$10$R5/GSm23GKVSrK82tILtzeoh7HVuIn2tRWnODNjKTnGnbsagFBPDe','camarero','preset','preset_waiter',1,NULL,NOW(),NOW(),80),
+('cliente','cliente@bistrofdi.local','Lucía','Lopez','$2y$10$1PE57AaW9hYc45FOd0RA/ebfNdQ4vaOsxRGO3HRJvHiLryxt8I2b.','cliente','default',NULL,1,NULL,NOW(),NOW(),150);
 
 
 INSERT INTO `ofertas` (`nombre`, `descripcion`, `fecha_inicio`, `fecha_fin`, `descuento`) VALUES
@@ -99,4 +99,12 @@ INSERT INTO `oferta_productos` (`oferta_id`, `producto_id`, `cantidad`) VALUES
 INSERT INTO `oferta_productos` (`oferta_id`, `producto_id`, `cantidad`) VALUES
 (5, 3, 1),
 (5, 16, 1);
+
+INSERT INTO `recompensas` (`producto_id`, `bistrocoins`, `activa`) VALUES
+(1, 18, 1),
+(4, 14, 1),
+(8, 10, 1),
+(9, 9, 1),
+(16, 12, 1);
+
 UPDATE productos SET se_cocina = 0 WHERE categoria_id = 4;
