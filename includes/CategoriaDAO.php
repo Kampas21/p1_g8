@@ -19,6 +19,7 @@ class CategoriaDAO {
                 $row['id'],
                 $row['nombre'],
                 $row['descripcion'],
+                $row['imagen'],
                 $row['activa']
             );
         }
@@ -48,15 +49,16 @@ class CategoriaDAO {
             $row['id'],
             $row['nombre'],
             $row['descripcion'],
+            $row['imagen'],
             $row['activa']
         );
     }
 
-    public static function create($nombre, $descripcion) {
+    public static function create($nombre, $descripcion, $imagen) {
         global $conn;
 
-        $stmt = $conn->prepare("INSERT INTO categorias (nombre, descripcion, activa) VALUES (?, ?, 1)");
-        $stmt->bind_param("ss", $nombre, $descripcion);
+        $stmt = $conn->prepare("INSERT INTO categorias (nombre, descripcion, imagen, activa) VALUES (?, ?, ?, 1)");
+        $stmt->bind_param("sss", $nombre, $descripcion, $imagen);
 
         $ok = $stmt->execute();
         $stmt->close();
@@ -64,11 +66,11 @@ class CategoriaDAO {
         return $ok;
     }
 
-    public static function update($id, $nombre, $descripcion) {
+    public static function update($id, $nombre, $descripcion, $imagen) {
         global $conn;
 
-        $stmt = $conn->prepare("UPDATE categorias SET nombre = ?, descripcion = ? WHERE id = ?");
-        $stmt->bind_param("ssi", $nombre, $descripcion, $id);
+        $stmt = $conn->prepare("UPDATE categorias SET nombre = ?, descripcion = ?, imagen = ? WHERE id = ?");
+        $stmt->bind_param("sssi", $nombre, $descripcion, $imagen, $id);
 
         $ok = $stmt->execute();
         $stmt->close();

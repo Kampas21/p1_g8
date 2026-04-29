@@ -45,6 +45,7 @@ ob_start();
                 <th>ID</th>
                 <th>Nombre</th>
                 <th>Descripción</th>
+                <th>Imagen</th>
                 <th>Estado</th>
                 <th>Acciones</th>
             </tr>

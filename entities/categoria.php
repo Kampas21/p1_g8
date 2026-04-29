@@ -5,12 +5,14 @@ class Categoria {
     private $id;
     private $nombre;
     private $descripcion;
+    private $imagen;
     private $activa;
 
-    public function __construct($id, $nombre, $descripcion, $activa) {
+    public function __construct($id, $nombre, $descripcion,$imagen, $activa) {
         $this->id = $id;
         $this->nombre = $nombre;
         $this->descripcion = $descripcion;
+        $this->imagen = $imagen;
         $this->activa = $activa;
     }
 
@@ -27,6 +29,10 @@ class Categoria {
     public function getDescripcion() {
         return $this->descripcion;
     }
+    
+    public function getImagen() {
+        return $this->imagen;
+    }
 
     public function isActiva() {
         return $this->activa;
@@ -41,6 +47,9 @@ class Categoria {
         $this->descripcion = $descripcion;
     }
 
+    public function setImagen($imagen) {
+        $this->imagen = $imagen;
+    }
     public function setActiva($activa) {
         $this->activa = $activa;
     }

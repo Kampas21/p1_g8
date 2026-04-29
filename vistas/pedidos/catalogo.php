@@ -16,119 +16,209 @@ $user = require_login();
 $usuario_id = (int)$user->getId();
 
 $pedido = PedidoService::getPedidoNuevo($usuario_id);
+
 if (!$pedido) {
     redirect('elegirTipo.php');
 }
+
 $pedido_id = $pedido->getId();
 
-// Obtener categoría GET
 $categoria_id = isset($_GET['categoria']) && is_numeric($_GET['categoria'])
     ? (int)$_GET['categoria']
     : null;
 
-// Inicializamos el almacén de los formularios HTML
 $formHtmls = [];
 
 if ($categoria_id) {
+
     $productos = ProductoDAO::getAllActivosByCategoria($categoria_id);
+
     $categoria = CategoriaDAO::getById($categoria_id);
-    
-    // Instanciamos un formulario por cada producto para que intercepte si hubo POST
+
     if (!empty($productos)) {
+
         foreach ($productos as $p) {
+
             $prod_id = (int)$p->getId();
-            $formAdd = new \es\ucm\fdi\aw\Formulario\FormularioAddCarrito($pedido_id, $prod_id, $categoria_id);
+
+            $formAdd =
+                new \es\ucm\fdi\aw\Formulario\FormularioAddCarrito(
+                    $pedido_id,
+                    $prod_id,
+                    $categoria_id
+                );
+
             $formHtmls[$prod_id] = $formAdd->gestiona();
         }
     }
+
 } else {
+
     $categorias = CategoriaDAO::getAll();
+
 }
 
 $titulo = $categoria_id && isset($categoria)
     ? 'Catálogo — ' . e($categoria->getNombre())
     : 'Catálogo';
 
-// ---- EMPIEZA LA VISTA DEL PROYECTO ----
 $tituloPagina = $titulo . ' | Bistro FDI';
 $rutaCSS = RUTA_APP . '/CSS/estilo.css';
+
 ob_start();
 ?>
 
 <main>
-  <?php foreach (flash_get_all() as $f): ?>
-      <div class="mensaje-<?= e($f['type']) ?>"><?= e($f['message']) ?></div>
-  <?php endforeach; ?>
 
-  <div class="panel">
-    <?php if ($categoria_id): ?>
+<?php foreach (flash_get_all() as $f): ?>
+<div class="mensaje-<?= e($f['type']) ?>">
+<?= e($f['message']) ?>
+</div>
+<?php endforeach; ?>
 
-      <div class="actions-inline mb-12">
-        <a href="catalogo.php" class="btn">← Categorías</a>
-        <a href="carrito.php" class="btn primary">🛒 Ver carrito</a>
-      </div>
 
-      <h2><?= e($categoria->getNombre()) ?></h2>
+<div class="panel">
 
-      <?php if (empty($productos)): ?>
-        <p>No hay productos disponibles en esta categoría.</p>
-      <?php else: ?>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Imagen</th>
-                <th>Nombre</th>
-                <th>Descripción</th>
-                <th>Precio</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-            <?php foreach ($productos as $p): ?>
-              <tr>
-                <td>
-                  <?php if ($p->getImagen()): ?>
-                    <img src="<?= e(RUTA_APP . '/' . $p->getImagen()) ?>" class="img-thumbnail" alt="<?= e($p->getNombre()) ?>">
-                  <?php endif; ?>
-                </td>
-                <td>
-                  <a href="<?= RUTA_APP ?>/vistas/productos/detalle_producto.php?id=<?= $p->getId() ?>" style="font-weight: bold; text-decoration: none;">
-                    <?= e($p->getNombre()) ?>
-                  </a>
-                </td>
-                <td><?= e($p->getDescripcion()) ?></td>
-                <td class="col-precio"><?= $p->getPrecioFinal() ?> €</td>
-                <td class="col-boton">
-                  <!-- Aquí imprimimos la vista generada del formulario que instanciamos arriba -->
-                  <?= $formHtmls[$p->getId()] ?>
-                </td>
-              </tr>
-            <?php endforeach; ?>
-            </tbody>
-          </table>
-        </div>
-      <?php endif; ?>
+<?php if ($categoria_id): ?>
 
-    <?php else: ?>
+<div class="actions-inline mb-12">
+<a href="catalogo.php" class="btn">
+← Categorías
+</a>
 
-      <div class="actions-inline mb-12">
-        <a href="carrito.php" class="btn primary">🛒 Ver carrito</a>
-      </div>
+<a href="carrito.php" class="btn primary">
+🛒 Ver carrito
+</a>
+</div>
 
-      <h2>Elige una categoría</h2>
+<h2><?= e($categoria->getNombre()) ?></h2>
 
-      <div class="flex-wrap-gap">
-        <?php foreach ($categorias as $cat): ?>
-          <a href="catalogo.php?categoria=<?= (int)$cat->getId() ?>" class="btn" class="btn-categoria">
-            <?= e($cat->getNombre()) ?>
-          </a>
-        <?php endforeach; ?>
-      </div>
+<?php if (empty($productos)): ?>
 
-    <?php endif; ?>
+<p>No hay productos disponibles en esta categoría.</p>
 
-  </div>
+<?php else: ?>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+<th>Imagen</th>
+<th>Nombre</th>
+<th>Descripción</th>
+<th>Precio</th>
+<th></th>
+</tr>
+</thead>
+
+<tbody>
+
+<?php foreach ($productos as $p): ?>
+
+<tr>
+
+<td>
+
+<?php if ($p->getImagen()): ?>
+
+<img
+src="<?= e(RUTA_APP . '/' . $p->getImagen()) ?>"
+class="img-thumbnail"
+alt="<?= e($p->getNombre()) ?>">
+
+<?php endif; ?>
+
+</td>
+
+<td>
+
+<a
+href="<?= RUTA_APP ?>/vistas/productos/detalle_producto.php?id=<?= $p->getId() ?>"
+style="font-weight:bold;text-decoration:none;">
+
+<?= e($p->getNombre()) ?>
+
+</a>
+
+</td>
+
+<td>
+<?= e($p->getDescripcion()) ?>
+</td>
+
+<td class="col-precio">
+<?= $p->getPrecioFinal() ?> €
+</td>
+
+<td class="col-boton">
+<?= $formHtmls[$p->getId()] ?>
+</td>
+
+</tr>
+
+<?php endforeach; ?>
+
+</tbody>
+
+</table>
+
+</div>
+
+<?php endif; ?>
+
+
+<?php else: ?>
+
+<div class="actions-inline mb-12">
+
+<a href="carrito.php" class="btn primary">
+🛒 Ver carrito
+</a>
+
+</div>
+
+
+<h2>Elige una categoría</h2>
+
+
+<div class="categoria-grid">
+
+<?php foreach ($categorias as $cat): ?>
+
+<div class="categoria-card">
+
+<a href="catalogo.php?categoria=<?= (int)$cat->getId() ?>">
+
+<img
+src="<?= RUTA_APP ?>/img/categorias/<?= e($cat->getImagen()) ?>"
+alt="<?= e($cat->getNombre()) ?>">
+
+</a>
+
+<h4>
+<?= e($cat->getNombre()) ?>
+</h4>
+
+<a
+href="catalogo.php?categoria=<?= (int)$cat->getId() ?>"
+class="btn primary">
+
+Ver productos
+
+</a>
+
+</div>
+
+<?php endforeach; ?>
+
+</div>
+
+<?php endif; ?>
+
+</div>
+
 </main>
 
 <?php
