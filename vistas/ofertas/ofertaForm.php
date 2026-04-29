@@ -1,7 +1,7 @@
 <?php
 //require_once __DIR__ . '/../../entities/oferta.php';
 require_once __DIR__ . '/../../includes/productoService.php';
-require_once __DIR__ . '/../../includes/ofertaService.php';
+require_once __DIR__ . '/../../includes/ofertaDAO.php';
 
 $productos = ProductoService::getAllActivos();
 
@@ -123,14 +123,23 @@ if ($modoEdicion) {
         <?php endforeach; ?>
     </table>
 
+    <h3>Resumen</h3>
+
+    <p>Total: <span id="precioTotal">0</span> €</p>
+    <p>Descuento: <span id="descuentoTxt">0</span> %</p>
+    <p>Precio final: <span id="precioFinal">0</span> €</p>
+
     <p>
         <button type="submit" class="btn-aceptar">Guardar</button>
     </p>
 
 </form>
 
+
 <p>
     <a class="btn-volver" href="listarOfertas.php">
         Volver al listado
     </a>
 </p>
+
+<script src="../../JS/ofertas.js"></script>

@@ -42,7 +42,7 @@ $total_descuento = 0;
 
 foreach ($ofertas_seleccionadas as $oferta_id) {
 
-    $oferta = OfertaService::getById($oferta_id);
+    $oferta = OfertaDAO::getById($oferta_id);
     $productos_oferta = ProductoService::getProductosDeOferta($oferta_id);
 
     if (!$oferta) {

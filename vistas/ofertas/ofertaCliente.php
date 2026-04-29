@@ -5,7 +5,7 @@ error_reporting(E_ALL);
 
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/productoService.php';
-require_once __DIR__ . '/../../includes/ofertaService.php';
+require_once __DIR__ . '/../../includes/ofertaDAO.php';
 require_once __DIR__ . '/../../includes/pedidoService.php';
 
 $user = require_login();
@@ -30,7 +30,7 @@ if ($modoSeleccion) {
 }
 
 // 🔹 Ofertas activas
-$ofertas = OfertaService::getAllActivas();
+$ofertas = OfertaDAO::getAllActivas();
 
 $tituloPagina = 'Ofertas disponibles';
 ob_start();

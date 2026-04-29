@@ -11,14 +11,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die('ID de la oferta no válido.');
     }
 
-    $oferta_pedido = OfertaService::ofertaEnUso($id);
+    $oferta_pedido = OfertaDAO::ofertaEnUso($id);
     if($oferta_pedido) {
         http_response_code(403);
         die('La oferta está en uso y no se puede borrar.');
     }
 
     OfertaProductoService::removeProductosDeOferta((int)$id);
-    OfertaService::borrarOferta((int)$id);
+    OfertaDAO::borrarOferta((int)$id);
 
     header("Location: ../../vistas/ofertas/listarOfertas.php");
     exit();

@@ -456,6 +456,10 @@ body {
     font-style: italic;
 }
 
+.click {
+    font-weight: bold;
+}
+
 /* =========================================
    ESTILOS COMPLEMENTARIOS PARA FORMS Y PERFIL
    ========================================= */

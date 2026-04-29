@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../includes/ofertaService.php';
+require_once __DIR__ . '/../../includes/ofertaDAO.php';
 
 $id = $_GET['id'] ?? null;
 

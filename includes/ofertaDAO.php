@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../entities/oferta.php';
 require_once __DIR__ . '/../includes/application.php';
 
-class OfertaService
+class OfertaDAO
 {
     // Obtener todas las ofertas
     public static function getAll()
