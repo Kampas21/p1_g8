@@ -13,15 +13,9 @@ require_once __DIR__ . '/../../includes/Formulario/FormularioAddCarrito.php';
 require_once __DIR__ . '/../../includes/pedidoService.php';
 
 $user = require_login();
-$usuario_id = (int)$user->getId();
-
-$pedido = PedidoService::getPedidoNuevo($usuario_id);
-
-if (!$pedido) {
+if (!PedidoService::carritoTieneTipo()) {
     redirect('elegirTipo.php');
 }
-
-$pedido_id = $pedido->getId();
 
 $categoria_id = isset($_GET['categoria']) && is_numeric($_GET['categoria'])
     ? (int)$_GET['categoria']
@@ -43,7 +37,6 @@ if ($categoria_id) {
 
             $formAdd =
                 new \es\ucm\fdi\aw\Formulario\FormularioAddCarrito(
-                    $pedido_id,
                     $prod_id,
                     $categoria_id
                 );

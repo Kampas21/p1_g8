@@ -35,7 +35,7 @@ HTML;
             return;
         }
 
-        \PedidoService::crearPedido($this->usuario_id, $tipo);
+        \PedidoService::iniciarCarrito($tipo);
 
         header("Location: " . RUTA_APP . "/vistas/pedidos/catalogo.php");
         exit;

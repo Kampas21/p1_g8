@@ -1,605 +1,352 @@
 <?php
 require_once __DIR__ . '/../includes/application.php';
 require_once __DIR__ . '/../entities/producto.php';
-require_once __DIR__ . '/../entities/productos_Pedido.php';
-
-require_once __DIR__ . '/../entities/pedido.php';
+require_once __DIR__ . '/../includes/ProductoDAO.php';
+require_once __DIR__ . '/../includes/ofertaEnPedidoDAO.php';
+require_once __DIR__ . '/../includes/PedidoDAO.php';
 
 class PedidoService
 {
-
-    /**
-     * Crea un pedido nuevo en estado 'nuevo' y devuelve su id.
-     */
-    public static function crearPedido($usuario_id, $tipo)
+    private static function asegurarCarritoSesion(): void
     {
-        global $conn;
-        $stmt = $conn->prepare(
-            "INSERT INTO pedidos (usuario_id, tipo, estado) VALUES (?, ?, 'nuevo')"
-        );
-        $stmt->bind_param("is", $usuario_id, $tipo);
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
 
-        $ok = $stmt->execute();
-        $stmt->close();
+        if (!isset($_SESSION['carrito']) || !is_array($_SESSION['carrito'])) {
+            $_SESSION['carrito'] = [];
+        }
 
-        return $ok;
+        if (!isset($_SESSION['carrito']['tipo'])) {
+            $_SESSION['carrito']['tipo'] = null;
+        }
+
+        if (!isset($_SESSION['carrito']['items']) || !is_array($_SESSION['carrito']['items'])) {
+            $_SESSION['carrito']['items'] = [];
+        }
+
+        if (!isset($_SESSION['carrito']['ofertas']) || !is_array($_SESSION['carrito']['ofertas'])) {
+            $_SESSION['carrito']['ofertas'] = [];
+        }
     }
 
-    /**
-     * Obtiene el pedido en estado 'nuevo' del usuario, o null si no tiene ninguno.
-     */
-    public static function getPedidoNuevo($usuario_id)
+    public static function iniciarCarrito(string $tipo): void
+    {
+        self::asegurarCarritoSesion();
+
+        $_SESSION['carrito'] = [
+            'tipo' => $tipo,
+            'items' => [],
+            'ofertas' => [],
+        ];
+
+        unset($_SESSION['ultimo_pedido_id']);
+    }
+
+    public static function getTipoCarrito(): ?string
+    {
+        self::asegurarCarritoSesion();
+
+        return $_SESSION['carrito']['tipo'] ?? null;
+    }
+
+    public static function carritoTieneTipo(): bool
+    {
+        return self::getTipoCarrito() !== null;
+    }
+
+    public static function getCarritoItems(): array
+    {
+        self::asegurarCarritoSesion();
+
+        return $_SESSION['carrito']['items'];
+    }
+
+    public static function carritoTieneProductos(): bool
+    {
+        return !empty(self::getCarritoItems());
+    }
+
+    public static function agregarProductoAlCarrito(int $producto_id, float $precio_unitario, int $cantidad = 1): void
+    {
+        self::asegurarCarritoSesion();
+
+        if (!isset($_SESSION['carrito']['items'][$producto_id])) {
+            $_SESSION['carrito']['items'][$producto_id] = [
+                'cantidad' => 0,
+                'precio_unitario' => $precio_unitario,
+            ];
+        }
+
+        $_SESSION['carrito']['items'][$producto_id]['cantidad'] += max(1, $cantidad);
+        $_SESSION['carrito']['items'][$producto_id]['precio_unitario'] = $precio_unitario;
+    }
+
+    public static function actualizarCantidadCarrito(int $producto_id, int $cantidad): void
+    {
+        self::asegurarCarritoSesion();
+
+        if ($cantidad <= 0) {
+            unset($_SESSION['carrito']['items'][$producto_id]);
+            return;
+        }
+
+        if (!isset($_SESSION['carrito']['items'][$producto_id])) {
+            return;
+        }
+
+        $_SESSION['carrito']['items'][$producto_id]['cantidad'] = $cantidad;
+    }
+
+    public static function eliminarProductoDelCarrito(int $producto_id): void
+    {
+        self::asegurarCarritoSesion();
+        unset($_SESSION['carrito']['items'][$producto_id]);
+    }
+
+    public static function limpiarCarrito(): void
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+
+        unset($_SESSION['carrito']);
+        unset($_SESSION['errores_ofertas']);
+    }
+
+    public static function getCarritoOfertas(): array
+    {
+        self::asegurarCarritoSesion();
+
+        return $_SESSION['carrito']['ofertas'];
+    }
+
+    public static function limpiarOfertasCarrito(): void
+    {
+        self::asegurarCarritoSesion();
+        $_SESSION['carrito']['ofertas'] = [];
+    }
+
+    public static function agregarOfertaAlCarrito(int $oferta_id, string $nombre, int $veces, float $descuento_total): void
+    {
+        self::asegurarCarritoSesion();
+
+        $_SESSION['carrito']['ofertas'][] = [
+            'oferta_id' => $oferta_id,
+            'nombre' => $nombre,
+            'veces_aplicada' => $veces,
+            'descuento_total' => $descuento_total,
+        ];
+    }
+
+    public static function calcularTotalCarritoSinDescuentos(): float
+    {
+        $total = 0.0;
+
+        foreach (self::getCarritoItems() as $item) {
+            $total += ((float) $item['precio_unitario']) * ((int) $item['cantidad']);
+        }
+
+        return round($total, 2);
+    }
+
+    public static function calcularDescuentoCarrito(): float
+    {
+        $total = 0.0;
+
+        foreach (self::getCarritoOfertas() as $oferta) {
+            $total += (float) ($oferta['descuento_total'] ?? 0);
+        }
+
+        return round($total, 2);
+    }
+
+    public static function confirmarCarrito(int $usuario_id, string $metodo_pago, float $total_sin_descuentos, float $total_descuento): ?int
     {
         global $conn;
-        $stmt = $conn->prepare(
-            "SELECT * FROM pedidos WHERE usuario_id = ? AND estado = 'nuevo' LIMIT 1"
-        );
-        $stmt->bind_param("i", $usuario_id);
-        $stmt->execute();
 
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
+        self::asegurarCarritoSesion();
+        $carrito = $_SESSION['carrito'];
 
-        $result->free();
-        $stmt->close();
-
-        if (!$row) {
+        if (empty($carrito['items']) || empty($carrito['tipo'])) {
             return null;
         }
 
-        return new Pedido(
-            $row['id'],
-            $row['numero_pedido'],
-            $row['fecha_hora'],
-            $row['fecha'],
-            $row['estado'],
-            $row['tipo'],
-            $row['metodo_pago'],
-            $row['usuario_id'],
-            $row['total_sin_descuentos'],
-            $row['total_descuento'],
-            $row['cocinero_id'],
-            $row['total'] ?? null
-        );
-        
+        $lineas = $carrito['items'];
+        $ofertas = $carrito['ofertas'];
+        $tipo = (string) $carrito['tipo'];
+
+        $estado = ($metodo_pago === 'tarjeta') ? 'en_preparacion' : 'recibido';
+        $requiereCocina = false;
+
+        $conn->begin_transaction();
+
+        try {
+            $numero = PedidoDAO::obtenerSiguienteNumeroDelDia();
+            $pedido_id = PedidoDAO::crearPedidoFormal($numero, $estado, $tipo, $metodo_pago, $usuario_id, $total_sin_descuentos, $total_descuento);
+
+            foreach ($lineas as $producto_id => $item) {
+                $producto = ProductoDAO::getById((int) $producto_id);
+                if ($producto && (int) $producto->getSeCocina() === 1) {
+                    $requiereCocina = true;
+                }
+
+                $cantidad = (int) ($item['cantidad'] ?? 1);
+                $precio_unitario = (float) ($item['precio_unitario'] ?? 0);
+
+                for ($i = 0; $i < $cantidad; $i++) {
+                    PedidoDAO::addProducto($pedido_id, (int) $producto_id, $precio_unitario);
+                }
+            }
+
+            foreach ($ofertas as $oferta) {
+                OfertaEnPedidoDAO::addOferta(
+                    $pedido_id,
+                    (int) ($oferta['oferta_id'] ?? 0),
+                    (int) ($oferta['veces_aplicada'] ?? 0),
+                    (float) ($oferta['descuento_total'] ?? 0)
+                );
+            }
+
+            if (!$requiereCocina) {
+                PedidoDAO::terminarPedidoParaEntrega($pedido_id);
+            }
+
+            $conn->commit();
+
+            $_SESSION['ultimo_pedido_id'] = $pedido_id;
+            self::limpiarCarrito();
+
+            return $pedido_id;
+        } catch (Throwable $e) {
+            $conn->rollback();
+            throw $e;
+        }
+    }
+
+    public static function crearPedido($usuario_id, $tipo)
+    {
+        return PedidoDAO::crearPedidoNuevo($usuario_id, $tipo);
+    }
+
+    public static function getPedidoNuevo($usuario_id)
+    {
+        return PedidoDAO::getPedidoNuevo($usuario_id);
     }
 
     public static function addProducto($pedido_id, $producto_id, $precio_unitario)
     {
-        global $conn;
-        $stmt = $conn->prepare(
-            "INSERT INTO productos_en_pedido (pedido_id, producto_id, precio_unitario, cantidad)
-             VALUES (?, ?, ?, 1)
-             ON DUPLICATE KEY UPDATE cantidad = cantidad + 1"
-        );
-        $stmt->bind_param("iid", $pedido_id, $producto_id, $precio_unitario);
-        return $stmt->execute();
+        return PedidoDAO::addProducto($pedido_id, $producto_id, $precio_unitario);
     }
 
-
-    /**
-     * Actualiza la cantidad de un producto en el carrito.
-     */
     public static function updateCantidad($pedido_id, $producto_id, $cantidad)
     {
-        global $conn;
-        $stmt = $conn->prepare(
-            "UPDATE productos_en_pedido SET cantidad = ?
-         WHERE pedido_id = ? AND producto_id = ?"
-        );
-        $stmt->bind_param("iii", $cantidad, $pedido_id, $producto_id);
-        return $stmt->execute();
+        return PedidoDAO::updateCantidad($pedido_id, $producto_id, $cantidad);
     }
 
-    /**
-     * Elimina un producto del carrito.
-     */
     public static function removeProducto($pedido_id, $producto_id)
     {
-        global $conn;
-        $stmt = $conn->prepare(
-            "DELETE FROM productos_en_pedido WHERE pedido_id = ? AND producto_id = ?"
-        );
-        $stmt->bind_param("ii", $pedido_id, $producto_id);
-        return $stmt->execute();
+        return PedidoDAO::removeProducto($pedido_id, $producto_id);
     }
 
-    /**
-     * Cancela y elimina el pedido y sus líneas.
-     */
     public static function cancelarPedido($pedido_id)
     {
-        global $conn;
-
-        $stmt = $conn->prepare("DELETE FROM productos_en_pedido WHERE pedido_id = ?");
-        $stmt->bind_param("i", $pedido_id);
-
-        $stmt->execute();
-        $stmt->close();
-
-        $stmt = $conn->prepare("DELETE FROM pedidos WHERE id = ?");
-        $stmt->bind_param("i", $pedido_id);
-
-        $stmt->execute();
-        $stmt->close();
+        return PedidoDAO::cancelarPedido($pedido_id);
     }
 
-    /**
-     * Confirma el pedido: asigna numero_pedido del día, cambia estado a 'recibido' y guarda el total.
-     */
     public static function confirmarPedido($pedido_id, $metodo_pago, $total)
     {
-        global $conn;
-
-        // Calcular el siguiente número de pedido del día
-        $stmtNumero = $conn->prepare("
-            SELECT COALESCE(MAX(numero_pedido), 0) + 1 AS siguiente 
-            FROM pedidos 
-            WHERE DATE(fecha_hora) = CURDATE() AND estado != 'nuevo'
-        ");
-        $stmtNumero->execute();
-        $rs = $stmtNumero->get_result();
-        $numero = $rs->fetch_assoc()['siguiente'];
-        $rs->free();
-        $stmtNumero->close();
-
-
-        $estado = ($metodo_pago === 'tarjeta') ? 'en_preparacion' : 'recibido';
-
-        // Si el pedido no contiene ningún producto que se cocine, lo saltamos directamente
-        $stmtCheck = $conn->prepare(
-            "SELECT COUNT(*) AS cnt FROM productos_en_pedido pep JOIN productos p ON p.id = pep.producto_id WHERE pep.pedido_id = ? AND p.se_cocina = 1"
-        );
-        $stmtCheck->bind_param("i", $pedido_id);
-        $stmtCheck->execute();
-        $rsCheck = $stmtCheck->get_result();
-        $rowCheck = $rsCheck->fetch_assoc();
-        $stmtCheck->close();
-
-        $terminarPedido = (($rowCheck['cnt'] ?? 0) == 0);
-
-        if ($terminarPedido) {
-            // No hay nada que cocinar → el pedido queda listo para entregar
-            $estado = 'terminado';
-        }
-
-        $stmt = $conn->prepare(
-            "UPDATE pedidos 
-            SET estado = ?, numero_pedido = ?, metodo_pago = ?, fecha_hora = CURRENT_TIMESTAMP 
-            WHERE id = ?"
-        );
-        $stmt->bind_param("sisi", $estado, $numero, $metodo_pago, $pedido_id);
-        $ok = $stmt->execute();
-        $stmt->close();
-
-        if ($ok && $terminarPedido) {
-            self::terminarPedidoParaEntrega($pedido_id);
-        }
-
-        return $ok;
+        return PedidoDAO::confirmarPedido($pedido_id, $metodo_pago, $total);
     }
 
     public static function getPedidoById($id)
     {
-        global $conn;
-        $stmt = $conn->prepare("SELECT * FROM pedidos WHERE id = ?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-
-        $result->free();
-        $stmt->close();
-
-        if (!$row) {
-            return null;
-        }
-
-        return new Pedido(
-            $row['id'],
-            $row['numero_pedido'],
-            $row['fecha_hora'],
-            $row['fecha'],
-            $row['estado'],
-            $row['tipo'],
-            $row['metodo_pago'],
-            $row['usuario_id'],
-            $row['total_sin_descuentos'],
-            $row['total_descuento'],
-            $row['cocinero_id'],
-            $row['total'] ?? null
-        );
-        
+        return PedidoDAO::getPedidoById($id);
     }
-
 
     public static function getPedidosDeUsuario($usuario_id)
     {
-        global $conn;
-        $stmt = $conn->prepare(
-            "SELECT * FROM pedidos
-         WHERE usuario_id = ? AND estado != 'nuevo'
-         ORDER BY fecha_hora DESC"
-        );
-        $stmt->bind_param("i", $usuario_id);
-        $stmt->execute();
-
-        $result = $stmt->get_result();
-        $pedidos = [];
-
-        while ($fila = $result->fetch_assoc()) {
-            $pedidos[] = new Pedido(
-            $fila['id'],
-            $fila['numero_pedido'],
-            $fila['fecha_hora'],
-            $fila['fecha'],
-            $fila['estado'],
-            $fila['tipo'],
-            $fila['metodo_pago'],
-            $fila['usuario_id'],
-            $fila['total_sin_descuentos'],
-            $fila['total_descuento'],
-            $fila['cocinero_id'],
-            $fila['total'] ?? null
-            );
-        }
-
-
-        $result->free();
-        $stmt->close();
-
-
-        return $pedidos;
+        return PedidoDAO::getPedidosDeUsuario($usuario_id);
     }
-
-
-
 
     public static function cambiarEstado(int $pedido_id, string $estado_nuevo): bool
     {
-        global $conn;
-        $stmt = $conn->prepare("UPDATE pedidos SET estado = ? WHERE id = ?");
-        $stmt->bind_param("si", $estado_nuevo, $pedido_id);
-        return $stmt->execute();
+        return PedidoDAO::cambiarEstado($pedido_id, $estado_nuevo);
     }
 
-    /**
-     * Devuelve los productos de un pedido con nombre, imagen, iva y estado.
-     */
     public static function getProductosPedido($pedido_id)
     {
-        global $conn;
-        $stmt = $conn->prepare(
-            "SELECT pep.*, p.nombre, p.imagen, p.se_cocina
-             FROM productos_en_pedido pep
-             JOIN productos p ON p.id = pep.producto_id
-             WHERE pep.pedido_id = ?"
-        );
-        $stmt->bind_param("i", $pedido_id);
-        $stmt->execute();
-
-
-        $result = $stmt->get_result();
-        $productos = [];
-
-        while ($fila = $result->fetch_assoc()) {
-            $productos[] = new Productos_Pedido(
-                $fila['id'],
-                $fila['nombre'],
-                $fila['pedido_id'],
-                $fila['producto_id'],
-                $fila['precio_unitario'],
-                $fila['cantidad'],
-                $fila['estado'],
-                $fila['imagen'],
-                $fila['se_cocina'] ?? 1
-            );
-        }
-
-        $result->free();
-        $stmt->close();
-
-        return $productos;
+        return PedidoDAO::getProductosPedido($pedido_id);
     }
 
-    /**
-     * Devuelve los pedidos por estado con los datos del cliente.
-     */
     public static function getPedidosPorEstado(string $estado): array
     {
-        global $conn;
-        $stmt = $conn->prepare(
-            "SELECT p.*, u.nombre AS cliente_nombre, u.username
-             FROM pedidos p
-             LEFT JOIN usuarios u ON p.usuario_id = u.id
-             WHERE p.estado = ?
-             ORDER BY p.fecha_hora ASC"
-        );
-        $stmt->bind_param("s", $estado);
-        $stmt->execute();
-        
-        $result = $stmt->get_result();
-        $pedidos = [];
-        while ($fila = $result->fetch_assoc()) {
-            $pedidos[] = $fila;
-        }
-        
-        $result->free();
-        $stmt->close();
-        
-        return $pedidos;
+        return PedidoDAO::getPedidosPorEstado($estado);
     }
-
 
     public static function marcarProductoPreparado($pedido_id, $producto_id)
     {
-        global $conn;
-        // Cambia el estado de una sola línea del pedido a 'preparado'
-        $stmt = $conn->prepare("UPDATE productos_en_pedido SET estado = 'preparado' WHERE pedido_id = ? AND producto_id = ?");
-        $stmt->bind_param("ii", $pedido_id, $producto_id);
-        return $stmt->execute();
+        return PedidoDAO::marcarProductoPreparado($pedido_id, $producto_id);
     }
 
     public static function marcarProductoPreparadoCamarero($pedido_id, $producto_id)
     {
-        $ok = self::marcarProductoPreparado($pedido_id, $producto_id);
+        $ok = PedidoDAO::marcarProductoPreparado($pedido_id, $producto_id);
 
-        if ($ok && self::todosProductosBarraPreparados($pedido_id)) {
-            self::terminarPedidoParaEntrega($pedido_id);
+        if ($ok && PedidoDAO::todosProductosBarraPreparados($pedido_id)) {
+            PedidoDAO::terminarPedidoParaEntrega($pedido_id);
         }
 
         return $ok;
     }
 
-    private static function todosProductosBarraPreparados($pedido_id): bool
-    {
-        global $conn;
-
-        $stmt = $conn->prepare(
-            "SELECT COUNT(*) AS pendientes
-             FROM productos_en_pedido pep
-             JOIN productos p ON p.id = pep.producto_id
-             WHERE pep.pedido_id = ?
-               AND p.se_cocina = 0
-               AND pep.estado = 'pendiente'"
-        );
-        $stmt->bind_param("i", $pedido_id);
-        $stmt->execute();
-
-        $result = $stmt->get_result();
-        $row = $result ? $result->fetch_assoc() : ['pendientes' => 0];
-
-        if ($result) {
-            $result->free();
-        }
-
-        $stmt->close();
-
-        return ((int)($row['pendientes'] ?? 0)) === 0;
-    }
-
     public static function terminarPedidoParaEntrega($pedido_id)
     {
-        global $conn;
-
-        $stmt = $conn->prepare("UPDATE productos_en_pedido SET estado = 'terminado' WHERE pedido_id = ?");
-        $stmt->bind_param("i", $pedido_id);
-        $okLineas = $stmt->execute();
-        $stmt->close();
-
-        if (!$okLineas) {
-            return false;
-        }
-
-        $stmt = $conn->prepare("UPDATE pedidos SET estado = 'terminado' WHERE id = ?");
-        $stmt->bind_param("i", $pedido_id);
-        $okPedido = $stmt->execute();
-        $stmt->close();
-
-        return $okPedido;
+        return PedidoDAO::terminarPedidoParaEntrega($pedido_id);
     }
-
-
-
-
-    // --- ESTADOS GLOBALES DEL PEDIDO (FUNCIONALIDAD 3) ---
 
     public static function getPedidosCocinando($cocinero_id)
     {
-        global $conn;
-        $stmt = $conn->prepare("SELECT * FROM pedidos WHERE cocinero_id = ? AND estado = 'cocinando' ORDER BY fecha_hora ASC");
-        $stmt->bind_param("i", $cocinero_id);
-        $stmt->execute();
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        return PedidoDAO::getPedidosCocinando($cocinero_id);
     }
 
     public static function asignarCocineroYEstado($pedido_id, $cocinero_id, $estado)
     {
-        global $conn;
-        $stmt = $conn->prepare("UPDATE pedidos SET cocinero_id = ?, estado = ? WHERE id = ?");
-        $stmt->bind_param("isi", $cocinero_id, $estado, $pedido_id);
-        return $stmt->execute();
+        return PedidoDAO::asignarCocineroYEstado($pedido_id, $cocinero_id, $estado);
     }
 
-    // --- PANEL DE GERENTE (FUNCIONALIDAD 3) ---
     public static function getPedidosPendientesGerente()
     {
-        global $conn;
-        $query = "SELECT p.*, u.nombre AS cocinero_nombre, u.apellidos AS cocinero_apellidos, u.avatar_valor 
-                  FROM pedidos p LEFT JOIN usuarios u ON p.cocinero_id = u.id 
-                  WHERE p.estado IN ('recibido', 'en_preparacion', 'cocinando', 'listo_cocina', 'terminado')
-                  ORDER BY p.fecha_hora ASC";
-                  
-        $stmt = $conn->prepare($query); 
-        $stmt->execute();
-
-        $result = $stmt->get_result();
-        $pedidos = [];
-        while ($fila = $result->fetch_assoc()) {
-            $pedidos[] = $fila;
-        }
-        
-        $result->free(); 
-        $stmt->close();
-
-        return $pedidos;
+        return PedidoDAO::getPedidosPendientesGerente();
     }
 
-    /**
-     * Obtiene los pedidos activos de un usuario para su perfil 
-     */
     public static function getPedidosActivosByUsuario(int $usuario_id): array
     {
-        global $conn;
-        // Editamos la query para calcular el 'total' usando las columnas existentes
-        $sql = "
-            SELECT numero_pedido, estado, fecha_hora, total
-            FROM pedidos
-            WHERE usuario_id = ?
-               AND estado IN ('en_preparacion', 'cocinando', 'listo_cocina', 'terminado')
-            ORDER BY fecha_hora DESC
-        ";
-        $stmt = $conn->prepare($sql);
-        if (!$stmt) return [];
-
-        $stmt->bind_param("i", $usuario_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        $pedidos = [];
-        while ($row = $result->fetch_assoc()) {
-            $pedidos[] = $row;
-        }
-
-        $result->free();
-
-        $stmt->close();
-        return $pedidos;
+        return PedidoDAO::getPedidosActivosByUsuario($usuario_id);
     }
 
-    /**
-     * Obtiene el histórico de pedidos de un usuario para su perfil
-     */
     public static function getPedidosHistoricoByUsuario(int $usuario_id): array
     {
-        global $conn;
-        $sql = "
-            SELECT numero_pedido, fecha_hora, tipo, total, estado
-            FROM pedidos
-            WHERE usuario_id = ?
-            ORDER BY fecha_hora DESC
-            LIMIT 15
-        ";
-        $stmt = $conn->prepare($sql);
-        if (!$stmt) return [];
-
-        $stmt->bind_param("i", $usuario_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        $pedidos = [];
-        while ($row = $result->fetch_assoc()) {
-            $pedidos[] = $row;
-        }
-
-        $result->free();
-
-        $stmt->close();
-        return $pedidos;
+        return PedidoDAO::getPedidosHistoricoByUsuario($usuario_id);
     }
 
-
-   public static function actualizarTotales($pedido_id, $total_sin_descuentos, $total_descuento)
+    public static function actualizarTotales($pedido_id, $total_sin_descuentos, $total_descuento)
     {
-        global $conn;
-
-        $stmt = $conn->prepare(
-            "UPDATE pedidos 
-             SET total_sin_descuentos = ?, total_descuento = ?
-             WHERE id = ?"
-        );
-
-        $stmt->bind_param("ddi", $total_sin_descuentos, $total_descuento, $pedido_id);
-        $stmt->execute();
-        $stmt->close();
+        return PedidoDAO::actualizarTotales($pedido_id, $total_sin_descuentos, $total_descuento);
     }
 
     public static function limpiarOfertas($pedido_id)
     {
-        global $conn;
-
-        $stmt = $conn->prepare(
-            "DELETE FROM ofertas_en_pedido WHERE pedido_id = ?"
-        );
-
-        $stmt->bind_param("i", $pedido_id);
-        $stmt->execute();
-        $stmt->close();
+        return PedidoDAO::limpiarOfertas($pedido_id);
     }
 
     public static function getOfertasDePedido($pedido_id)
     {
-        global $conn;
-
-        $stmt = $conn->prepare(
-            "SELECT oep.*, o.nombre
-         FROM ofertas_en_pedido oep
-         JOIN ofertas o ON o.id = oep.oferta_id
-         WHERE oep.pedido_id = ?"
-        );
-
-        $stmt->bind_param("i", $pedido_id);
-        $stmt->execute();
-
-        $result = $stmt->get_result();
-
-        $ofertas = [];
-
-        while ($fila = $result->fetch_assoc()) {
-            $ofertas[] = (object)[
-                'id' => $fila['id'],
-                'pedido_id' => $fila['pedido_id'],
-                'oferta_id' => $fila['oferta_id'],
-                'nombre' => $fila['nombre'],
-                'veces_aplicada' => $fila['veces_aplicada'],
-                'descuento_total' => $fila['descuento_total']
-            ];
-        }
-
-        $stmt->close();
-
-        return $ofertas;
+        return PedidoDAO::getOfertasDePedido($pedido_id);
     }
 
-    /**
-     * Cuenta los pedidos activos de un usuario para no cargar los datos completos en el perfil solo para ver el número
-     */
     public static function contarPedidosActivosByUsuario(int $usuario_id): int
     {
-        global $conn;
-        
-        $sql = "
-            SELECT COUNT(*) as num_activos
-            FROM pedidos
-            WHERE usuario_id = ?
-               AND estado IN ('en_preparacion', 'cocinando', 'listo_cocina', 'terminado')
-        ";
-        
-        $stmt = $conn->prepare($sql);
-        if (!$stmt) {
-            return 0;
-        }
-
-        $stmt->bind_param("i", $usuario_id);
-        $stmt->execute();
-        
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        
-        $result->free();
-        $stmt->close();
-
-        return (int)($row['num_activos'] ?? 0);
+        return PedidoDAO::contarPedidosActivosByUsuario($usuario_id);
     }
 }

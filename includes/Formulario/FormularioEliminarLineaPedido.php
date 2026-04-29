@@ -6,12 +6,10 @@ require_once __DIR__ . '/../../includes/pedidoService.php';
 
 class FormularioEliminarLineaPedido extends Formulario {
 
-    private $pedido_id;
     private $producto_id;
 
-    public function __construct($pedido_id, $producto_id) {
+    public function __construct($producto_id) {
         parent::__construct('formRemoveLinea_' . $producto_id);
-        $this->pedido_id = $pedido_id;
         $this->producto_id = $producto_id;
     }
 
@@ -31,7 +29,7 @@ HTML;
             return;
         }
 
-        \PedidoService::removeProducto($this->pedido_id, $producto_id);
+        \PedidoService::eliminarProductoDelCarrito($producto_id);
 
         header("Location: " . RUTA_APP . "/vistas/pedidos/carrito.php");
         exit;

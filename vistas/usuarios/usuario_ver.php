@@ -54,6 +54,7 @@ ob_start();
     <div class="actions-inline mt-14">
       <a class="btn" href="usuarios.php">Volver al listado</a>
       <a class="btn primary" href="usuario_form.php?id=<?= $user->getId() ?>">Editar usuario</a>
+      <a class="btn" href="../pedidos/listarPedidosCliente.php?usuario_id=<?= $user->getId() ?>">Ver pedidos</a>
 
       <?php if ($user->isActivo()): ?>
         <form method="post" action="../../scripts/usuarios/usuario_eliminar.php" onsubmit="return confirm('¿Desactivar este usuario?');" class="d-inline">
