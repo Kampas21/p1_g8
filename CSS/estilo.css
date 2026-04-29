@@ -461,6 +461,10 @@ body {
     text-decoration: none;
 }
 
+#contenedorProductos div {
+    margin-bottom: 10px;
+}
+
 /* =========================================
    ESTILOS COMPLEMENTARIOS PARA FORMS Y PERFIL
    ========================================= */
