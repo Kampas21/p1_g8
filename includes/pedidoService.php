@@ -156,8 +156,10 @@ class PedidoService
         $rowCheck = $rsCheck->fetch_assoc();
         $stmtCheck->close();
 
-        if (($rowCheck['cnt'] ?? 0) == 0) {
-            // No hay nada que cocinar → pasar directamente a la cola de reparto/terminado
+        $terminarPedido = (($rowCheck['cnt'] ?? 0) == 0);
+
+        if ($terminarPedido) {
+            // No hay nada que cocinar → el pedido queda listo para entregar
             $estado = 'terminado';
         }
 
@@ -167,7 +169,14 @@ class PedidoService
             WHERE id = ?"
         );
         $stmt->bind_param("sisi", $estado, $numero, $metodo_pago, $pedido_id);
-        return $stmt->execute();
+        $ok = $stmt->execute();
+        $stmt->close();
+
+        if ($ok && $terminarPedido) {
+            self::terminarPedidoParaEntrega($pedido_id);
+        }
+
+        return $ok;
     }
 
     public static function getPedidoById($id)
@@ -330,6 +339,65 @@ class PedidoService
         $stmt = $conn->prepare("UPDATE productos_en_pedido SET estado = 'preparado' WHERE pedido_id = ? AND producto_id = ?");
         $stmt->bind_param("ii", $pedido_id, $producto_id);
         return $stmt->execute();
+    }
+
+    public static function marcarProductoPreparadoCamarero($pedido_id, $producto_id)
+    {
+        $ok = self::marcarProductoPreparado($pedido_id, $producto_id);
+
+        if ($ok && self::todosProductosBarraPreparados($pedido_id)) {
+            self::terminarPedidoParaEntrega($pedido_id);
+        }
+
+        return $ok;
+    }
+
+    private static function todosProductosBarraPreparados($pedido_id): bool
+    {
+        global $conn;
+
+        $stmt = $conn->prepare(
+            "SELECT COUNT(*) AS pendientes
+             FROM productos_en_pedido pep
+             JOIN productos p ON p.id = pep.producto_id
+             WHERE pep.pedido_id = ?
+               AND p.se_cocina = 0
+               AND pep.estado = 'pendiente'"
+        );
+        $stmt->bind_param("i", $pedido_id);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $row = $result ? $result->fetch_assoc() : ['pendientes' => 0];
+
+        if ($result) {
+            $result->free();
+        }
+
+        $stmt->close();
+
+        return ((int)($row['pendientes'] ?? 0)) === 0;
+    }
+
+    public static function terminarPedidoParaEntrega($pedido_id)
+    {
+        global $conn;
+
+        $stmt = $conn->prepare("UPDATE productos_en_pedido SET estado = 'terminado' WHERE pedido_id = ?");
+        $stmt->bind_param("i", $pedido_id);
+        $okLineas = $stmt->execute();
+        $stmt->close();
+
+        if (!$okLineas) {
+            return false;
+        }
+
+        $stmt = $conn->prepare("UPDATE pedidos SET estado = 'terminado' WHERE id = ?");
+        $stmt->bind_param("i", $pedido_id);
+        $okPedido = $stmt->execute();
+        $stmt->close();
+
+        return $okPedido;
     }
 
 

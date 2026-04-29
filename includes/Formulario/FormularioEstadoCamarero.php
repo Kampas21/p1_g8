@@ -8,12 +8,14 @@ class FormularioEstadoCamarero extends Formulario {
 
     private $pedido_id;
     private $accion;
+    private $producto_id;
 
-    public function __construct($pedido_id, $accion) {
+    public function __construct($pedido_id, $accion, $producto_id = 0) {
         $this->pedido_id = $pedido_id;
         $this->accion = $accion;
+        $this->producto_id = (int)$producto_id;
 
-        parent::__construct('formCamarero_' . $pedido_id);
+        parent::__construct('formCamarero_' . $pedido_id . '_' . $accion . ($this->producto_id ? '_' . $this->producto_id : ''));
     }
 
  protected function generaCamposFormulario(&$datos) {
@@ -21,8 +23,9 @@ class FormularioEstadoCamarero extends Formulario {
     return "
         <input type='hidden' name='pedido_id' value='{$this->pedido_id}'>
         <input type='hidden' name='accion' value='{$this->accion}'>
+        <input type='hidden' name='producto_id' value='{$this->producto_id}'>
         <button type='submit' class='btn primary'>
-            " . ($this->accion === 'cobrar' ? '💰 Cobrar' : ($this->accion === 'terminar' ? '📦 Preparar y terminar' : '📦 Entregar')) . "
+            " . ($this->accion === 'cobrar' ? '💰 Cobrar' : ($this->accion === 'preparar_linea' ? '🟡 Preparar' : ($this->accion === 'pasar_entrega' ? '🛎️ Pasar a entrega' : '📦 Entregar'))) . "
         </button>
     ";
 }
@@ -31,6 +34,7 @@ class FormularioEstadoCamarero extends Formulario {
 
     $pedido_id = filter_var($datos['pedido_id'], FILTER_VALIDATE_INT);
     $accion = $datos['accion'] ?? null;
+    $producto_id = filter_var($datos['producto_id'] ?? null, FILTER_VALIDATE_INT);
 
     if (!$pedido_id || !$accion) {
         return;
@@ -42,15 +46,21 @@ class FormularioEstadoCamarero extends Formulario {
         \PedidoService::cambiarEstado($pedido_id, 'en_preparacion');
     }
 
-    if ($accion === 'terminar') {
-        // Pasar a estado 'terminado' (lista para entregar)
-        \PedidoService::cambiarEstado($pedido_id, 'terminado');
+    if ($accion === 'preparar_linea' && $producto_id) {
+        \PedidoService::marcarProductoPreparadoCamarero($pedido_id, $producto_id);
+    }
+
+    if ($accion === 'pasar_entrega') {
+        \PedidoService::terminarPedidoParaEntrega($pedido_id);
     }
 
     if ($accion === 'entregar') {
+        \PedidoService::terminarPedidoParaEntrega($pedido_id);
         \PedidoService::cambiarEstado($pedido_id, 'entregado');
     }
 
-header("Location: " . RUTA_APP . "/vistas/pedidos/gestionCamarero.php");    exit;
+    $tab = ($accion === 'entregar') ? 'entregar' : (($accion === 'cobrar') ? 'recibidos' : 'listos');
+    header("Location: " . RUTA_APP . "/vistas/pedidos/gestionCamarero.php?tab=" . $tab);
+    exit;
 }
 }

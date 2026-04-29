@@ -37,7 +37,7 @@ ob_start();
                 </tr>
             <?php else: ?>
                 <?php foreach ($pedidos as $p): ?>
-                    <?php $pedido_id = (int)$p['id']; $productos = \PedidoService::getProductosPedido($pedido_id); ?>
+                    <?php $pedido_id = (int)$p['id']; $productos = \PedidoService::getProductosPedido($pedido_id); $pedido_cerrado = in_array($p['estado'], ['terminado', 'entregado'], true); ?>
                     <tr class="tabla-panel-fila">
                         <td><strong>#<?= (int)$p['id'] ?></strong></td>
                         <td>
@@ -73,7 +73,7 @@ ob_start();
                                     <li>
                                         <?= (int)$prod->getCantidad() ?>x <?= e($prod->getNombre()) ?>
                                         <?= $prod->getSeCocina() ? '👨‍🍳' : '🤵' ?>
-                                        <?= $prod->getEstado() === 'preparado' ? '✅' : '⏳' ?>
+                                        <?= $pedido_cerrado ? '🏁' : ($prod->getEstado() === 'terminado' ? '🏁' : ($prod->getEstado() === 'preparado' ? '✅' : '⏳')) ?>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>

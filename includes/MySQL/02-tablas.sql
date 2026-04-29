@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS `productos_en_pedido` (
     `cantidad` INT NOT NULL DEFAULT 1,
     `precio_unitario` DECIMAL(10,2) NOT NULL,
 
-    `estado` ENUM('pendiente', 'preparado') DEFAULT 'pendiente',
+    `estado` ENUM('pendiente', 'preparado', 'terminado') DEFAULT 'pendiente',
     
     FOREIGN KEY (`pedido_id`) REFERENCES `pedidos`(`id`) ON DELETE CASCADE,
     FOREIGN KEY (`producto_id`) REFERENCES `productos`(`id`) ON DELETE CASCADE,
