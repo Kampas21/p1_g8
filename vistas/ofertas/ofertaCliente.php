@@ -5,7 +5,7 @@ error_reporting(E_ALL);
 
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/ProductoDAO.php';
-require_once __DIR__ . '/../../includes/ofertaService.php';
+require_once __DIR__ . '/../../includes/ofertaDAO.php';
 require_once __DIR__ . '/../../includes/pedidoService.php';
 
 $user = require_login();
@@ -30,7 +30,7 @@ if ($modoSeleccion) {
 }
 
 // 🔹 Ofertas activas
-$ofertas = OfertaService::getAllActivas();
+$ofertas = OfertaDAO::getAllActivas();
 
 $tituloPagina = 'Ofertas disponibles';
 ob_start();
@@ -41,7 +41,7 @@ ob_start();
 <?php if ($modoSeleccion): ?>
     <div class="info-ofertas">
         <strong class="info-ofertas-titulo">ℹ️ Información importante sobre las ofertas:</strong>
-        
+
         <ul class="info-ofertas-lista">
             <li>Puedes seleccionar una o varias ofertas y aplicarlas al pedido actual.</li>
             <li><strong>Debes seleccionar todas las ofertas que quieras usar antes de pulsar "Aplicar ofertas", sino solo se seleccionaran de solo una oferta.</strong></li>
@@ -58,20 +58,20 @@ ob_start();
 <?php if ($modoSeleccion): ?>
     <form method="POST" action="../../scripts/ofertas/aplicarOfertas.php">
         <input type="hidden" name="pedido_id" value="<?= $pedido_id ?>">
-<?php endif; ?>
+    <?php endif; ?>
 
     <div class="panel table-wrap">
         <table>
             <tr>
-                <?php if ($modoSeleccion): ?>   
+                <?php if ($modoSeleccion): ?>
                     <th>Seleccionar</th>
                 <?php endif; ?>
                 <th>Nombre</th>
-                <th>Descripción</th>
+                <!-- <th>Descripción</th> -->
                 <th>Productos</th>
-                <th>Precio pack</th>
+                <!-- <th>Precio pack</th> -->
                 <th>Descuento</th>
-                <th>Precio final</th>
+                <!-- <th>Precio final</th> -->
                 <?php if ($modoSeleccion): ?>
                     <th>Aplicable</th>
                 <?php endif; ?>
@@ -79,7 +79,7 @@ ob_start();
 
             <?php foreach ($ofertas as $oferta): ?>
                 <?php
-                $precio_total = 0;
+                // $precio_total = 0;
                 $productos = ProductoDAO::getProductosDeOferta($oferta->getId());
 
                 $lista = array_map(function ($p) use (&$precio_total) {
@@ -92,7 +92,7 @@ ob_start();
                     return $p->getNombre() . " ($cantidad) " . round($precio_cant, 2) . '€';
                 }, $productos);
 
-                $precio_final = $oferta->aplicarDescuento($precio_total);
+                // $precio_final = $oferta->aplicarDescuento($precio_total);
 
                 $aplicable = true;
 
@@ -117,14 +117,19 @@ ob_start();
                         </td>
                     <?php endif; ?>
 
-                    <td><?= htmlspecialchars($oferta->getNombre()) ?></td>
-                    <td><?= htmlspecialchars($oferta->getDescripcion()) ?></td>
+                    <td>
+                        <a class="click"
+                            href="detalleOferta.php?id=<?= $oferta->getId() ?>&return=<?= "../pedidos/carrito.php" ?>">
+                            <?= htmlspecialchars($oferta->getNombre()) ?>
+                        </a>
+                    </td>
+                    <!-- <td><?= htmlspecialchars($oferta->getDescripcion()) ?></td> -->
 
                     <td><?= implode(', ', $lista) ?></td>
 
-                    <td><?= round($precio_total, 2) ?>€</td>
+                    <!-- <td>?= round($precio_total, 2) ?>€</td> -->
                     <td><?= $oferta->getDescuento() ?>%</td>
-                    <td><?= round($precio_final, 2) ?>€</td>
+                    <!-- <td>?= round($precio_final, 2) ?>€</td> -->
 
                     <?php if ($modoSeleccion): ?>
                         <td>

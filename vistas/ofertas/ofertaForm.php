@@ -1,7 +1,7 @@
 <?php
 //require_once __DIR__ . '/../../entities/oferta.php';
 require_once __DIR__ . '/../../includes/ProductoDAO.php';
-require_once __DIR__ . '/../../includes/ofertaService.php';
+require_once __DIR__ . '/../../includes/ofertaDAO.php';
 
 $productos = ProductoDAO::getAllActivos();
 

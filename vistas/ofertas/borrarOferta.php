@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../includes/ofertaService.php';
+require_once __DIR__ . '/../../includes/ofertaDAO.php';
 
 $id = $_GET['id'] ?? null;
 
@@ -8,8 +8,8 @@ if (!$id || !is_numeric($id)) {
     exit();
 }
 
-$oferta = OfertaService::getById((int)$id);
-$oferta_pedido = OfertaService::ofertaEnUso((int)$id);
+$oferta = OfertaDAO::getById((int)$id);
+$oferta_pedido = OfertaDAO::ofertaEnUso((int)$id);
 
 if (!$oferta) {
     echo '<p>La oferta no existe.</p>';

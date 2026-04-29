@@ -9,7 +9,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require_once __DIR__ . '/../../includes/config.php';
-require_once __DIR__ . '/../../includes/ofertaService.php';
+require_once __DIR__ . '/../../includes/ofertaDAO.php';
 require_once __DIR__ . '/../../includes/OfertaProductoDAO.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $descuento !== ''
     ) {
 
-        $id = OfertaService::crearOferta($nombre, $descripcion, $fecha_inicio, $fecha_fin, $descuento);
+        $id = OfertaDAO::crearOferta($nombre, $descripcion, $fecha_inicio, $fecha_fin, $descuento);
 
         foreach ($cantidades as $producto_id => $cantidad) {
 

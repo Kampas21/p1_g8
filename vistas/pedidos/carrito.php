@@ -138,11 +138,11 @@ ob_start();
                 — <?= $o->veces_aplicada ?? $o['veces_aplicada'] ?>x
                 — -<?= $o->descuento_total ?? $o['descuento_total'] ?> €
 
-                
+
                 <div style="margin-left:15px; font-size: 0.9em; color:#666;">
 
                   <?php
-                 
+
                   $productos_oferta = ProductoDAO::getProductosDeOferta(
                     $o->oferta_id
                   );
@@ -191,7 +191,7 @@ ob_start();
                 </td>
 
                 <td>
-                  <a href="<?= RUTA_APP ?>/vistas/productos/detalle_producto.php?id=<?= $linea->getProductoId() ?>" style="font-weight: bold; text-decoration: none;">
+                  <a href="<?= RUTA_APP ?>/vistas/productos/detalle_producto.php?id=<?= $linea->getProductoId() ?>" class="click">
                     <?= e($linea->getNombre()) ?>
                   </a>
                 </td>
@@ -215,15 +215,17 @@ ob_start();
               <td class="col-precio"><strong><?= $total ?> €</strong></td>
             </tr>
 
-            <tr>
-              <td colspan="4"><strong>Descuento:</strong></td>
-              <td class="col-precio"><strong>-<?= round($descuento_total, 2) ?> €</strong></td>
-            </tr>
+            <?php if ($descuento_total > 0): ?>
+              <tr>
+                <td colspan="4"><strong>Descuento:</strong></td>
+                <td class="col-precio"><strong>-<?= round($descuento_total, 2) ?> €</strong></td>
+              </tr>
 
-            <tr>
-              <td colspan="4"><strong>Total final:</strong></td>
-              <td class="col-precio"><strong><?= round($total_final, 2) ?> €</strong></td>
-            </tr>
+              <tr>
+                <td colspan="4"><strong>Total final:</strong></td>
+                <td class="col-precio"><strong><?= round($total_final, 2) ?> €</strong></td>
+              </tr>
+            <?php endif; ?>
 
           </tfoot>
 
