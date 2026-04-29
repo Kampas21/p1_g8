@@ -155,31 +155,53 @@ class ProductoDAO {
         return $ok;
     }
 
-    public static function update($id, $nombre, $descripcion, $categoria_id, $precio, $iva, $se_cocina = 1) {
-        global $conn;
+  public static function update(
+$id,
+$nombre,
+$descripcion,
+$categoria_id,
+$precio,
+$iva,
+$se_cocina,
+$imagen
+){
 
-        $stmt = $conn->prepare("
-            UPDATE productos
-            SET nombre = ?, descripcion = ?, categoria_id = ?, precio_base = ?, iva = ?, se_cocina = ?
-            WHERE id = ?
-        ");
+global $conn;
 
-        $stmt->bind_param(
-            "ssidiii",
-            $nombre,
-            $descripcion,
-            $categoria_id,
-            $precio,
-            $iva,
-            $se_cocina,
-            $id
-        );
+$sql="
+UPDATE productos
+SET
+nombre=?,
+descripcion=?,
+categoria_id=?,
+precio_base=?,
+iva=?,
+se_cocina=?,
+imagen=?
+WHERE id=?
+";
 
-        $ok = $stmt->execute();
-        $stmt->close();
+$stmt=$conn->prepare($sql);
 
-        return $ok;
-    }
+$stmt->bind_param(
+"ssidiisi",
+$nombre,
+$descripcion,
+$categoria_id,
+$precio,
+$iva,
+$se_cocina,
+$imagen,
+$id
+);
+
+$ok=$stmt->execute();
+
+$stmt->close();
+
+return $ok;
+
+}
 
     public static function activar($id) {
         global $conn;
