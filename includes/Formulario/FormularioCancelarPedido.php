@@ -7,10 +7,7 @@ require_once __DIR__ . '/../../includes/pedidoService.php';
 
 class FormularioCancelarPedido extends Formulario {
 
-    private $pedido_id;
-
-    public function __construct(int $pedido_id) {
-        $this->pedido_id = $pedido_id;
+    public function __construct() {
         parent::__construct("formCancelarPedido", ['urlRedireccion' => 'elegirTipo.php']);
     }
 
@@ -23,7 +20,8 @@ class FormularioCancelarPedido extends Formulario {
     }
 
     protected function procesaFormulario(&$datos) {
-        \PedidoService::cancelarPedido($this->pedido_id);
+        \PedidoService::limpiarCarrito();
+        unset($_SESSION['ultimo_pedido_id']);
         flash_set('success', 'Pedido cancelado.');
     }
 }

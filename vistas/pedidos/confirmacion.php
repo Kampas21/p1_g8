@@ -5,8 +5,16 @@ require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/application.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/util.php';
+require_once __DIR__ . '/../../includes/pedidoService.php';
 
 $user = require_login();
+
+$pedido = null;
+if (!empty($_SESSION['ultimo_pedido_id'])) {
+  $pedidoId = (int)$_SESSION['ultimo_pedido_id'];
+  unset($_SESSION['ultimo_pedido_id']);
+  $pedido = PedidoService::getPedidoById($pedidoId);
+}
 
 $tituloPagina = 'Pedido confirmado | Bistro FDI';
 $rutaCSS = RUTA_APP . '/CSS/estilo.css';
@@ -18,6 +26,10 @@ ob_start();
   <div class="panel">
     <h2>Pedido confirmado</h2>
     <p>Tu pedido se ha registrado correctamente.</p>
+    <?php if ($pedido): ?>
+      <p><strong>Número de pedido:</strong> <?= e((string)$pedido->getNumero_pedido()) ?></p>
+      <p><strong>Estado:</strong> <?= e((string)$pedido->getEstado()) ?></p>
+    <?php endif; ?>
     <p>Puedes consultar su estado desde tu perfil o seguir navegando por la aplicación.</p>
 
     <div class="actions-inline mt-16">

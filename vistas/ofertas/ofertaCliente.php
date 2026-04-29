@@ -9,23 +9,12 @@ require_once __DIR__ . '/../../includes/ofertaDAO.php';
 require_once __DIR__ . '/../../includes/pedidoService.php';
 
 $user = require_login();
+$modoSeleccion = PedidoService::carritoTieneProductos();
 
-if (!$user) {
-    redirect('carrito.php');
-}
-
-// 🔹 Detectar si viene de pedido
-$pedido_id = $_POST['pedido_id'] ?? null;
-$modoSeleccion = $pedido_id !== null;
-
-// 🔹 Obtener productos del pedido
 $pedido_productos = [];
-
 if ($modoSeleccion) {
-    $productos = PedidoService::getProductosPedido($pedido_id);
-
-    foreach ($productos as $p) {
-        $pedido_productos[$p->getProductoId()] = $p->getCantidad();
+    foreach (PedidoService::getCarritoItems() as $producto_id => $item) {
+        $pedido_productos[(int)$producto_id] = (int)($item['cantidad'] ?? 0);
     }
 }
 
@@ -57,7 +46,6 @@ ob_start();
 
 <?php if ($modoSeleccion): ?>
     <form method="POST" action="../../scripts/ofertas/aplicarOfertas.php">
-        <input type="hidden" name="pedido_id" value="<?= $pedido_id ?>">
     <?php endif; ?>
 
     <div class="panel table-wrap">

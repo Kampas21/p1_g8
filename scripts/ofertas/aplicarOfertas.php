@@ -2,38 +2,34 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-session_start();
-
+require_once __DIR__ . '/../../includes/config.php';
+require_once __DIR__ . '/../../includes/application.php';
+require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/pedidoService.php';
 require_once __DIR__ . '/../../includes/ofertaDAO.php';
 require_once __DIR__ . '/../../includes/ProductoDAO.php';
-require_once __DIR__ . '/../../includes/ofertaEnPedidoDAO.php';
 
-$pedido_id = $_POST['pedido_id'] ?? null;
+$user = require_login();
+
 $ofertas_seleccionadas = $_POST['ofertas'] ?? [];
 
-if (!$pedido_id) {
-    die("Pedido no válido");
+if (!PedidoService::carritoTieneProductos()) {
+    header("Location: ../../vistas/pedidos/carrito.php");
+    exit;
 }
 
-
-$productos = PedidoService::getProductosPedido($pedido_id);
+PedidoService::limpiarOfertasCarrito();
 
 $pedido_productos = [];
 $precio_sin_descuento = 0;
 
-foreach ($productos as $p) {
-    $id = $p->getProductoId();
-    $cantidad = $p->getCantidad();
-    $precio = $p->getPrecio();
+foreach (PedidoService::getCarritoItems() as $id => $item) {
+    $cantidad = (int)($item['cantidad'] ?? 0);
+    $precio = (float)($item['precio_unitario'] ?? 0);
 
     $pedido_productos[$id] = $cantidad;
     $precio_sin_descuento += $precio * $cantidad;
 }
-
-
-PedidoService::limpiarOfertas($pedido_id);
-
 
 $errores_ofertas = [];
 
@@ -86,10 +82,9 @@ foreach ($ofertas_seleccionadas as $oferta_id) {
 
     $total_descuento += $descuento_total_oferta;
 
-
-    OfertaEnPedidoDAO::addOferta(
-        $pedido_id,
-        $oferta_id,
+    PedidoService::agregarOfertaAlCarrito(
+        (int)$oferta_id,
+        $oferta->getNombre(),
         $veces,
         $descuento_total_oferta
     );
@@ -100,13 +95,6 @@ foreach ($ofertas_seleccionadas as $oferta_id) {
         $pedido_productos[$id] -= $po->cantidad * $veces;
     }
 }
-
-
-PedidoService::actualizarTotales(
-    $pedido_id,
-    $precio_sin_descuento,
-    $total_descuento
-);
 
 
 $_SESSION['errores_ofertas'] = $errores_ofertas;

@@ -7,11 +7,15 @@ require_once __DIR__ . '/../../includes/pedidoService.php';
 
 class FormularioPago extends Formulario {
 
-    private $pedido_id;
+  private $usuario_id;
+  private $total_sin_descuentos;
+  private $total_descuento;
     private $total;
 
-    public function __construct(int $pedido_id, float $total) {
-        $this->pedido_id = $pedido_id;
+  public function __construct(int $usuario_id, float $total_sin_descuentos, float $total_descuento, float $total) {
+    $this->usuario_id = $usuario_id;
+    $this->total_sin_descuentos = $total_sin_descuentos;
+    $this->total_descuento = $total_descuento;
         $this->total = $total;
         parent::__construct('formPago', ['urlRedireccion' => 'confirmacion.php']);
     }
@@ -81,8 +85,11 @@ class FormularioPago extends Formulario {
         $metodo = $datos['metodo_pago'] ?? '';
 
         if ($metodo === 'camarero') {
-            \PedidoService::confirmarPedido($this->pedido_id, 'camarero', $this->total);
-            $_SESSION['ultimo_pedido_id'] = $this->pedido_id;
+        $pedido_id = \PedidoService::confirmarCarrito($this->usuario_id, 'camarero', $this->total_sin_descuentos, $this->total_descuento);
+        if (!$pedido_id) {
+          $this->errores['metodo_pago'] = 'No se ha podido confirmar el pedido.';
+          return;
+        }
             return;
         }
 
@@ -106,8 +113,11 @@ class FormularioPago extends Formulario {
             }
 
             if (count($this->errores) === 0) {
-                \PedidoService::confirmarPedido($this->pedido_id, 'tarjeta', $this->total);
-                $_SESSION['ultimo_pedido_id'] = $this->pedido_id;
+              $pedido_id = \PedidoService::confirmarCarrito($this->usuario_id, 'tarjeta', $this->total_sin_descuentos, $this->total_descuento);
+              if (!$pedido_id) {
+                $this->errores['metodo_pago'] = 'No se ha podido confirmar el pedido.';
+                return;
+              }
                 return;
             }
         }

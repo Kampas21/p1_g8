@@ -1,5 +1,8 @@
 <?php
 require_once __DIR__ . '/includes/config.php';
+require_once __DIR__ . '/includes/auth.php';
+
+$user = current_user();
 
 $tituloPagina = 'Inicio | Bistro FDI';
 ob_start();
@@ -30,6 +33,7 @@ ob_start();
         El personal del bistró gestiona pedidos y categorías.</li>
     </ul>
 
+    <?php if (!$user): ?>
     <section class="caja-acceso">
         <h3>Acceso</h3>
         <p>Entra o crea una cuenta para acceder.</p>
@@ -39,6 +43,7 @@ ob_start();
             <a href="<?= RUTA_APP ?>/vistas/usuarios/registro.php" class="boton-enlace">Registrarse</a>
         </div>
     </section>
+    <?php endif; ?>
 </article>
 
 <?php

@@ -1,6 +1,4 @@
 <?php
-session_start();
-
 require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/application.php';
 require_once __DIR__ . '/../../includes/auth.php';
@@ -16,66 +14,40 @@ require_once __DIR__ . '/../../includes/pedidoService.php';
 require_once __DIR__ . '/../../includes/ProductoDAO.php';
 
 $user = require_login();
-$usuario_id = (int)$user->getId();
-
-$pedido = PedidoService::getPedidoNuevo($usuario_id);
-
-if (!$pedido) {
+if (!PedidoService::carritoTieneTipo()) {
+  flash_set('info', 'No tienes carrito. Inicia un pedido para añadir productos.');
   redirect('elegirTipo.php');
 }
 
-$pedido_id = (int)$pedido->getId();
-
-$lineas = PedidoService::getProductosPedido($pedido_id);
-
-
-$total = 0;
-
-foreach ($lineas as $linea) {
-  $total += $linea->getPrecio() * $linea->getCantidad();
-}
-
-$total = round($total, 2);
-
-
-$descuento_total = 0;
-$ofertas_aplicadas = [];
-
-if (method_exists('PedidoService', 'getOfertasDePedido')) {
-  $ofertas_aplicadas = PedidoService::getOfertasDePedido($pedido_id);
-
-  foreach ($ofertas_aplicadas as $oferta) {
-    $descuento_total += $oferta->descuento_total ?? $oferta['descuento_total'];
-  }
-}
-
-$total_final = max(0, $total - $descuento_total);
+$lineas = PedidoService::getCarritoItems();
+$tipoPedido = PedidoService::getTipoCarrito();
+$total = PedidoService::calcularTotalCarritoSinDescuentos();
+$descuento_total = PedidoService::calcularDescuentoCarrito();
+$ofertas_aplicadas = PedidoService::getCarritoOfertas();
+$total_final = max(0, round($total - $descuento_total, 2));
 
 
 $formsActualizarHtml = [];
 $formsEliminarHtml = [];
 
-foreach ($lineas as $linea) {
-
-  $prod_id = (int)$linea->getProductoId();
+foreach ($lineas as $prod_id => $item) {
+  $prod_id = (int)$prod_id;
 
   $formUpdate = new \es\ucm\fdi\aw\Formulario\FormularioActualizarLineaPedido(
-    $pedido_id,
     $prod_id,
-    (int)$linea->getCantidad()
+    (int)($item['cantidad'] ?? 1)
   );
 
   $formsActualizarHtml[$prod_id] = $formUpdate->gestiona();
 
   $formRemove = new \es\ucm\fdi\aw\Formulario\FormularioEliminarLineaPedido(
-    $pedido_id,
     $prod_id
   );
 
   $formsEliminarHtml[$prod_id] = $formRemove->gestiona();
 }
 
-$formCancelar = new \es\ucm\fdi\aw\Formulario\FormularioCancelarPedido($pedido_id);
+$formCancelar = new \es\ucm\fdi\aw\Formulario\FormularioCancelarPedido();
 $htmlFormCancelar = $formCancelar->gestiona();
 
 
@@ -106,7 +78,7 @@ ob_start();
 
     <h2>Mi carrito
       <span class="text-muted-italic">
-        — pedido <?= e($pedido->getTipo() === 'local' ? '🍽️ en local' : '🥡 para llevar') ?>
+        — pedido <?= e($tipoPedido === 'local' ? '🍽️ en local' : '🥡 para llevar') ?>
       </span>
     </h2>
 
@@ -116,6 +88,8 @@ ob_start();
       <div class="actions-inline">
 
         <a href="catalogo.php" class="btn">← Seguir comprando</a>
+
+        <?= $htmlFormCancelar ?>
 
       </div>
 
@@ -132,11 +106,11 @@ ob_start();
               <li>
 
                 <strong>
-                  <?= e($o->nombre ?? $o['nombre']) ?>
+                  <?= e($o['nombre'] ?? '') ?>
                 </strong>
 
-                — <?= $o->veces_aplicada ?? $o['veces_aplicada'] ?>x
-                — -<?= $o->descuento_total ?? $o['descuento_total'] ?> €
+                — <?= (int)($o['veces_aplicada'] ?? 0) ?>x
+                — -<?= round((float)($o['descuento_total'] ?? 0), 2) ?> €
 
 
                 <div style="margin-left:15px; font-size: 0.9em; color:#666;">
@@ -144,7 +118,7 @@ ob_start();
                   <?php
 
                   $productos_oferta = ProductoDAO::getProductosDeOferta(
-                    $o->oferta_id
+                    $o['oferta_id']
                   );
 
                   foreach ($productos_oferta as $po):
@@ -180,27 +154,30 @@ ob_start();
 
           <tbody>
 
-            <?php foreach ($lineas as $linea):
-              $prod_id = (int)$linea->getProductoId();
+            <?php foreach ($lineas as $prod_id => $item):
+              $producto = ProductoDAO::getById((int)$prod_id);
+              if (!$producto) { continue; }
+              $cantidad = (int)($item['cantidad'] ?? 1);
+              $precio = (float)($item['precio_unitario'] ?? 0);
             ?>
 
               <tr>
 
                 <td>
-                  <img src="<?= e(RUTA_APP . '/' . $linea->getImagen()) ?>" class="img-thumbnail" alt="<?= e($linea->getNombre()) ?>">
+                  <img src="<?= e(RUTA_APP . '/' . $producto->getImagen()) ?>" class="img-thumbnail" alt="<?= e($producto->getNombre()) ?>">
                 </td>
 
                 <td>
-                  <a href="<?= RUTA_APP ?>/vistas/productos/detalle_producto.php?id=<?= $linea->getProductoId() ?>" class="click">
-                    <?= e($linea->getNombre()) ?>
+                  <a href="<?= RUTA_APP ?>/vistas/productos/detalle_producto.php?id=<?= $producto->getId() ?>" class="click">
+                    <?= e($producto->getNombre()) ?>
                   </a>
                 </td>
 
-                <td class="col-precio"><?= e($linea->getPrecio()) ?> €</td>
+                <td class="col-precio"><?= e((string)$precio) ?> €</td>
 
                 <td><?= $formsActualizarHtml[$prod_id] ?></td>
 
-                <td class="col-precio"><?= round($linea->getPrecio() * $linea->getCantidad(), 2) ?> €</td>
+                <td class="col-precio"><?= round($precio * $cantidad, 2) ?> €</td>
 
               </tr>
 
@@ -237,12 +214,11 @@ ob_start();
 
         <a href="catalogo.php" class="btn">← Seguir comprando</a>
 
-        <form action="../ofertas/ofertaCliente.php" method="POST">
-          <input type="hidden" name="pedido_id" value="<?= $pedido_id ?>">
-          <button class="btn-nuevo">Ofertas</button>
-        </form>
+        <a href="../ofertas/ofertaCliente.php" class="btn-nuevo">Ofertas</a>
 
         <a href="pago.php" class="btn primary">Confirmar</a>
+
+        <?= $htmlFormCancelar ?>
 
       </div>
 

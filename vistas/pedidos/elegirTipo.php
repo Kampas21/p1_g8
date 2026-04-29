@@ -9,21 +9,16 @@ require_once __DIR__ . '/../../includes/Formulario/FormularioElegirTipo.php';
 require_once __DIR__ . '/../../includes/pedidoService.php';
 
 $user = require_login();
-$usuario_id = (int)$user->getId();
+if (PedidoService::carritoTieneProductos()) {
+  redirect('carrito.php');
+}
 
-// Si ya tiene un carrito/pedido activo, lo mandamos al carrito
-$pedidoActivo = PedidoService::getPedidoNuevo($usuario_id);
-if ($pedidoActivo) {
-    // comprobar si tiene productos
-    $lineas = PedidoService::getProductosPedido($pedidoActivo->getId());
-
-    if (!empty($lineas)) {
-        redirect('carrito.php');
-    }
+if (PedidoService::carritoTieneTipo()) {
+  redirect('catalogo.php');
 }
 
 // Instanciamos el nuevo formulario
-$form = new \es\ucm\fdi\aw\Formulario\FormularioElegirTipo($usuario_id);
+$form = new \es\ucm\fdi\aw\Formulario\FormularioElegirTipo((int)$user->getId());
 $htmlForm = $form->gestiona();
 
 $tituloPagina = 'Elegir tipo de pedido | Bistro FDI';

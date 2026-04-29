@@ -9,12 +9,10 @@ require_once __DIR__ . '/../../includes/pedidoService.php';
 
 class FormularioAddCarrito extends Formulario {
 
-    private $pedido_id;
     private $producto_id;
     private $categoria_id;
 
-    public function __construct(int $pedido_id, int $producto_id, int $categoria_id) {
-        $this->pedido_id = $pedido_id;
+    public function __construct(int $producto_id, int $categoria_id) {
         $this->producto_id = $producto_id;
         $this->categoria_id = $categoria_id;
         
@@ -42,7 +40,7 @@ class FormularioAddCarrito extends Formulario {
             $producto = \ProductoDAO::getById($prod_id);
             if ($producto) {
                 $precio = $producto->getPrecioFinal();
-                \PedidoService::addProducto($this->pedido_id, $prod_id, $precio);
+                \PedidoService::agregarProductoAlCarrito($prod_id, $precio);
                 flash_set('success', 'Producto añadido al carrito.');
             } else {
                 return ['general' => 'El producto no existe.'];

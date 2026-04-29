@@ -9,6 +9,8 @@ require_once __DIR__ . '/../../includes/pedidoService.php';
 
 $user = require_login();
 $usuario_id = (int)$user->getId();
+$esGerente = user_has_role($user, 'gerente');
+$usuarioIdContexto = isset($_GET['usuario_id']) ? (int)$_GET['usuario_id'] : 0;
 
 $pedido_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 if (!$pedido_id) {
@@ -17,7 +19,7 @@ if (!$pedido_id) {
 
 $pedido = PedidoService::getPedidoById($pedido_id);
 
-if (!$pedido || (int)$pedido->getUsuario_id() !== $usuario_id) {
+if (!$pedido || (!$esGerente && (int)$pedido->getUsuario_id() !== $usuario_id)) {
     http_response_code(403);
     
     $tituloPagina = 'Acceso denegado | Bistro FDI';
@@ -64,7 +66,7 @@ ob_start();
 
   <div class="panel">
     <div class="actions-inline mb-12">
-      <a href="listarPedidosCliente.php" class="btn">← Mis pedidos</a>
+      <a href="listarPedidosCliente.php<?= $esGerente && $usuarioIdContexto > 0 ? '?usuario_id=' . $usuarioIdContexto : '' ?>" class="btn">← Volver</a>
     </div>
 
     <h2>Pedido #<?= e($pedido->getNumero_pedido()) ?></h2>
