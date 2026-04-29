@@ -53,9 +53,15 @@ class Oferta
 
     public function estaActiva()
     {
-        $ahora = date('Y-m-d H:i');
+        $tz = new DateTimeZone('Europe/Madrid');
 
-        return $ahora >= $this->fecha_inicio && $ahora <= $this->fecha_fin;
+        $ahora = new DateTime('now', $tz);
+        $inicio = new DateTime($this->fecha_inicio, $tz);
+        $fin = new DateTime($this->fecha_fin, $tz);
+
+        //var_dump($this->fecha_inicio, $this->fecha_fin, $ahora, $inicio, $fin);
+
+        return $ahora >= $inicio && $ahora <= $fin;
     }
 
     public function aplicarDescuento(float $precioOriginal)
