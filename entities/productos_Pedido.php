@@ -10,10 +10,12 @@ class Productos_Pedido {
     private $cantidad;
     private $estado;
     private $imagen;   
-    private $se_cocina; 
-         
+    private $se_cocina;
+    private $es_recompensa;
+    private $bistrocoins_unitarios;
+    
 
-    public function __construct($id, $nombre, $pedido_id, $producto_id, $precio, $cantidad, $estado, $imagen, $se_cocina = 1) {
+    public function __construct($id, $nombre, $pedido_id, $producto_id, $precio, $cantidad, $estado, $imagen = null, $se_cocina = 1, $es_recompensa = 0, $bistrocoins_unitarios = 0) {
         $this->id = $id;
         $this->nombre = $nombre;
         $this->pedido_id = $pedido_id;
@@ -23,6 +25,8 @@ class Productos_Pedido {
         $this->estado = $estado;
         $this->imagen = $imagen;
         $this->se_cocina = $se_cocina;
+        $this->es_recompensa = (int)$es_recompensa;
+        $this->bistrocoins_unitarios = (int)$bistrocoins_unitarios;
     }
 
     public function getSeCocina() {
@@ -59,5 +63,17 @@ class Productos_Pedido {
 
     public function getImagen(){
         return $this->imagen;
+    }
+
+    public function esRecompensa(): bool { 
+        return $this->es_recompensa === 1; 
+    }
+
+    public function getBistrocoinsUnitarios(): int { 
+        return $this->bistrocoins_unitarios; 
+    }
+
+    public function getBistrocoinsTotales(): int { 
+        return $this->bistrocoins_unitarios * $this->cantidad; 
     }
 }

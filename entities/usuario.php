@@ -14,10 +14,12 @@ class Usuario {
     private $avatar_url;
     private $activo;
     private $updated_at;
+    private $bistrocoins;
+
 
     public function __construct(int $id, string $username, string $email, string $nombre, string $apellidos, 
                                 string $password_hash, string $rol, string $avatar_tipo, ?string $avatar_valor, 
-                                string $avatar_url, int $activo, string $updated_at) {
+                                string $avatar_url, int $activo, string $updated_at, int $bistrocoins = 0) {
         $this->id = $id;
         $this->username = $username;
         $this->email = $email;
@@ -30,6 +32,8 @@ class Usuario {
         $this->avatar_url = $avatar_url;
         $this->activo = $activo;
         $this->updated_at = $updated_at;
+        $this->bistrocoins = $bistrocoins;
+
     }
 
     // Getters
