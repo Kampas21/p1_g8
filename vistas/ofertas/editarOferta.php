@@ -1,72 +1,42 @@
 <?php
+
+require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/OfertaDAO.php';
+require_once __DIR__ . '/../../includes/Formulario/FormularioOferta.php';
+
+use es\ucm\fdi\aw\Formulario\FormularioOferta;
+
+$user = current_user();
+if (!$user || !user_has_role($user, 'gerente')) {
+    http_response_code(403);
+    die('Acceso denegado');
+}
+
+$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+if (!$id) {
+    http_response_code(400);
+    die('ID inválido');
+}
+
+$oferta = OfertaDAO::getById($id);
+if (!$oferta) {
+    http_response_code(404);
+    die('Oferta no encontrada');
+}
+
+$form = new FormularioOferta($oferta);
+$htmlForm = $form->gestiona();
+
 $tituloPagina = 'Editar oferta';
 $rutaCSS = '../../CSS/estilo.css';
 
 ob_start();
-
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-require_once __DIR__ . '/../../includes/ofertaDAO.php';
-require_once __DIR__ . '/../../includes/OfertaProductoDAO.php';
-require_once __DIR__ . '/../../includes/config.php';
-
-$id = $_GET['id'] ?? null;
-
-$oferta = OfertaDAO::getById($id);
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    $nombre = trim($_POST['nombre'] ?? '');
-    $descripcion = trim($_POST['descripcion'] ?? '');
-    $fecha_inicio = $_POST['fecha_inicio'] ?? '';
-    $fecha_fin = $_POST['fecha_fin'] ?? '';
-    $descuento = $_POST['descuento'] ?? '';
-
-    //$productos = $_POST['productos'] ?? [];
-    $cantidades = $_POST['cantidades'] ?? [];
-
-    $descuento = (float) $descuento;
-
-    if ($descuento < 0 || $descuento > 100) {
-        $error = "El descuento debe estar entre 0 y 100.";
-    } elseif (
-        $nombre !== '' &&
-        $fecha_inicio !== '' &&
-        $fecha_fin !== '' &&
-        $descuento !== ''
-    ) {
-
-        OfertaDAO::editarOferta(
-            $id,
-            $nombre,
-            $descripcion,
-            $fecha_inicio,
-            $fecha_fin,
-            $descuento
-        );
-
-        foreach ($cantidades as $producto_id => $cantidad) {
-
-            $cantidad = (int)$cantidad;
-
-            if ($cantidad > 0) {
-                OfertaProductoDAO::addProducto($id, $producto_id, $cantidad);
-            }
-            else{
-                OfertaProductoDAO::removeProducto($id, $producto_id);
-            }
-        }
-
-        header("Location: " . RUTA_APP . "/vistas/ofertas/listarOfertas.php");
-        exit();
-    } else {
-        $error = "Todos los campos obligatorios deben completarse.";
-    }
-}
-
-require __DIR__ . '/ofertaForm.php';
-
+?>
+<div class="panel">
+    <h1>Editar oferta</h1>
+    <?= $htmlForm ?>
+    <p><a class="btn-volver" href="listarOfertas.php">← Volver</a></p>
+</div>
+<?php
 $contenidoPrincipal = ob_get_clean();
 require __DIR__ . '/../../includes/plantilla.php';
