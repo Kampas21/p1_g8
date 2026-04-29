@@ -5,9 +5,9 @@ error_reporting(E_ALL);
 session_start();
 
 require_once __DIR__ . '/../../includes/pedidoService.php';
-require_once __DIR__ . '/../../includes/ofertaService.php';
+require_once __DIR__ . '/../../includes/ofertaDAO.php';
 require_once __DIR__ . '/../../includes/ProductoDAO.php';
-require_once __DIR__ . '/../../includes/ofertaEnPedidoService.php';
+require_once __DIR__ . '/../../includes/ofertaEnPedidoDAO.php';
 
 $pedido_id = $_POST['pedido_id'] ?? null;
 $ofertas_seleccionadas = $_POST['ofertas'] ?? [];
@@ -42,7 +42,7 @@ $total_descuento = 0;
 
 foreach ($ofertas_seleccionadas as $oferta_id) {
 
-    $oferta = OfertaService::getById($oferta_id);
+    $oferta = OfertaDAO::getById($oferta_id);
     $productos_oferta = ProductoDAO::getProductosDeOferta($oferta_id);
 
     if (!$oferta) {
@@ -87,7 +87,7 @@ foreach ($ofertas_seleccionadas as $oferta_id) {
     $total_descuento += $descuento_total_oferta;
 
 
-    OfertaEnPedidoService::addOferta(
+    OfertaEnPedidoDAO::addOferta(
         $pedido_id,
         $oferta_id,
         $veces,

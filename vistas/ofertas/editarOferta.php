@@ -8,13 +8,13 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once __DIR__ . '/../../includes/ofertaService.php';
+require_once __DIR__ . '/../../includes/ofertaDAO.php';
 require_once __DIR__ . '/../../includes/OfertaProductoDAO.php';
 require_once __DIR__ . '/../../includes/config.php';
 
 $id = $_GET['id'] ?? null;
 
-$oferta = OfertaService::getById($id);
+$oferta = OfertaDAO::getById($id);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $descuento !== ''
     ) {
 
-        OfertaService::editarOferta(
+        OfertaDAO::editarOferta(
             $id,
             $nombre,
             $descripcion,

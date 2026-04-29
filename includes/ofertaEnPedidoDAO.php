@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../includes/application.php';
 require_once __DIR__ . '/../entities/ofertaEnPedido.php';
 
-class OfertaEnPedidoService
+class OfertaEnPedidoDAO
 {
     public static function addOferta($pedido_id, $oferta_id, $veces, $descuento_total)
     {
