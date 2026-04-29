@@ -50,7 +50,6 @@ class PedidoService
     public static function getTipoCarrito(): ?string
     {
         self::asegurarCarritoSesion();
-
         return $_SESSION['carrito']['tipo'] ?? null;
     }
 
@@ -62,7 +61,6 @@ class PedidoService
     public static function getCarritoItems(): array
     {
         self::asegurarCarritoSesion();
-
         return $_SESSION['carrito']['items'];
     }
 
@@ -121,7 +119,6 @@ class PedidoService
     public static function getCarritoOfertas(): array
     {
         self::asegurarCarritoSesion();
-
         return $_SESSION['carrito']['ofertas'];
     }
 
@@ -187,7 +184,15 @@ class PedidoService
 
         try {
             $numero = PedidoDAO::obtenerSiguienteNumeroDelDia();
-            $pedido_id = PedidoDAO::crearPedidoFormal($numero, $estado, $tipo, $metodo_pago, $usuario_id, $total_sin_descuentos, $total_descuento);
+            $pedido_id = PedidoDAO::crearPedidoFormal(
+                $numero,
+                $estado,
+                $tipo,
+                $metodo_pago,
+                $usuario_id,
+                $total_sin_descuentos,
+                $total_descuento
+            );
 
             foreach ($lineas as $producto_id => $item) {
                 $producto = ProductoDAO::getById((int) $producto_id);
@@ -240,18 +245,21 @@ class PedidoService
 
     public static function addProducto($pedido_id, $producto_id, $precio_unitario, $esRecompensa = 0, $bistrocoinsUnitarios = 0)
     {
-<<<<<<< HEAD
         global $conn;
-        $esRecompensa = (int)$esRecompensa;
-        $bistrocoinsUnitarios = (int)$bistrocoinsUnitarios;
+
+        $esRecompensa = (int) $esRecompensa;
+        $bistrocoinsUnitarios = (int) $bistrocoinsUnitarios;
+
         $stmt = $conn->prepare(
-            "INSERT INTO productos_en_pedido (pedido_id, producto_id, precio_unitario, cantidad, es_recompensa, bistrocoins_unitarios)
+            "INSERT INTO productos_en_pedido 
+                (pedido_id, producto_id, precio_unitario, cantidad, es_recompensa, bistrocoins_unitarios)
              VALUES (?, ?, ?, 1, ?, ?)
              ON DUPLICATE KEY UPDATE cantidad = cantidad + 1"
         );
         $stmt->bind_param("iidii", $pedido_id, $producto_id, $precio_unitario, $esRecompensa, $bistrocoinsUnitarios);
-        return $stmt->execute();
+        $ok = $stmt->execute();
         $stmt->close();
+
         return $ok;
     }
 
@@ -272,79 +280,70 @@ class PedidoService
 
         $ok = self::addProducto(
             $pedido_id,
-            (int)$recompensa->getProductoId(),
+            (int) $recompensa->getProductoId(),
             0.0,
             1,
-            (int)$recompensa->getBistrocoins()
+            (int) $recompensa->getBistrocoins()
         );
 
         return [$ok, $ok ? 'Recompensa añadida al pedido.' : 'No se pudo añadir la recompensa al pedido.'];
     }
 
-    /**
-     * Actualiza la cantidad de un producto en el carrito.
-     */
     public static function updateCantidad($pedido_id, $producto_id, $cantidad)
     {
         global $conn;
+
         $stmt = $conn->prepare(
-            "UPDATE productos_en_pedido SET cantidad = ?
+            "UPDATE productos_en_pedido 
+             SET cantidad = ?
              WHERE pedido_id = ? AND producto_id = ? AND es_recompensa = 0"
         );
         $stmt->bind_param("iii", $cantidad, $pedido_id, $producto_id);
         $ok = $stmt->execute();
         $stmt->close();
+
         return $ok;
     }
 
-     public static function updateCantidadByLinea(int $linea_id, int $cantidad)
+    public static function updateCantidadByLinea(int $linea_id, int $cantidad)
     {
         global $conn;
+
         $stmt = $conn->prepare("UPDATE productos_en_pedido SET cantidad = ? WHERE id = ?");
         $stmt->bind_param("ii", $cantidad, $linea_id);
         $ok = $stmt->execute();
         $stmt->close();
-        return $ok;
-=======
-        return PedidoDAO::addProducto($pedido_id, $producto_id, $precio_unitario);
-    }
 
-    public static function updateCantidad($pedido_id, $producto_id, $cantidad)
-    {
-        return PedidoDAO::updateCantidad($pedido_id, $producto_id, $cantidad);
->>>>>>> a08cda4facb8a71f404cd8c2349058b62f64c7d8
+        return $ok;
     }
 
     public static function removeProducto($pedido_id, $producto_id)
     {
-<<<<<<< HEAD
         global $conn;
+
         $stmt = $conn->prepare(
-            "DELETE FROM productos_en_pedido WHERE pedido_id = ? AND producto_id = ? AND es_recompensa = 0"
+            "DELETE FROM productos_en_pedido 
+             WHERE pedido_id = ? AND producto_id = ? AND es_recompensa = 0"
         );
         $stmt->bind_param("ii", $pedido_id, $producto_id);
         $ok = $stmt->execute();
         $stmt->close();
+
         return $ok;
     }
- 
-     public static function removeProductoByLinea(int $linea_id)
+
+    public static function removeProductoByLinea(int $linea_id)
     {
         global $conn;
+
         $stmt = $conn->prepare("DELETE FROM productos_en_pedido WHERE id = ?");
         $stmt->bind_param("i", $linea_id);
         $ok = $stmt->execute();
         $stmt->close();
+
         return $ok;
     }
-    /**
-     * Cancela y elimina el pedido y sus líneas.
-     */
-=======
-        return PedidoDAO::removeProducto($pedido_id, $producto_id);
-    }
 
->>>>>>> a08cda4facb8a71f404cd8c2349058b62f64c7d8
     public static function cancelarPedido($pedido_id)
     {
         return PedidoDAO::cancelarPedido($pedido_id);
@@ -352,62 +351,77 @@ class PedidoService
 
     public static function confirmarPedido($pedido_id, $metodo_pago, $total)
     {
-<<<<<<< HEAD
         global $conn;
 
-        // Calcular el siguiente número de pedido del día
+        $estadoOriginal = self::getEstadoActualPedido((int) $pedido_id) ?? 'nuevo';
+
         $stmtNumero = $conn->prepare("
-            SELECT COALESCE(MAX(numero_pedido), 0) + 1 AS siguiente 
-            FROM pedidos 
+            SELECT COALESCE(MAX(numero_pedido), 0) + 1 AS siguiente
+            FROM pedidos
             WHERE DATE(fecha_hora) = CURDATE() AND estado != 'nuevo'
         ");
         $stmtNumero->execute();
         $rs = $stmtNumero->get_result();
-        $numero = $rs->fetch_assoc()['siguiente'];
+        $numero = (int) ($rs->fetch_assoc()['siguiente'] ?? 1);
         $rs->free();
         $stmtNumero->close();
 
-
         $estado = ($metodo_pago === 'tarjeta') ? 'en_preparacion' : 'recibido';
 
-        // Si el pedido no contiene ningún producto que se cocine, lo saltamos directamente
         $stmtCheck = $conn->prepare(
-            "SELECT COUNT(*) AS cnt FROM productos_en_pedido pep JOIN productos p ON p.id = pep.producto_id WHERE pep.pedido_id = ? AND p.se_cocina = 1"
+            "SELECT COUNT(*) AS cnt
+             FROM productos_en_pedido pep
+             JOIN productos p ON p.id = pep.producto_id
+             WHERE pep.pedido_id = ? AND p.se_cocina = 1"
         );
         $stmtCheck->bind_param("i", $pedido_id);
         $stmtCheck->execute();
         $rsCheck = $stmtCheck->get_result();
         $rowCheck = $rsCheck->fetch_assoc();
+        $rsCheck->free();
         $stmtCheck->close();
 
-        $terminarPedido = (($rowCheck['cnt'] ?? 0) == 0);
+        $terminarPedido = ((int) ($rowCheck['cnt'] ?? 0) === 0);
 
         if ($terminarPedido) {
-            // No hay nada que cocinar → el pedido queda listo para entregar
             $estado = 'terminado';
         }
 
         $stmt = $conn->prepare(
-            "UPDATE pedidos 
-            SET estado = ?, numero_pedido = ?, metodo_pago = ?, fecha_hora = CURRENT_TIMESTAMP 
-            WHERE id = ?"
+            "UPDATE pedidos
+             SET estado = ?, numero_pedido = ?, metodo_pago = ?, fecha_hora = CURRENT_TIMESTAMP
+             WHERE id = ?"
         );
         $stmt->bind_param("sisi", $estado, $numero, $metodo_pago, $pedido_id);
         $ok = $stmt->execute();
         $stmt->close();
 
-        if ($ok && $terminarPedido) {
+        if (!$ok) {
+            return false;
+        }
+
+        if ($metodo_pago === 'tarjeta') {
+            $okCoins = self::liquidarBistroCoinsSiProcede((int) $pedido_id);
+
+            if (!$okCoins) {
+                $stmtRollback = $conn->prepare(
+                    "UPDATE pedidos
+                     SET estado = ?, numero_pedido = NULL, metodo_pago = NULL
+                     WHERE id = ?"
+                );
+                $stmtRollback->bind_param("si", $estadoOriginal, $pedido_id);
+                $stmtRollback->execute();
+                $stmtRollback->close();
+
+                return false;
+            }
+        }
+
+        if ($terminarPedido) {
             self::terminarPedidoParaEntrega($pedido_id);
         }
 
-        if ($ok && $metodo_pago === 'tarjeta') {
-            self::liquidarBistroCoinsSiProcede($pedido_id);
-        }
-
-        return $ok;
-=======
-        return PedidoDAO::confirmarPedido($pedido_id, $metodo_pago, $total);
->>>>>>> a08cda4facb8a71f404cd8c2349058b62f64c7d8
+        return true;
     }
 
     public static function getPedidoById($id)
@@ -420,31 +434,64 @@ class PedidoService
         return PedidoDAO::getPedidosDeUsuario($usuario_id);
     }
 
-    public static function cambiarEstado(int $pedido_id, string $estado_nuevo): bool
+    private static function getEstadoActualPedido(int $pedido_id): ?string
     {
-<<<<<<< HEAD
         global $conn;
+
+        $stmt = $conn->prepare("SELECT estado FROM pedidos WHERE id = ? LIMIT 1");
+        $stmt->bind_param("i", $pedido_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $result->free();
+        $stmt->close();
+
+        return $row['estado'] ?? null;
+    }
+
+    private static function updateEstadoSimple(int $pedido_id, string $estado_nuevo): bool
+    {
+        global $conn;
+
         $stmt = $conn->prepare("UPDATE pedidos SET estado = ? WHERE id = ?");
         $stmt->bind_param("si", $estado_nuevo, $pedido_id);
         $ok = $stmt->execute();
         $stmt->close();
 
-        if ($ok && $estado_nuevo === 'en_preparacion') {
-            $ok = self::liquidarBistroCoinsSiProcede($pedido_id);
+        return $ok;
+    }
+
+    public static function cambiarEstado(int $pedido_id, string $estado_nuevo): bool
+    {
+        $estadoAnterior = self::getEstadoActualPedido($pedido_id);
+
+        if ($estadoAnterior === null) {
+            return false;
         }
 
-        return $ok;
-=======
-        return PedidoDAO::cambiarEstado($pedido_id, $estado_nuevo);
->>>>>>> a08cda4facb8a71f404cd8c2349058b62f64c7d8
+        $ok = self::updateEstadoSimple($pedido_id, $estado_nuevo);
+        if (!$ok) {
+            return false;
+        }
+
+        if ($estado_nuevo === 'en_preparacion') {
+            $okCoins = self::liquidarBistroCoinsSiProcede($pedido_id);
+
+            if (!$okCoins) {
+                self::updateEstadoSimple($pedido_id, $estadoAnterior);
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static function getProductosPedido($pedido_id)
     {
-<<<<<<< HEAD
         global $conn;
+
         $stmt = $conn->prepare(
-            "SELECT pep.*, p.nombre, p.imagen
+            "SELECT pep.*, p.nombre, p.imagen, p.se_cocina
              FROM productos_en_pedido pep
              JOIN productos p ON p.id = pep.producto_id
              WHERE pep.pedido_id = ?
@@ -452,7 +499,6 @@ class PedidoService
         );
         $stmt->bind_param("i", $pedido_id);
         $stmt->execute();
-
 
         $result = $stmt->get_result();
         $productos = [];
@@ -477,9 +523,6 @@ class PedidoService
         $stmt->close();
 
         return $productos;
-=======
-        return PedidoDAO::getProductosPedido($pedido_id);
->>>>>>> a08cda4facb8a71f404cd8c2349058b62f64c7d8
     }
 
     public static function getPedidosPorEstado(string $estado): array
@@ -515,16 +558,7 @@ class PedidoService
 
     public static function asignarCocineroYEstado($pedido_id, $cocinero_id, $estado)
     {
-<<<<<<< HEAD
-        global $conn;
-        $stmt = $conn->prepare("UPDATE pedidos SET cocinero_id = ?, estado = ? WHERE id = ?");
-        $stmt->bind_param("isi", $cocinero_id, $estado, $pedido_id);
-        $ok = $stmt->execute();
-        $stmt->close();
-        return $ok;
-=======
         return PedidoDAO::asignarCocineroYEstado($pedido_id, $cocinero_id, $estado);
->>>>>>> a08cda4facb8a71f404cd8c2349058b62f64c7d8
     }
 
     public static function getPedidosPendientesGerente()
@@ -534,18 +568,19 @@ class PedidoService
 
     public static function getPedidosActivosByUsuario(int $usuario_id): array
     {
-<<<<<<< HEAD
         global $conn;
-        // Editamos la query para calcular el 'total' usando las columnas existentes
+
         $sql = "
-            SELECT numero_pedido, estado, fecha_hora, total
+            SELECT id, numero_pedido, estado, fecha_hora, total
             FROM pedidos
             WHERE usuario_id = ?
-               AND estado IN ('en_preparacion', 'cocinando', 'listo_cocina', 'terminado')
+              AND estado IN ('en_preparacion', 'cocinando', 'listo_cocina', 'terminado')
             ORDER BY fecha_hora DESC
         ";
         $stmt = $conn->prepare($sql);
-        if (!$stmt) return [];
+        if (!$stmt) {
+            return [];
+        }
 
         $stmt->bind_param("i", $usuario_id);
         $stmt->execute();
@@ -553,32 +588,31 @@ class PedidoService
 
         $pedidos = [];
         while ($row = $result->fetch_assoc()) {
-            $row['lineas'] = self::getResumenLineasPedido((int)$row['id']);
+            $row['lineas'] = self::getResumenLineasPedido((int) $row['id']);
             $pedidos[] = $row;
         }
 
         $result->free();
-
         $stmt->close();
+
         return $pedidos;
-=======
-        return PedidoDAO::getPedidosActivosByUsuario($usuario_id);
->>>>>>> a08cda4facb8a71f404cd8c2349058b62f64c7d8
     }
 
     public static function getPedidosHistoricoByUsuario(int $usuario_id): array
     {
-<<<<<<< HEAD
         global $conn;
+
         $sql = "
-            SELECT numero_pedido, fecha_hora, tipo, total, estado, bistrocoins_generados, bistrocoins_gastados
+            SELECT id, numero_pedido, fecha_hora, tipo, total, estado, bistrocoins_generados, bistrocoins_gastados
             FROM pedidos
             WHERE usuario_id = ? AND estado != 'nuevo'
             ORDER BY fecha_hora DESC
             LIMIT 15
         ";
         $stmt = $conn->prepare($sql);
-        if (!$stmt) return [];
+        if (!$stmt) {
+            return [];
+        }
 
         $stmt->bind_param("i", $usuario_id);
         $stmt->execute();
@@ -586,45 +620,42 @@ class PedidoService
 
         $pedidos = [];
         while ($row = $result->fetch_assoc()) {
-            $row['lineas'] = self::getResumenLineasPedido((int)$row['id']);
+            $row['lineas'] = self::getResumenLineasPedido((int) $row['id']);
             $pedidos[] = $row;
         }
 
         $result->free();
-
         $stmt->close();
+
         return $pedidos;
     }
 
-     public static function getResumenLineasPedido(int $pedido_id): array
+    public static function getResumenLineasPedido(int $pedido_id): array
     {
         global $conn;
+
         $sql = "SELECT p.nombre, pep.cantidad, pep.es_recompensa
                 FROM productos_en_pedido pep
                 JOIN productos p ON p.id = pep.producto_id
                 WHERE pep.pedido_id = ?
                 ORDER BY pep.es_recompensa ASC, p.nombre ASC";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param('i', $pedido_id);
+        $stmt->bind_param("i", $pedido_id);
         $stmt->execute();
         $result = $stmt->get_result();
+
         $lineas = [];
         while ($row = $result->fetch_assoc()) {
             $lineas[] = $row;
         }
+
         $result->free();
         $stmt->close();
+
         return $lineas;
     }
 
-
-   public static function actualizarTotales($pedido_id, $total_sin_descuentos, $total_descuento)
-=======
-        return PedidoDAO::getPedidosHistoricoByUsuario($usuario_id);
-    }
-
     public static function actualizarTotales($pedido_id, $total_sin_descuentos, $total_descuento)
->>>>>>> a08cda4facb8a71f404cd8c2349058b62f64c7d8
     {
         return PedidoDAO::actualizarTotales($pedido_id, $total_sin_descuentos, $total_descuento);
     }
@@ -647,21 +678,28 @@ class PedidoService
     public static function getBistrocoinsGastadosPedido(int $pedido_id): int
     {
         global $conn;
-        $stmt = $conn->prepare("SELECT COALESCE(SUM(cantidad * bistrocoins_unitarios), 0) AS total FROM productos_en_pedido WHERE pedido_id = ? AND es_recompensa = 1");
-        $stmt->bind_param('i', $pedido_id);
+
+        $stmt = $conn->prepare(
+            "SELECT COALESCE(SUM(cantidad * bistrocoins_unitarios), 0) AS total
+             FROM productos_en_pedido
+             WHERE pedido_id = ? AND es_recompensa = 1"
+        );
+        $stmt->bind_param("i", $pedido_id);
         $stmt->execute();
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
         $result->free();
         $stmt->close();
-        return (int)($row['total'] ?? 0);
+
+        return (int) ($row['total'] ?? 0);
     }
 
     public static function liquidarBistroCoinsSiProcede(int $pedido_id): bool
     {
         global $conn;
+
         $stmt = $conn->prepare("SELECT usuario_id, total, bistrocoins_liquidados FROM pedidos WHERE id = ? LIMIT 1");
-        $stmt->bind_param('i', $pedido_id);
+        $stmt->bind_param("i", $pedido_id);
         $stmt->execute();
         $result = $stmt->get_result();
         $pedido = $result->fetch_assoc();
@@ -671,13 +709,14 @@ class PedidoService
         if (!$pedido) {
             return false;
         }
-        if ((int)$pedido['bistrocoins_liquidados'] === 1) {
+
+        if ((int) $pedido['bistrocoins_liquidados'] === 1) {
             return true;
         }
 
-        $usuarioId = (int)$pedido['usuario_id'];
+        $usuarioId = (int) $pedido['usuario_id'];
         $gastados = self::getBistrocoinsGastadosPedido($pedido_id);
-        $generados = (int)floor(max(0, (float)$pedido['total']));
+        $generados = (int) floor(max(0, (float) $pedido['total']));
         $saldo = UsuarioDAO::getBistrocoinsByUserId($usuarioId);
 
         if ($saldo < $gastados) {
@@ -687,20 +726,25 @@ class PedidoService
         $nuevoSaldo = $saldo - $gastados + $generados;
 
         $conn->begin_transaction();
+
         try {
             $stmtUser = $conn->prepare("UPDATE usuarios SET bistrocoins = ?, updated_at = NOW() WHERE id = ?");
-            $stmtUser->bind_param('ii', $nuevoSaldo, $usuarioId);
+            $stmtUser->bind_param("ii", $nuevoSaldo, $usuarioId);
             $stmtUser->execute();
             $stmtUser->close();
 
-            $stmtPedido = $conn->prepare("UPDATE pedidos SET bistrocoins_generados = ?, bistrocoins_gastados = ?, bistrocoins_liquidados = 1 WHERE id = ?");
-            $stmtPedido->bind_param('iii', $generados, $gastados, $pedido_id);
+            $stmtPedido = $conn->prepare(
+                "UPDATE pedidos
+                 SET bistrocoins_generados = ?, bistrocoins_gastados = ?, bistrocoins_liquidados = 1
+                 WHERE id = ?"
+            );
+            $stmtPedido->bind_param("iii", $generados, $gastados, $pedido_id);
             $stmtPedido->execute();
             $stmtPedido->close();
 
             $conn->commit();
             return true;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $conn->rollback();
             return false;
         }

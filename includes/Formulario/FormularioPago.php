@@ -10,14 +10,14 @@ class FormularioPago extends Formulario {
   private $usuario_id;
   private $total_sin_descuentos;
   private $total_descuento;
-    private $total;
+  private $total;
 
   public function __construct(int $usuario_id, float $total_sin_descuentos, float $total_descuento, float $total) {
     $this->usuario_id = $usuario_id;
     $this->total_sin_descuentos = $total_sin_descuentos;
     $this->total_descuento = $total_descuento;
-        $this->total = $total;
-        parent::__construct('formPago', ['urlRedireccion' => 'confirmacion.php']);
+    $this->total = $total;
+    parent::__construct('formPago', ['urlRedireccion' => 'confirmacion.php']);
     }
 
     protected function generaCamposFormulario(&$datos) {
@@ -82,23 +82,24 @@ class FormularioPago extends Formulario {
     }
 
     protected function procesaFormulario(&$datos) {
+        $this->errores = [];
         $metodo = $datos['metodo_pago'] ?? '';
 
         if ($metodo === 'camarero') {
-        $pedido_id = \PedidoService::confirmarCarrito($this->usuario_id, 'camarero', $this->total_sin_descuentos, $this->total_descuento);
-        if (!$pedido_id) {
-          $this->errores['metodo_pago'] = 'No se ha podido confirmar el pedido.';
-          return;
-        }
+            if (!\PedidoService::confirmarPedido($this->pedido_id, 'camarero', $this->total)) {
+                $this->errores[] = 'No se pudo registrar el pedido para pago en camarero.';
+                return;
+            }
+            $_SESSION['ultimo_pedido_id'] = $this->pedido_id;
+            unset($_SESSION['pedido_id']);
             return;
         }
 
         if ($metodo === 'tarjeta') {
-            $numero    = trim($datos['numero_tarjeta'] ?? '');
-            $nombre    = trim($datos['nombre_tarjeta'] ?? '');
-            $caducidad = trim($datos['caducidad']      ?? '');
-            $cvv       = trim($datos['cvv']            ?? '');
-
+            $numero = trim($datos['numero_tarjeta'] ?? '');
+            $nombre = trim($datos['nombre_tarjeta'] ?? '');
+            $caducidad = trim($datos['caducidad'] ?? '');
+            $cvv = trim($datos['cvv'] ?? '');
             if (!preg_match('/^\d{16}$/', preg_replace('/\s+/', '', $numero))) {
                 $this->errores['numero_tarjeta'] = 'El número de tarjeta debe tener 16 dígitos.';
             }
@@ -111,17 +112,18 @@ class FormularioPago extends Formulario {
             if (!preg_match('/^\d{3,4}$/', $cvv)) {
                 $this->errores['cvv'] = 'El CVV debe tener 3 o 4 dígitos.';
             }
-
             if (count($this->errores) === 0) {
-              $pedido_id = \PedidoService::confirmarCarrito($this->usuario_id, 'tarjeta', $this->total_sin_descuentos, $this->total_descuento);
-              if (!$pedido_id) {
-                $this->errores['metodo_pago'] = 'No se ha podido confirmar el pedido.';
-                return;
-              }
+                if (!\PedidoService::confirmarPedido($this->pedido_id, 'tarjeta', $this->total)) {
+                    $this->errores[] = 'No se pudo confirmar el pago con tarjeta.';
+                    return;
+                }
+                $_SESSION['ultimo_pedido_id'] = $this->pedido_id;
+                unset($_SESSION['pedido_id']);
                 return;
             }
+            return;
         }
 
-        return ['metodo_pago' => 'Selecciona un método de pago.'];
+        $this->errores['metodo_pago'] = 'Selecciona un método de pago.';
     }
 }
