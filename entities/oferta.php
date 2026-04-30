@@ -68,4 +68,9 @@ class Oferta
     {
         return round($precioOriginal * (1 - $this->descuento / 100), 2);
     }
+
+    public function getPrecioInicial()
+    {
+        return 20;
+    }
 }
