@@ -50,8 +50,6 @@ class Usuario {
     public function getActivo(): int { return $this->activo; }
     public function getUpdatedAt(): string { return $this->updated_at; }
     public function isActivo(): bool { return $this->activo === 1; }
-
-    public function getNombreCompleto(): string {
-        return $this->nombre . ' ' . $this->apellidos;
-    }
+    public function getNombreCompleto(): string { return $this->nombre . ' ' . $this->apellidos; }
+    public function getBistrocoins(): int { return $this->bistrocoins; }
 }
