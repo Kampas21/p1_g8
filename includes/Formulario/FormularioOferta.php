@@ -124,7 +124,7 @@ class FormularioOferta extends Formulario
 </button>
 </p>
 
-<script src="../../JS/oferta.js"></script>
+<script src="../../JS/ofertaDescuento.js"></script>
 
 HTML;
     }
