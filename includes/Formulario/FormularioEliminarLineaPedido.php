@@ -3,6 +3,7 @@ namespace es\ucm\fdi\aw\Formulario;
 
 require_once __DIR__ . '/Formulario.php';
 require_once __DIR__ . '/../../includes/pedidoService.php';
+require_once __DIR__ . '/../../includes/OfertaService.php';
 
 class FormularioEliminarLineaPedido extends Formulario {
 
@@ -28,5 +29,13 @@ HTML;
         }
         \PedidoService::removeProductoByLinea($linea_id);
         flash_set('success', 'Línea eliminada del carrito.');
+
+
+
+        $ofertas = $_SESSION['ofertas_seleccionadas'] ?? [];
+
+        $errores = \OfertaService::aplicarOfertas($ofertas);
+
+        $_SESSION['errores_ofertas'] = $errores;
     }
 }
