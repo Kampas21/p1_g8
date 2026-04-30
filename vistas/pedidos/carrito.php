@@ -263,7 +263,7 @@ ob_start();
 
             <div class="actions-inline">
                 <a href="catalogo.php" class="btn">← Seguir comprando</a>
-                <a href="../ofertas/ofertaCliente.php" class="btn-nuevo">Ofertas</a>
+                <a href="../ofertas/ofertaCliente.php?modo=edicion" class="btn-nuevo">Ofertas</a>
                 <a href="<?= RUTA_APP ?>/vistas/recompensas/recompensaCliente.php" class="btn-nuevo">Recompensas</a>
                 <a href="pago.php" class="btn primary">Confirmar</a>
                 <?= $htmlFormCancelar ?>

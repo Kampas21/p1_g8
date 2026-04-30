@@ -4,6 +4,7 @@ namespace es\ucm\fdi\aw\Formulario;
 require_once __DIR__ . '/Formulario.php';
 require_once __DIR__ . '/../../entities/pedido.php';
 require_once __DIR__ . '/../../includes/pedidoService.php';
+require_once __DIR__ . '/../../includes/OfertaService.php';
 
 class FormularioActualizarLineaPedido extends Formulario {
 
@@ -41,5 +42,13 @@ class FormularioActualizarLineaPedido extends Formulario {
                 flash_set('success', 'Cantidad actualizada.');
             }
         }
+
+        
+
+        $ofertas = $_SESSION['ofertas_seleccionadas'] ?? [];
+
+        $errores = \OfertaService::aplicarOfertas($ofertas);
+
+        $_SESSION['errores_ofertas'] = $errores;
     }
 }
