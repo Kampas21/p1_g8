@@ -21,7 +21,7 @@ $user = function_exists('current_user') ? current_user() : null;
             <?php if ($user->getRol() === 'gerente'): ?>
                 <li><a href="<?= RUTA_APP ?>/vistas/categorias/categoriasList.php">Categorías</a></li>
                 <li><a href="<?= RUTA_APP ?>/vistas/ofertas/listarOfertas.php">Ofertas</a></li>
-                <li><a href="<?= RUTA_APP ?>/vistas/recompensas/listarRecompensas.php">Recompensas manager</a></li>
+                <li><a href="<?= RUTA_APP ?>/vistas/recompensas/listarRecompensas.php">Panel Recompensas</a></li>
 
             <?php endif; ?>
             

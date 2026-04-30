@@ -349,81 +349,82 @@ class PedidoService
         return PedidoDAO::cancelarPedido($pedido_id);
     }
 
+    private static function pedidoRequiereCocina(int $pedido_id): bool
+{
+    global $conn;
+
+    $stmt = $conn->prepare(
+        "SELECT COUNT(*) AS cnt
+         FROM productos_en_pedido pep
+         JOIN productos p ON p.id = pep.producto_id
+         WHERE pep.pedido_id = ? AND p.se_cocina = 1"
+    );
+    $stmt->bind_param("i", $pedido_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $result->free();
+    $stmt->close();
+
+    return ((int) ($row['cnt'] ?? 0)) > 0;
+}
+
     public static function confirmarPedido($pedido_id, $metodo_pago, $total)
-    {
-        global $conn;
+{
+    global $conn;
 
-        $estadoOriginal = self::getEstadoActualPedido((int) $pedido_id) ?? 'nuevo';
+    $estadoOriginal = self::getEstadoActualPedido((int) $pedido_id) ?? 'nuevo';
+    $requiereCocina = self::pedidoRequiereCocina((int) $pedido_id);
 
-        $stmtNumero = $conn->prepare("
-            SELECT COALESCE(MAX(numero_pedido), 0) + 1 AS siguiente
-            FROM pedidos
-            WHERE DATE(fecha_hora) = CURDATE() AND estado != 'nuevo'
-        ");
-        $stmtNumero->execute();
-        $rs = $stmtNumero->get_result();
-        $numero = (int) ($rs->fetch_assoc()['siguiente'] ?? 1);
-        $rs->free();
-        $stmtNumero->close();
+    $stmtNumero = $conn->prepare("
+        SELECT COALESCE(MAX(numero_pedido), 0) + 1 AS siguiente
+        FROM pedidos
+        WHERE DATE(fecha_hora) = CURDATE() AND estado != 'nuevo'
+    ");
+    $stmtNumero->execute();
+    $rs = $stmtNumero->get_result();
+    $numero = (int) ($rs->fetch_assoc()['siguiente'] ?? 1);
+    $rs->free();
+    $stmtNumero->close();
 
-        $estado = ($metodo_pago === 'tarjeta') ? 'en_preparacion' : 'recibido';
-
-        $stmtCheck = $conn->prepare(
-            "SELECT COUNT(*) AS cnt
-             FROM productos_en_pedido pep
-             JOIN productos p ON p.id = pep.producto_id
-             WHERE pep.pedido_id = ? AND p.se_cocina = 1"
-        );
-        $stmtCheck->bind_param("i", $pedido_id);
-        $stmtCheck->execute();
-        $rsCheck = $stmtCheck->get_result();
-        $rowCheck = $rsCheck->fetch_assoc();
-        $rsCheck->free();
-        $stmtCheck->close();
-
-        $terminarPedido = ((int) ($rowCheck['cnt'] ?? 0) === 0);
-
-        if ($terminarPedido) {
-            $estado = 'terminado';
-        }
-
-        $stmt = $conn->prepare(
-            "UPDATE pedidos
-             SET estado = ?, numero_pedido = ?, metodo_pago = ?, fecha_hora = CURRENT_TIMESTAMP
-             WHERE id = ?"
-        );
-        $stmt->bind_param("sisi", $estado, $numero, $metodo_pago, $pedido_id);
-        $ok = $stmt->execute();
-        $stmt->close();
-
-        if (!$ok) {
-            return false;
-        }
-
-        if ($metodo_pago === 'tarjeta') {
-            $okCoins = self::liquidarBistroCoinsSiProcede((int) $pedido_id);
-
-            if (!$okCoins) {
-                $stmtRollback = $conn->prepare(
-                    "UPDATE pedidos
-                     SET estado = ?, numero_pedido = NULL, metodo_pago = NULL
-                     WHERE id = ?"
-                );
-                $stmtRollback->bind_param("si", $estadoOriginal, $pedido_id);
-                $stmtRollback->execute();
-                $stmtRollback->close();
-
-                return false;
-            }
-        }
-
-        if ($terminarPedido) {
-            self::terminarPedidoParaEntrega($pedido_id);
-        }
-
-        return true;
+    if ($metodo_pago === 'tarjeta') {
+        $estado = $requiereCocina ? 'en_preparacion' : 'listo_cocina';
+    } else {
+        $estado = 'recibido';
     }
 
+    $stmt = $conn->prepare(
+        "UPDATE pedidos
+         SET estado = ?, numero_pedido = ?, metodo_pago = ?, fecha_hora = CURRENT_TIMESTAMP
+         WHERE id = ?"
+    );
+    $stmt->bind_param("sisi", $estado, $numero, $metodo_pago, $pedido_id);
+    $ok = $stmt->execute();
+    $stmt->close();
+
+    if (!$ok) {
+        return false;
+    }
+
+    if ($metodo_pago === 'tarjeta') {
+        $okCoins = self::liquidarBistroCoinsSiProcede((int) $pedido_id);
+
+        if (!$okCoins) {
+            $stmtRollback = $conn->prepare(
+                "UPDATE pedidos
+                 SET estado = ?, numero_pedido = NULL, metodo_pago = NULL
+                 WHERE id = ?"
+            );
+            $stmtRollback->bind_param("si", $estadoOriginal, $pedido_id);
+            $stmtRollback->execute();
+            $stmtRollback->close();
+
+            return false;
+        }
+    }
+
+    return true;
+}
     public static function getPedidoById($id)
     {
         return PedidoDAO::getPedidoById($id);
