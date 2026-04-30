@@ -1,42 +1,27 @@
-window.onload = function () {
+function actualizarValores() {
+    let inicial = parseFloat(document.getElementById('precio_inicial')?.value) || 0;
+    let final = parseFloat(document.getElementById('precio_final')?.value) || 0;
 
-    // FILTRO POR CATEGORÍAS (SOLO VISUAL)
-    window.filtrar = function (cat) {
+    let descuento = 0;
 
-        document.querySelectorAll(".producto").forEach(p => {
+    if (inicial > 0) {
+        descuento = ((inicial - final) / inicial) * 100;
+    }
 
-            if (cat === 0) {
-                p.style.display = "block";
-            } else {
-                p.style.display = (p.dataset.cat == cat) ? "block" : "none";
-            }
-        });
-    };
+    let campo = document.getElementById('descuento');
+    if (campo) {
+        campo.value = descuento.toFixed(2);
+    }
+}
 
-    // AÑADIR PRODUCTO (SIN AJAX, SOLO DOM + INPUTS OCULTOS)
-    window.addProduct = function (id, nombre) {
+// Esperar a que cargue la página
+document.addEventListener('DOMContentLoaded', function () {
 
-        let cantidad = document.getElementById("cant_" + id).value;
+    let inicial = document.getElementById('precio_inicial');
+    let final = document.getElementById('precio_final');
 
-        // inputs ocultos para PHP
-        document.getElementById("inputs").innerHTML += `
-            <input type="hidden" name="productos[]" value="${id}">
-            <input type="hidden" name="cantidades[]" value="${cantidad}">
-        `;
+    if (inicial) inicial.addEventListener('input', actualizarValores);
+    if (final) final.addEventListener('input', actualizarValores);
 
-        // lista visual
-        document.getElementById("lista").innerHTML += `
-            <div>
-                ${nombre} - ${cantidad} uds
-            </div>
-        `;
-    };
-
-    // BOTONES CATEGORÍAS (NO SE TE OLVIDE ESTO)
-    document.querySelectorAll(".catBtn").forEach(btn => {
-        btn.addEventListener("click", function () {
-            filtrar(this.dataset.id);
-        });
-    });
-
-};
+    actualizarValores(); // calcular al cargar
+});

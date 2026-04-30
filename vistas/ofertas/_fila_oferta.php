@@ -33,11 +33,21 @@ class="btn small primary">
 Editar
 </a>
 
-<a href="borrarOferta.php?id=<?= (int)$oferta->getId() ?>"
-class="btn small danger"
-onclick="return confirm('¿Borrar oferta?');">
+<form method="post"
+action="../../scripts/ofertas/borrarOferta.php"
+onsubmit="return confirm('¿Borrar oferta?');"
+class="d-inline">
+
+<input type="hidden"
+name="id"
+value="<?= (int)$oferta->getId() ?>">
+
+<button class="btn small danger" type="submit">
 Borrar
-</a>
+</button>
+
+</form>
+
 
 </div>
 </td>
