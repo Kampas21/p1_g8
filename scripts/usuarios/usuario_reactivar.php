@@ -12,7 +12,6 @@ $admin = require_role('gerente');
 if (!is_post()) {
     redirect(RUTA_APP . '/vistas/usuarios/usuarios.php');
 }
-require_csrf();
 
 $id = (int)($_POST['id'] ?? 0);
 
