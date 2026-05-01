@@ -113,12 +113,10 @@ class FormularioPago extends Formulario {
         }
 
         if ($metodo === 'camarero') {
-            if (!\PedidoService::confirmarPedido($this->pedido_id, 'camarero', $this->total)) {
-                $this->errores[] = 'No se pudo registrar el pedido para pago en camarero.';
-                return;
+            $pedido_id = \PedidoService::confirmarCarrito($this->usuario_id, 'camarero', $this->total_sin_descuentos, $this->total_descuento);
+            if (!$pedido_id) {
+                $this->errores['metodo_pago'] = 'No se ha podido confirmar el pedido.';
             }
-            $_SESSION['ultimo_pedido_id'] = $this->pedido_id;
-            unset($_SESSION['pedido_id']);
             return;
         }
 
@@ -140,12 +138,11 @@ class FormularioPago extends Formulario {
                 $this->errores['cvv'] = 'El CVV debe tener 3 o 4 dígitos.';
             }
             if (count($this->errores) === 0) {
-                if (!\PedidoService::confirmarPedido($this->pedido_id, 'tarjeta', $this->total)) {
-                    $this->errores[] = 'No se pudo confirmar el pago con tarjeta.';
+                $pedido_id = \PedidoService::confirmarCarrito($this->usuario_id, 'tarjeta', $this->total_sin_descuentos, $this->total_descuento);
+                if (!$pedido_id) {
+                    $this->errores['metodo_pago'] = 'No se ha podido confirmar el pedido.';
                     return;
                 }
-                $_SESSION['ultimo_pedido_id'] = $this->pedido_id;
-                unset($_SESSION['pedido_id']);
                 return;
             }
             return;

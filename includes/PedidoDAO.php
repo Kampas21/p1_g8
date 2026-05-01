@@ -46,6 +46,69 @@ class PedidoDAO
         return (int) ($row['siguiente'] ?? 1);
     }
 
+    public static function guardarPedidoCompleto(
+        int $usuario_id,
+        string $metodo_pago,
+        string $tipo,
+        string $estado,
+        array $lineas,
+        array $ofertas,
+        float $total_sin_descuentos,
+        float $total_descuento
+    ): int {
+        global $conn;
+
+        $requiereCocina = false;
+
+        $conn->begin_transaction();
+
+        try {
+            $numero = self::obtenerSiguienteNumeroDelDia();
+            $pedido_id = self::crearPedidoFormal($numero, $estado, $tipo, $metodo_pago, $usuario_id, $total_sin_descuentos, $total_descuento);
+
+            require_once __DIR__ . '/ProductoDAO.php';
+            require_once __DIR__ . '/ofertaEnPedidoDAO.php';
+
+            foreach ($lineas as $clave => $item) {
+                $producto_id = isset($item['producto_id']) ? (int) $item['producto_id'] : (int) $clave;
+                
+                $producto = ProductoDAO::getById((int) $producto_id);
+                if ($producto && (int) $producto->getSeCocina() === 1) {
+                    $requiereCocina = true;
+                }
+
+                $cantidad = (int) ($item['cantidad'] ?? 1);
+                $precio_unitario = (float) ($item['precio_unitario'] ?? 0);
+                $es_recompensa = !empty($item['es_recompensa']) ? 1 : 0;
+                $bistrocoins_unitarios = (int) ($item['bistrocoins_unitarios'] ?? 0);
+
+                for ($i = 0; $i < $cantidad; $i++) {
+                    self::addProducto($pedido_id, (int) $producto_id, $precio_unitario, $es_recompensa, $bistrocoins_unitarios);
+                }
+            }
+
+            foreach ($ofertas as $oferta) {
+                OfertaEnPedidoDAO::addOferta(
+                    $pedido_id,
+                    (int) ($oferta['oferta_id'] ?? 0),
+                    (int) ($oferta['veces_aplicada'] ?? 0),
+                    (float) ($oferta['descuento_total'] ?? 0)
+                );
+            }
+
+            if (!$requiereCocina && $estado === 'en_preparacion') {
+                self::updateEstadoSimple($pedido_id, 'listo_cocina');
+            }
+
+            $conn->commit();
+            return $pedido_id;
+
+        } catch (Throwable $e) {
+            $conn->rollback();
+            throw $e;
+        }
+    }
+
     public static function crearPedidoFormal(
         int $numero,
         string $estado,
@@ -224,32 +287,6 @@ class PedidoDAO
         return $ok;
     }
 
-    public static function confirmarPedido($pedido_id, $metodo_pago, $total)
-    {
-        global $conn;
-
-        $numero = self::obtenerSiguienteNumeroDelDia();
-        $estado = ($metodo_pago === 'tarjeta') ? 'en_preparacion' : 'recibido';
-
-        if (!self::pedidoRequiereCocina($pedido_id)) {
-            $estado = 'terminado';
-        }
-
-        $stmt = $conn->prepare(
-            "UPDATE pedidos
-             SET estado = ?, numero_pedido = ?, metodo_pago = ?, fecha_hora = CURRENT_TIMESTAMP
-             WHERE id = ?"
-        );
-        $stmt->bind_param("sisi", $estado, $numero, $metodo_pago, $pedido_id);
-        $ok = $stmt->execute();
-        $stmt->close();
-
-        if ($ok && $estado === 'terminado') {
-            self::terminarPedidoParaEntrega($pedido_id);
-        }
-
-        return $ok;
-    }
 
     public static function getPedidosDeUsuario($usuario_id)
     {
@@ -361,16 +398,6 @@ class PedidoDAO
         return $ok;
     }
 
-    public static function marcarProductoPreparadoCamarero($pedido_id, $producto_id)
-    {
-        $ok = self::marcarProductoPreparado($pedido_id, $producto_id);
-
-        if ($ok && self::todosProductosBarraPreparados($pedido_id)) {
-            self::terminarPedidoParaEntrega($pedido_id);
-        }
-
-        return $ok;
-    }
 
     public static function todosProductosBarraPreparados($pedido_id): bool
     {

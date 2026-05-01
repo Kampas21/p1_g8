@@ -207,8 +207,6 @@ class PedidoService
 
     public static function confirmarCarrito(int $usuario_id, string $metodo_pago, float $total_sin_descuentos, float $total_descuento): ?int
     {
-        global $conn;
-
         self::asegurarCarritoSesion();
         $carrito = $_SESSION['carrito'];
 
@@ -221,54 +219,13 @@ class PedidoService
         $tipo = (string) $carrito['tipo'];
 
         $estado = ($metodo_pago === 'tarjeta') ? 'en_preparacion' : 'recibido';
-        $requiereCocina = false;
 
-        $conn->begin_transaction();
+        $pedido_id = PedidoDAO::guardarPedidoCompleto($usuario_id, $metodo_pago, $tipo, $estado, $lineas, $ofertas, $total_sin_descuentos, $total_descuento);
 
-        try {
-            $numero = PedidoDAO::obtenerSiguienteNumeroDelDia();
-            $pedido_id = PedidoDAO::crearPedidoFormal($numero, $estado, $tipo, $metodo_pago, $usuario_id, $total_sin_descuentos, $total_descuento);
+        $_SESSION['ultimo_pedido_id'] = $pedido_id;
+        self::limpiarCarrito();
 
-            foreach ($lineas as $clave => $item) {
-                $producto_id = isset($item['producto_id']) ? (int) $item['producto_id'] : (int) $clave;
-                $producto = ProductoDAO::getById((int) $producto_id);
-                if ($producto && (int) $producto->getSeCocina() === 1) {
-                    $requiereCocina = true;
-                }
-
-                $cantidad = (int) ($item['cantidad'] ?? 1);
-                $precio_unitario = (float) ($item['precio_unitario'] ?? 0);
-                $es_recompensa = !empty($item['es_recompensa']) ? 1 : 0;
-                $bistrocoins_unitarios = (int) ($item['bistrocoins_unitarios'] ?? 0);
-
-                for ($i = 0; $i < $cantidad; $i++) {
-                    PedidoDAO::addProducto($pedido_id, (int) $producto_id, $precio_unitario, $es_recompensa, $bistrocoins_unitarios);
-                }
-            }
-
-            foreach ($ofertas as $oferta) {
-                OfertaEnPedidoDAO::addOferta(
-                    $pedido_id,
-                    (int) ($oferta['oferta_id'] ?? 0),
-                    (int) ($oferta['veces_aplicada'] ?? 0),
-                    (float) ($oferta['descuento_total'] ?? 0)
-                );
-            }
-
-            if (!$requiereCocina && $estado === 'en_preparacion') {
-                PedidoDAO::updateEstadoSimple($pedido_id, 'listo_cocina');
-            }
-
-            $conn->commit();
-
-            $_SESSION['ultimo_pedido_id'] = $pedido_id;
-            self::limpiarCarrito();
-
-            return $pedido_id;
-        } catch (Throwable $e) {
-            $conn->rollback();
-            throw $e;
-        }
+        return $pedido_id;
     }
 
     public static function crearPedido($usuario_id, $tipo)
@@ -301,10 +258,6 @@ class PedidoService
         return PedidoDAO::cancelarPedido($pedido_id);
     }
 
-    public static function confirmarPedido($pedido_id, $metodo_pago, $total)
-    {
-        return PedidoDAO::confirmarPedido($pedido_id, $metodo_pago, $total);
-    }
 
     public static function getPedidoById($id)
     {

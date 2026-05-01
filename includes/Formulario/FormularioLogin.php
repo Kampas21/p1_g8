@@ -66,7 +66,7 @@ class FormularioLogin extends Formulario
             
             
             if (!$user || !password_verify($password, $user->getPasswordHash())) {
-                $this->errores['global'] = "El usuario o el password introducido no son correctos.";
+                $this->errores[0] = "El usuario o la contraseña introducidos no son correctos.";
             } else {
                 login_user($user); 
             }
