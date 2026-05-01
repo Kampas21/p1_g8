@@ -58,17 +58,35 @@ if ($modoEdicion) {
         <input type="datetime-local" name="fecha_fin" value="<?= htmlspecialchars($fecha_fin) ?>" required>
     </p>
     
-    <p>
-        <label>Descuento (%), del 1 al 100:</label><br>
-        <input type="number" name="descuento" step="0.01" min="0" max="100"
-            value="<?= htmlspecialchars($descuento) ?>" required>
+    <!-- El descuento se calcula automáticamente por JS según el total -->
+    <input type="hidden" id="descuentoCalculado" name="descuento"
+           value="<?= htmlspecialchars($descuento ?: 5) ?>">
 
-        <!-- <label>Precio con descuento aplicado, solo se pueden dos decimales:</label><br>
-        <input type="number" name="precio_des" step="0.01" min="0"
-            value="<?= htmlspecialchars($precio_des) ?>" required> -->
-    </p>
+    <h3>Añadir productos dinámicamente</h3>
 
+    <a class="btn-aceptar" id="aAddProduct" href="#">Añadir producto</a>
 
+    <!--
+        <template> — patrón del Ejemplo1V2 (formularioOfertasV2.js).
+        JS clona este bloque cada vez que el usuario pulsa "Añadir producto".
+        Las opciones se generan desde PHP con los productos reales de la BD.
+    -->
+    <template id="mySelectProductsTemplate">
+        <div class="fila-producto-dinamica" style="margin-top:6px;">
+            <select name="mySelectProduct[]" class="form-control mb-1">
+                <option value="" selected>Seleccione un producto</option>
+                <?php foreach ($productos as $p): ?>
+                <option value="<?= $p->getId() ?>"
+                        data-precio="<?= $p->getPrecioFinal() ?>">
+                    <?= htmlspecialchars($p->getNombre()) ?>
+                    (<?= number_format($p->getPrecioFinal(), 2) ?> €)
+                </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+    </template>
+
+    <div id="contenedorProductosDinamicos"></div>
 
     <h3>Productos de la oferta</h3>
 
@@ -116,7 +134,8 @@ if ($modoEdicion) {
                     <input type="number"
                         name="cantidades[<?= $p->getId() ?>]"
                         value="<?= $cantidad ?>"
-                        min="0">
+                        min="0"
+                        data-precio="<?= $p->getPrecioFinal() ?>">
                 </td>
             </tr>
 
