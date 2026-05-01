@@ -1,8 +1,10 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/../../includes/application.php';
 require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/util.php';
 require_once __DIR__ . '/../../includes/UsuarioDAO.php';
 require_once __DIR__ . '/../../entities/pedido.php';
 require_once __DIR__ . '/../../includes/Formulario/FormularioPerfil.php';
@@ -12,20 +14,16 @@ use es\ucm\fdi\aw\Formulario\FormularioPerfil;
 
 $user = require_login();
 
-// Si piden quitar el avatar (POST)
 if (is_post() && ($_POST['accion'] ?? '') === 'quitar_avatar') {
-    require_csrf();
     UsuarioDAO::user_remove_custom_avatar($user->getId());
     flash_set('success', 'Avatar personalizado eliminado.');
     header("Location: perfil.php");
     exit();
 }
 
-// Inicialización de vista y Formulario
 $form = new FormularioPerfil();
 $htmlFormPerfil = $form->gestiona();
 
-// Delegamos la consulta de pedidos al servicio
 $pedidosActivos = [];
 $pedidosHistorico = [];
 $pedidosDisponibles = false;
@@ -47,7 +45,7 @@ try {
     $pedidosDisponibles = false;
 }
 
-$saldoBistrocoins = method_exists($user, 'getBistrocoins') ? (int) $user->getBistrocoins() : 0;
+$saldoBistrocoins = method_exists($user, 'getBistrocoins') ? (int)$user->getBistrocoins() : 0;
 
 $tituloPagina = 'Perfil | Bistro FDI';
 $rutaCSS = RUTA_APP . '/CSS/estilo.css';
@@ -58,9 +56,9 @@ ob_start();
 <div class="panel">
     <h2>Mi Cuenta</h2>
 
-    <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+    <div class="actions-inline mb-12">
         <a href="perfil.php?tab=datos" class="btn <?= $tab === 'datos' ? 'editar' : '' ?>">👤 Configuración de Perfil</a>
-        <a href="perfil.php?tab=activos" class="btn <?= $tab === 'activos' ? 'editar' : '' ?>">⏳ Pedidos Activos (<?= $numPedidosActivos ?>)</a>
+        <a href="perfil.php?tab=activos" class="btn <?= $tab === 'activos' ? 'editar' : '' ?>">⏳ Pedidos Activos (<?= (int)$numPedidosActivos ?>)</a>
         <a href="perfil.php?tab=historico" class="btn <?= $tab === 'historico' ? 'editar' : '' ?>">📜 Histórico de Pedidos</a>
         <a href="<?= RUTA_APP ?>/vistas/recompensas/recompensaCliente.php" class="btn">🎁 Recompensas</a>
     </div>
@@ -77,25 +75,26 @@ ob_start();
         <section class="panel profile-card" style="grid-column: 1 / -1;">
             <h3>Mis Datos</h3>
 
-            <div class="profile-top" style="align-items: center; border-bottom: 1px solid #eee; padding-bottom: 20px; margin-bottom: 20px;">
-                <div style="text-align: center;">
-                    <img class="avatar lg" style="margin-bottom: 8px;" src="<?= e($user->getAvatarUrl()) ?>" alt="Avatar de <?= e($user->getUsername()) ?>">
+            <div class="profile-top">
+                <div class="perfil-avatar-box">
+                    <img class="avatar lg"
+                         src="<?= e($user->getAvatarUrl()) ?>"
+                         alt="Avatar de <?= e($user->getUsername()) ?>">
 
                     <?php if ($user->getAvatarTipo() === 'custom'): ?>
                         <form method="post" onsubmit="return confirm('¿Quitar avatar personalizado?');">
-                            <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
                             <input type="hidden" name="accion" value="quitar_avatar">
                             <button class="btn danger small" type="submit">Eliminar foto</button>
                         </form>
                     <?php endif; ?>
                 </div>
 
-                <div style="margin-left: 10px;">
+                <div class="perfil-datos-box">
                     <p><strong>Usuario:</strong> <?= e($user->getUsername()) ?></p>
                     <p><strong>Email:</strong> <?= e($user->getEmail()) ?></p>
                     <p><strong>Nombre y apellidos:</strong> <?= e($user->getNombre()) ?> <?= e($user->getApellidos()) ?></p>
-                    <p><strong>Rol:</strong> <?= e(UsuarioDAO::role_label((string) $user->getRol())) ?></p>
-                    <p><strong>BistroCoins:</strong> <?= e((string) $saldoBistrocoins) ?></p>
+                    <p><strong>Rol:</strong> <?= e(UsuarioDAO::role_label((string)$user->getRol())) ?></p>
+                    <p><strong>BistroCoins:</strong> <?= (int)$saldoBistrocoins ?></p>
                 </div>
             </div>
 
