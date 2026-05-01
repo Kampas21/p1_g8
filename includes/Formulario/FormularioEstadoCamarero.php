@@ -43,7 +43,12 @@ class FormularioEstadoCamarero extends Formulario {
   
 
     if ($accion === 'cobrar') {
-        \PedidoService::cambiarEstado($pedido_id, 'en_preparacion');
+        $ok = \PedidoService::cambiarEstado($pedido_id, 'en_preparacion');
+        if (!$ok) {
+            flash_set('error', 'El cliente no tiene BistroCoins suficientes para procesar el pedido. Cancela el pedido o cobra el importe íntegro.');
+        } else {
+            flash_set('success', 'Pedido cobrado y enviado a cocina.');
+        }
     }
 
     if ($accion === 'preparar_linea' && $producto_id) {

@@ -26,25 +26,34 @@ $descuento_total = PedidoService::calcularDescuentoCarrito();
 $ofertas_aplicadas = PedidoService::getCarritoOfertas();
 $total_final = max(0, round($total - $descuento_total, 2));
 
+$bistrocoins_reservados = 0;
+foreach ($lineas as $item) {
+    if (!empty($item['es_recompensa'])) {
+        $bistrocoins_reservados += ((int)$item['bistrocoins_unitarios']) * ((int)$item['cantidad']);
+    }
+}
+
 
 $formsActualizarHtml = [];
 $formsEliminarHtml = [];
 
-foreach ($lineas as $prod_id => $item) {
-  $prod_id = (int)$prod_id;
+foreach ($lineas as $clave => $item) {
+  $prod_id = isset($item['producto_id']) ? (int)$item['producto_id'] : (int)$clave;
+  
+  if (empty($item['es_recompensa'])) {
+      $formUpdate = new \es\ucm\fdi\aw\Formulario\FormularioActualizarLineaPedido(
+        $prod_id,
+        (int)($item['cantidad'] ?? 1)
+      );
 
-  $formUpdate = new \es\ucm\fdi\aw\Formulario\FormularioActualizarLineaPedido(
-    $prod_id,
-    (int)($item['cantidad'] ?? 1)
-  );
-
-  $formsActualizarHtml[$prod_id] = $formUpdate->gestiona();
+      $formsActualizarHtml[$clave] = $formUpdate->gestiona();
+  }
 
   $formRemove = new \es\ucm\fdi\aw\Formulario\FormularioEliminarLineaPedido(
-    $prod_id
+    $clave
   );
 
-  $formsEliminarHtml[$prod_id] = $formRemove->gestiona();
+  $formsEliminarHtml[$clave] = $formRemove->gestiona();
 }
 
 $formCancelar = new \es\ucm\fdi\aw\Formulario\FormularioCancelarPedido();
@@ -88,6 +97,7 @@ ob_start();
       <div class="actions-inline">
 
         <a href="catalogo.php" class="btn">← Seguir comprando</a>
+        <a href="<?= RUTA_APP ?>/vistas/recompensas/recompensaCliente.php" class="btn-nuevo">Recompensas</a>
 
         <?= $htmlFormCancelar ?>
 
@@ -154,11 +164,14 @@ ob_start();
 
           <tbody>
 
-            <?php foreach ($lineas as $prod_id => $item):
-              $producto = ProductoDAO::getById((int)$prod_id);
+            <?php foreach ($lineas as $clave => $item):
+              $prod_id = isset($item['producto_id']) ? (int)$item['producto_id'] : (int)$clave;
+              $producto = ProductoDAO::getById($prod_id);
               if (!$producto) { continue; }
               $cantidad = (int)($item['cantidad'] ?? 1);
               $precio = (float)($item['precio_unitario'] ?? 0);
+              $esRecompensa = !empty($item['es_recompensa']);
+              $bistrocoinsUnitarios = (int)($item['bistrocoins_unitarios'] ?? 0);
             ?>
 
               <tr>
@@ -171,13 +184,38 @@ ob_start();
                   <a href="<?= RUTA_APP ?>/vistas/productos/detalle_producto.php?id=<?= $producto->getId() ?>" class="click">
                     <?= e($producto->getNombre()) ?>
                   </a>
+                  <?php if ($esRecompensa): ?>
+                      <br><small><strong>(Recompensa)</strong></small>
+                  <?php endif; ?>
                 </td>
 
-                <td class="col-precio"><?= e((string)$precio) ?> €</td>
+                <td class="col-precio">
+                    <?php if ($esRecompensa): ?>
+                        <?= e((string)$bistrocoinsUnitarios) ?> BC
+                    <?php else: ?>
+                        <?= e((string)$precio) ?> €
+                    <?php endif; ?>
+                </td>
 
-                <td><?= $formsActualizarHtml[$prod_id] ?></td>
+                <td>
+                    <?php if ($esRecompensa): ?>
+                        <?= e((string)$cantidad) ?>
+                    <?php else: ?>
+                        <?= $formsActualizarHtml[$clave] ?? e((string)$cantidad) ?>
+                    <?php endif; ?>
+                </td>
 
-                <td class="col-precio"><?= round($precio * $cantidad, 2) ?> €</td>
+                <td class="col-precio">
+                    <?php if ($esRecompensa): ?>
+                        <?= e((string)($bistrocoinsUnitarios * $cantidad)) ?> BC
+                    <?php else: ?>
+                        <?= round($precio * $cantidad, 2) ?> €
+                    <?php endif; ?>
+                </td>
+                
+                <td>
+                    <?= $formsEliminarHtml[$clave] ?? '' ?>
+                </td>
 
               </tr>
 
@@ -188,7 +226,7 @@ ob_start();
           <tfoot>
 
             <tr>
-              <td colspan="4"><strong>Total:</strong></td>
+              <td colspan="4"><strong>Total productos de pago:</strong></td>
               <td class="col-precio"><strong><?= $total ?> €</strong></td>
             </tr>
 
@@ -199,8 +237,15 @@ ob_start();
               </tr>
 
               <tr>
-                <td colspan="4"><strong>Total final:</strong></td>
+                <td colspan="4"><strong>Total a pagar:</strong></td>
                 <td class="col-precio"><strong><?= round($total_final, 2) ?> €</strong></td>
+              </tr>
+            <?php endif; ?>
+
+            <?php if ($bistrocoins_reservados > 0): ?>
+              <tr>
+                <td colspan="4"><strong>BistroCoins reservados:</strong></td>
+                <td class="col-precio"><strong><?= e((string)$bistrocoins_reservados) ?> BC</strong></td>
               </tr>
             <?php endif; ?>
 
@@ -214,7 +259,9 @@ ob_start();
 
         <a href="catalogo.php" class="btn">← Seguir comprando</a>
 
-        <a href="../ofertas/ofertaCliente.php" class="btn-nuevo">Ofertas</a>
+        <a href="../ofertas/ofertaCliente.php?modo=edicion" class="btn-nuevo">Ofertas</a>
+
+        <a href="<?= RUTA_APP ?>/vistas/recompensas/recompensaCliente.php" class="btn-nuevo">Recompensas</a>
 
         <a href="pago.php" class="btn primary">Confirmar</a>
 

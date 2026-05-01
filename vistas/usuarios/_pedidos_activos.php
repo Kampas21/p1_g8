@@ -5,7 +5,7 @@
 
     <?php if (!$pedidosDisponibles): ?>
         <div class="pedido-linea">
-            <strong>Ejemplo visual (boceto)</strong>
+            <strong>Ejemplo visual</strong>
             <div class="progress-steps">
                 <div class="progress-step done"><div class="dot"></div>En preparación</div>
                 <div class="progress-step done"><div class="dot"></div>Cocinando</div>
@@ -21,6 +21,17 @@
             <div class="pedido-linea">
                 <strong>Pedido #<?= e((string) $p['numero_pedido']) ?></strong>
                 <div class="muted">Estado actual: <?= e((string) $p['estado']) ?></div>
+                <div class="muted">Importe: <?= e((string) $p['total']) ?> €</div>
+                <?php if (!empty($p['lineas'])): ?>
+                    <ul>
+                        <?php foreach ($p['lineas'] as $linea): ?>
+                            <li>
+                                <?= e((string)$linea['nombre']) ?>: <?= (int)$linea['cantidad'] ?>
+                                <?= ((int)$linea['es_recompensa'] === 1) ? '(Recompensa)' : '' ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
             </div>
         <?php endforeach; ?>
     <?php endif; ?>

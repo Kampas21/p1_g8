@@ -188,6 +188,29 @@ class PedidoDAO
     {
         global $conn;
 
+        $stmt = $conn->prepare("SELECT usuario_id, bistrocoins_liquidados, bistrocoins_generados, bistrocoins_gastados FROM pedidos WHERE id = ? LIMIT 1");
+        $stmt->bind_param("i", $pedido_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $pedido = $result->fetch_assoc();
+        $result->free();
+        $stmt->close();
+
+        if ($pedido && (int)$pedido['bistrocoins_liquidados'] === 1) {
+            $usuarioId = (int)$pedido['usuario_id'];
+            $gastados = (int)$pedido['bistrocoins_gastados'];
+            $generados = (int)$pedido['bistrocoins_generados'];
+            
+            require_once __DIR__ . '/UsuarioDAO.php';
+            $saldo = UsuarioDAO::getBistrocoinsByUserId($usuarioId);
+            $nuevoSaldo = max(0, $saldo + $gastados - $generados);
+
+            $stmtUser = $conn->prepare("UPDATE usuarios SET bistrocoins = ?, updated_at = NOW() WHERE id = ?");
+            $stmtUser->bind_param("ii", $nuevoSaldo, $usuarioId);
+            $stmtUser->execute();
+            $stmtUser->close();
+        }
+
         $stmt = $conn->prepare("DELETE FROM productos_en_pedido WHERE pedido_id = ?");
         $stmt->bind_param("i", $pedido_id);
         $stmt->execute();
@@ -269,7 +292,8 @@ class PedidoDAO
             "SELECT pep.*, p.nombre, p.imagen, p.se_cocina
              FROM productos_en_pedido pep
              JOIN productos p ON p.id = pep.producto_id
-             WHERE pep.pedido_id = ?"
+             WHERE pep.pedido_id = ?
+             ORDER BY pep.es_recompensa ASC, pep.id ASC"
         );
         $stmt->bind_param("i", $pedido_id);
         $stmt->execute();
@@ -287,7 +311,9 @@ class PedidoDAO
                 $fila['cantidad'],
                 $fila['estado'],
                 $fila['imagen'],
-                $fila['se_cocina'] ?? 1
+                $fila['se_cocina'] ?? 1,
+                $fila['es_recompensa'] ?? 0,
+                $fila['bistrocoins_unitarios'] ?? 0
             );
         }
 
@@ -452,7 +478,7 @@ class PedidoDAO
         global $conn;
 
         $sql = "
-            SELECT numero_pedido, estado, fecha_hora, total
+            SELECT id, numero_pedido, estado, fecha_hora, total
             FROM pedidos
             WHERE usuario_id = ?
                AND estado IN ('en_preparacion', 'cocinando', 'listo_cocina', 'terminado')
@@ -469,6 +495,7 @@ class PedidoDAO
 
         $pedidos = [];
         while ($row = $result->fetch_assoc()) {
+            $row['lineas'] = self::getResumenLineasPedido((int) $row['id']);
             $pedidos[] = $row;
         }
 
@@ -483,7 +510,7 @@ class PedidoDAO
         global $conn;
 
         $sql = "
-                        SELECT id, numero_pedido, fecha_hora, tipo, total, estado
+                        SELECT id, numero_pedido, fecha_hora, tipo, total, estado, bistrocoins_generados, bistrocoins_gastados
             FROM pedidos
             WHERE usuario_id = ?
               AND estado != 'nuevo'
@@ -501,6 +528,7 @@ class PedidoDAO
 
         $pedidos = [];
         while ($row = $result->fetch_assoc()) {
+            $row['lineas'] = self::getResumenLineasPedido((int) $row['id']);
             $pedidos[] = $row;
         }
 
@@ -600,5 +628,133 @@ class PedidoDAO
         $stmt->close();
 
         return (int) ($row['num_activos'] ?? 0);
+    }
+
+    public static function getResumenLineasPedido(int $pedido_id): array
+    {
+        global $conn;
+
+        $sql = "SELECT p.nombre, pep.cantidad, pep.es_recompensa
+                FROM productos_en_pedido pep
+                JOIN productos p ON p.id = pep.producto_id
+                WHERE pep.pedido_id = ?
+                ORDER BY pep.es_recompensa ASC, p.nombre ASC";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $pedido_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $lineas = [];
+        while ($row = $result->fetch_assoc()) {
+            $lineas[] = $row;
+        }
+
+        $result->free();
+        $stmt->close();
+
+        return $lineas;
+    }
+
+    public static function getBistrocoinsGastadosPedido(int $pedido_id): int
+    {
+        global $conn;
+
+        $stmt = $conn->prepare(
+            "SELECT COALESCE(SUM(cantidad * bistrocoins_unitarios), 0) AS total
+             FROM productos_en_pedido
+             WHERE pedido_id = ? AND es_recompensa = 1"
+        );
+        $stmt->bind_param("i", $pedido_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $result->free();
+        $stmt->close();
+
+        return (int) ($row['total'] ?? 0);
+    }
+
+    public static function liquidarBistroCoinsSiProcede(int $pedido_id): bool
+    {
+        global $conn;
+
+        $stmt = $conn->prepare("SELECT usuario_id, total, bistrocoins_liquidados FROM pedidos WHERE id = ? LIMIT 1");
+        $stmt->bind_param("i", $pedido_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $pedido = $result->fetch_assoc();
+        $result->free();
+        $stmt->close();
+
+        if (!$pedido) {
+            return false;
+        }
+
+        if ((int) $pedido['bistrocoins_liquidados'] === 1) {
+            return true;
+        }
+
+        $usuarioId = (int) $pedido['usuario_id'];
+        $gastados = self::getBistrocoinsGastadosPedido($pedido_id);
+        $generados = (int) floor(max(0, (float) $pedido['total']));
+        require_once __DIR__ . '/UsuarioDAO.php';
+        $saldo = UsuarioDAO::getBistrocoinsByUserId($usuarioId);
+
+        if ($saldo < $gastados) {
+            return false;
+        }
+
+        $nuevoSaldo = $saldo - $gastados + $generados;
+
+        $conn->begin_transaction();
+
+        try {
+            $stmtUser = $conn->prepare("UPDATE usuarios SET bistrocoins = ?, updated_at = NOW() WHERE id = ?");
+            $stmtUser->bind_param("ii", $nuevoSaldo, $usuarioId);
+            $stmtUser->execute();
+            $stmtUser->close();
+
+            $stmtPedido = $conn->prepare(
+                "UPDATE pedidos
+                 SET bistrocoins_generados = ?, bistrocoins_gastados = ?, bistrocoins_liquidados = 1
+                 WHERE id = ?"
+            );
+            $stmtPedido->bind_param("iii", $generados, $gastados, $pedido_id);
+            $stmtPedido->execute();
+            $stmtPedido->close();
+
+            $conn->commit();
+            return true;
+        } catch (Throwable $e) {
+            $conn->rollback();
+            return false;
+        }
+    }
+
+    public static function getEstadoActualPedido(int $pedido_id): ?string
+    {
+        global $conn;
+
+        $stmt = $conn->prepare("SELECT estado FROM pedidos WHERE id = ? LIMIT 1");
+        $stmt->bind_param("i", $pedido_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $result->free();
+        $stmt->close();
+
+        return $row['estado'] ?? null;
+    }
+
+    public static function updateEstadoSimple(int $pedido_id, string $estado_nuevo): bool
+    {
+        global $conn;
+
+        $stmt = $conn->prepare("UPDATE pedidos SET estado = ? WHERE id = ?");
+        $stmt->bind_param("si", $estado_nuevo, $pedido_id);
+        $ok = $stmt->execute();
+        $stmt->close();
+
+        return $ok;
     }
 }

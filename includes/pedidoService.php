@@ -41,6 +41,7 @@ class PedidoService
         ];
 
         unset($_SESSION['ultimo_pedido_id']);
+        unset($_SESSION['ofertas_seleccionadas']);
     }
 
     public static function getTipoCarrito(): ?string
@@ -67,19 +68,62 @@ class PedidoService
         return !empty(self::getCarritoItems());
     }
 
-    public static function agregarProductoAlCarrito(int $producto_id, float $precio_unitario, int $cantidad = 1): void
+    public static function agregarProductoAlCarrito(int $producto_id, float $precio_unitario, int $cantidad = 1, bool $es_recompensa = false, int $bistrocoins_unitarios = 0): void
     {
         self::asegurarCarritoSesion();
 
-        if (!isset($_SESSION['carrito']['items'][$producto_id])) {
-            $_SESSION['carrito']['items'][$producto_id] = [
+        $clave_carrito = $es_recompensa ? $producto_id . '_R' : $producto_id;
+
+        if (!isset($_SESSION['carrito']['items'][$clave_carrito])) {
+            $_SESSION['carrito']['items'][$clave_carrito] = [
+                'producto_id' => $producto_id,
                 'cantidad' => 0,
                 'precio_unitario' => $precio_unitario,
+                'es_recompensa' => $es_recompensa,
+                'bistrocoins_unitarios' => $bistrocoins_unitarios
             ];
         }
 
-        $_SESSION['carrito']['items'][$producto_id]['cantidad'] += max(1, $cantidad);
-        $_SESSION['carrito']['items'][$producto_id]['precio_unitario'] = $precio_unitario;
+        $_SESSION['carrito']['items'][$clave_carrito]['cantidad'] += max(1, $cantidad);
+        $_SESSION['carrito']['items'][$clave_carrito]['precio_unitario'] = $precio_unitario;
+    }
+
+    public static function addRecompensaAlCarrito(int $recompensa_id, int $usuario_id): array
+    {
+        require_once __DIR__ . '/RecompensaDAO.php';
+        require_once __DIR__ . '/UsuarioDAO.php';
+
+        $recompensa = RecompensaDAO::getById($recompensa_id);
+
+        if (!$recompensa || !$recompensa->isActiva()) {
+            return [false, 'La recompensa seleccionada no existe o no está activa.'];
+        }
+
+        $saldo = UsuarioDAO::getBistrocoinsByUserId($usuario_id);
+        
+        self::asegurarCarritoSesion();
+        $gastados = 0;
+        foreach ($_SESSION['carrito']['items'] as $item) {
+            if (!empty($item['es_recompensa'])) {
+                $gastados += ((int)$item['bistrocoins_unitarios']) * ((int)$item['cantidad']);
+            }
+        }
+
+        $disponibles = $saldo - $gastados;
+
+        if ($disponibles < $recompensa->getBistrocoins()) {
+            return [false, 'No tienes BistroCoins suficientes para añadir esta recompensa al pedido.'];
+        }
+
+        self::agregarProductoAlCarrito(
+            (int) $recompensa->getProductoId(),
+            0.0,
+            1,
+            true,
+            (int) $recompensa->getBistrocoins()
+        );
+
+        return [true, 'Recompensa añadida al pedido.'];
     }
 
     public static function actualizarCantidadCarrito(int $producto_id, int $cantidad): void
@@ -98,10 +142,10 @@ class PedidoService
         $_SESSION['carrito']['items'][$producto_id]['cantidad'] = $cantidad;
     }
 
-    public static function eliminarProductoDelCarrito(int $producto_id): void
+    public static function eliminarProductoDelCarrito($clave_carrito): void
     {
         self::asegurarCarritoSesion();
-        unset($_SESSION['carrito']['items'][$producto_id]);
+        unset($_SESSION['carrito']['items'][$clave_carrito]);
     }
 
     public static function limpiarCarrito(): void
@@ -185,7 +229,8 @@ class PedidoService
             $numero = PedidoDAO::obtenerSiguienteNumeroDelDia();
             $pedido_id = PedidoDAO::crearPedidoFormal($numero, $estado, $tipo, $metodo_pago, $usuario_id, $total_sin_descuentos, $total_descuento);
 
-            foreach ($lineas as $producto_id => $item) {
+            foreach ($lineas as $clave => $item) {
+                $producto_id = isset($item['producto_id']) ? (int) $item['producto_id'] : (int) $clave;
                 $producto = ProductoDAO::getById((int) $producto_id);
                 if ($producto && (int) $producto->getSeCocina() === 1) {
                     $requiereCocina = true;
@@ -193,9 +238,11 @@ class PedidoService
 
                 $cantidad = (int) ($item['cantidad'] ?? 1);
                 $precio_unitario = (float) ($item['precio_unitario'] ?? 0);
+                $es_recompensa = !empty($item['es_recompensa']) ? 1 : 0;
+                $bistrocoins_unitarios = (int) ($item['bistrocoins_unitarios'] ?? 0);
 
                 for ($i = 0; $i < $cantidad; $i++) {
-                    PedidoDAO::addProducto($pedido_id, (int) $producto_id, $precio_unitario);
+                    PedidoDAO::addProducto($pedido_id, (int) $producto_id, $precio_unitario, $es_recompensa, $bistrocoins_unitarios);
                 }
             }
 
@@ -208,8 +255,8 @@ class PedidoService
                 );
             }
 
-            if (!$requiereCocina) {
-                PedidoDAO::terminarPedidoParaEntrega($pedido_id);
+            if (!$requiereCocina && $estado === 'en_preparacion') {
+                PedidoDAO::updateEstadoSimple($pedido_id, 'listo_cocina');
             }
 
             $conn->commit();
@@ -234,9 +281,9 @@ class PedidoService
         return PedidoDAO::getPedidoNuevo($usuario_id);
     }
 
-    public static function addProducto($pedido_id, $producto_id, $precio_unitario)
+    public static function addProducto($pedido_id, $producto_id, $precio_unitario, $es_recompensa = 0, $bistrocoins_unitarios = 0)
     {
-        return PedidoDAO::addProducto($pedido_id, $producto_id, $precio_unitario);
+        return PedidoDAO::addProducto($pedido_id, $producto_id, $precio_unitario, $es_recompensa, $bistrocoins_unitarios);
     }
 
     public static function updateCantidad($pedido_id, $producto_id, $cantidad)
@@ -271,7 +318,40 @@ class PedidoService
 
     public static function cambiarEstado(int $pedido_id, string $estado_nuevo): bool
     {
-        return PedidoDAO::cambiarEstado($pedido_id, $estado_nuevo);
+        $estadoAnterior = PedidoDAO::getEstadoActualPedido($pedido_id);
+
+        if ($estadoAnterior === null) {
+            return false;
+        }
+
+        $ok = PedidoDAO::updateEstadoSimple($pedido_id, $estado_nuevo);
+        if (!$ok) {
+            return false;
+        }
+
+        if ($estado_nuevo === 'en_preparacion') {
+            $okCoins = PedidoDAO::liquidarBistroCoinsSiProcede($pedido_id);
+
+            if (!$okCoins) {
+                PedidoDAO::updateEstadoSimple($pedido_id, $estadoAnterior);
+                return false;
+            }
+
+            $requiereCocina = false;
+            $prods = PedidoDAO::getProductosPedido($pedido_id);
+            foreach ($prods as $pr) {
+                if ((int)$pr->getSeCocina() === 1) {
+                    $requiereCocina = true;
+                    break;
+                }
+            }
+
+            if (!$requiereCocina) {
+                PedidoDAO::updateEstadoSimple($pedido_id, 'listo_cocina');
+            }
+        }
+
+        return true;
     }
 
     public static function getProductosPedido($pedido_id)
@@ -348,5 +428,30 @@ class PedidoService
     public static function contarPedidosActivosByUsuario(int $usuario_id): int
     {
         return PedidoDAO::contarPedidosActivosByUsuario($usuario_id);
+    }
+
+    public static function getResumenLineasPedido(int $pedido_id): array
+    {
+        return PedidoDAO::getResumenLineasPedido($pedido_id);
+    }
+
+    public static function getBistrocoinsGastadosPedido(int $pedido_id): int
+    {
+        return PedidoDAO::getBistrocoinsGastadosPedido($pedido_id);
+    }
+
+    public static function liquidarBistroCoinsSiProcede(int $pedido_id): bool
+    {
+        return PedidoDAO::liquidarBistroCoinsSiProcede($pedido_id);
+    }
+
+    public static function getEstadoActualPedido(int $pedido_id): ?string
+    {
+        return PedidoDAO::getEstadoActualPedido($pedido_id);
+    }
+
+    public static function updateEstadoSimple(int $pedido_id, string $estado_nuevo): bool
+    {
+        return PedidoDAO::updateEstadoSimple($pedido_id, $estado_nuevo);
     }
 }

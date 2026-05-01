@@ -11,14 +11,20 @@ $user = function_exists('current_user') ? current_user() : null;
         <li><a href="<?= RUTA_APP ?>/index.php">Inicio</a></li>
         <li><a href="<?= RUTA_APP ?>/vistas/pedidos/elegirTipo.php">Nuevo pedido</a></li>
         <li><a href="<?= RUTA_APP ?>/vistas/ofertas/ofertaCliente.php">Nuestras ofertas</a></li>
+        <li><a href="<?= RUTA_APP ?>/vistas/recompensas/recompensaCliente.php">Recompensas</a></li>
+
 
         <!-- Enlaces solo para usuarios logueados -->
         <?php if ($user): ?>
-            <h3>Panel gerente</h3>
+            <?php if ($user->getRol() !== 'cliente'): ?>
+                <h3>Panel <?= htmlspecialchars($user->getRol()) ?></h3>
+            <?php endif; ?>
             <!-- Categorías y Ofertas: Solo Gerente -->
             <?php if ($user->getRol() === 'gerente'): ?>
                 <li><a href="<?= RUTA_APP ?>/vistas/categorias/categoriasList.php">Categorías</a></li>
                 <li><a href="<?= RUTA_APP ?>/vistas/ofertas/listarOfertas.php">Ofertas</a></li>
+                <li><a href="<?= RUTA_APP ?>/vistas/recompensas/listarRecompensas.php">Panel Recompensas</a></li>
+
             <?php endif; ?>
             
             <!-- Panel Camarero: Solo Camareros y Gerentes -->

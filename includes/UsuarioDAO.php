@@ -155,7 +155,8 @@ class UsuarioDAO {
             $row['avatar_valor'] ?? null,
             $row['avatar_url'],
             (int)$row['activo'],
-            $row['updated_at'] ?? ''
+            $row['updated_at'] ?? '',
+            (int)($row['bistrocoins'] ?? 0)
         );
     }
 
@@ -358,8 +359,8 @@ class UsuarioDAO {
         $conn = crearConexion();
 
         $sql = "INSERT INTO usuarios
-                (username, email, nombre, apellidos, password_hash, rol, avatar_tipo, avatar_valor, activo, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW())";
+                (username, email, nombre, apellidos, password_hash, rol, avatar_tipo, avatar_valor, activo, created_at, updated_at, bistrocoins)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW(), 0)";
 
         $passwordHash = password_hash($data['password'], PASSWORD_DEFAULT);
         $rol = $data['rol'] ?? 'cliente';
@@ -516,5 +517,41 @@ class UsuarioDAO {
         $stmt->execute();
         $stmt->close();
         $conn->close();
+    }
+
+    public static function getBistrocoinsByUserId(int $id): int {
+        $conn = crearConexion();
+        $stmt = $conn->prepare("SELECT bistrocoins FROM usuarios WHERE id = ? LIMIT 1");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $result->free();
+        $stmt->close();
+        $conn->close();
+        return (int)($row['bistrocoins'] ?? 0);
+    }
+
+    public static function ajustarBistrocoins(int $id, int $delta): bool {
+        $conn = crearConexion();
+        $sql = "UPDATE usuarios SET bistrocoins = GREATEST(0, bistrocoins + ?), updated_at = NOW() WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ii", $delta, $id);
+        $ok = $stmt->execute();
+        $stmt->close();
+        $conn->close();
+        return $ok;
+    }
+
+    public static function setBistrocoins(int $id, int $coins): bool {
+        $coins = max(0, $coins);
+        $conn = crearConexion();
+        $sql = "UPDATE usuarios SET bistrocoins = ?, updated_at = NOW() WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ii", $coins, $id);
+        $ok = $stmt->execute();
+        $stmt->close();
+        $conn->close();
+        return $ok;
     }
 }
