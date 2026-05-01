@@ -108,14 +108,22 @@ class UsuarioDAO {
             return ['type' => 'default', 'value' => null];
         }
 
-        if ($mode === 'preset') {
-            $preset = (string)($_POST['avatar_preset'] ?? '');
-            $presets = self::avatar_presets();
-            if (!isset($presets[$preset])) {
-                throw new RuntimeException('Debes seleccionar un avatar predefinido válido.');
-            }
-            return ['type' => 'preset', 'value' => $preset];
-        }
+      if ($mode === 'preset') {
+
+    $preset = (string)($_POST['avatar_preset'] ?? '');
+
+    if ($preset === '') {
+        return ['type' => 'default', 'value' => null];
+    }
+
+    $presets = self::avatar_presets();
+
+    if (!isset($presets[$preset])) {
+        throw new RuntimeException('Debes seleccionar un avatar predefinido válido.');
+    }
+
+    return ['type' => 'preset', 'value' => $preset];
+}
 
         if ($mode === 'upload') {
             $uploaded = self::upload_avatar_from_request('avatar_upload');
@@ -390,8 +398,7 @@ class UsuarioDAO {
     }
 
     public static function user_update(int $id, array $data, array $opts = []): void {
-        global $conn;
-
+$conn = crearConexion();
         $existing = self::user_find_by_id($id);
 
         if (!$existing) {
@@ -461,6 +468,7 @@ class UsuarioDAO {
         $stmt->bind_param($types, ...$params);
         $stmt->execute();
         $stmt->close();
+        $conn->close();
     }
 
     public static function user_soft_delete(int $id): void {
