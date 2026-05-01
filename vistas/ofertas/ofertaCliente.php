@@ -116,7 +116,7 @@ ob_start();
 
                 <td>
                     <a class="click"
-                            href="detalleOferta.php?id=<?= $oferta->getId() ?>&return=<?= "../ofertas/ofertaCliente.php?modo=edicion" ?>">
+                            href="detalleOferta.php?id=<?= $oferta->getId() ?>&return=<?= urlencode("../ofertas/ofertaCliente.php" . ($modoSeleccion ? "?modo=edicion" : "")) ?>">
                             <?= htmlspecialchars($oferta->getNombre()) ?>
                     </a>
                 </td>

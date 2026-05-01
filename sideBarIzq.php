@@ -16,7 +16,9 @@ $user = function_exists('current_user') ? current_user() : null;
 
         <!-- Enlaces solo para usuarios logueados -->
         <?php if ($user): ?>
-            <h3>Panel gerente</h3>
+            <?php if ($user->getRol() !== 'cliente'): ?>
+                <h3>Panel <?= htmlspecialchars($user->getRol()) ?></h3>
+            <?php endif; ?>
             <!-- Categorías y Ofertas: Solo Gerente -->
             <?php if ($user->getRol() === 'gerente'): ?>
                 <li><a href="<?= RUTA_APP ?>/vistas/categorias/categoriasList.php">Categorías</a></li>
