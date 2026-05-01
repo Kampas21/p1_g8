@@ -23,9 +23,9 @@ HTML;
 
     protected function procesaFormulario(&$datos) {
 
-        $producto_id = filter_var($datos['producto_id'], FILTER_VALIDATE_INT);
+        $producto_id = trim($datos['producto_id'] ?? '');
 
-        if (!$producto_id) {
+        if (empty($producto_id)) {
             return;
         }
 

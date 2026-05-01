@@ -1,7 +1,8 @@
-<?php
+<?php 
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
+session_start();
 
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/ProductoDAO.php';
@@ -9,16 +10,25 @@ require_once __DIR__ . '/../../includes/ofertaDAO.php';
 require_once __DIR__ . '/../../includes/pedidoService.php';
 
 $user = require_login();
-$modoSeleccion = PedidoService::carritoTieneProductos();
+
+$modoSeleccion = ($_GET['modo'] ?? '') === 'edicion';
+
 
 $pedido_productos = [];
+
 if ($modoSeleccion) {
     foreach (PedidoService::getCarritoItems() as $producto_id => $item) {
         $pedido_productos[(int)$producto_id] = (int)($item['cantidad'] ?? 0);
     }
 }
 
-// 🔹 Ofertas activas
+/**
+ * 🔥 estado de ofertas seleccionadas (persistente)
+ */
+if (!isset($_SESSION['ofertas_seleccionadas'])) {
+    $_SESSION['ofertas_seleccionadas'] = [];
+}
+
 $ofertas = OfertaDAO::getAllActivas();
 
 $tituloPagina = 'Ofertas disponibles';
@@ -29,113 +39,111 @@ ob_start();
 
 <?php if ($modoSeleccion): ?>
     <div class="info-ofertas">
-        <strong class="info-ofertas-titulo">ℹ️ Información importante sobre las ofertas:</strong>
+        <strong>ℹ️ Información importante sobre las ofertas:</strong>
 
-        <ul class="info-ofertas-lista">
-            <li>Puedes seleccionar una o varias ofertas y aplicarlas al pedido actual.</li>
-            <li><strong>Debes seleccionar todas las ofertas que quieras usar antes de pulsar "Aplicar ofertas", sino solo se seleccionaran de solo una oferta.</strong></li>
-            <li>Cada oferta indica los productos y cantidades necesarias para poder aplicarse.</li>
-            <li>Una oferta solo se aplicará si tu pedido contiene todos los productos requeridos en la cantidad suficiente.</li>
-            <li>Las ofertas pueden aplicarse varias veces si se cumplen las condiciones (por ejemplo, varios packs).</li>
-            <li>Un mismo producto no puede utilizarse en más de una oferta al mismo tiempo.</li>
-            <li>Podrás ver el precio original del pedido y el ahorro total aplicado gracias a las ofertas.</li>
+        <ul>
+            <li>Solo puedes seleccionar una oferta por envío.</li>
+            <li>Las ofertas se van acumulando si las añades una a una.</li>
+            <li><strong>Si seleccionas una ya marcada, se desmarca.</strong></li>
+            <li>Una oferta se puede multiplicar si tienes los productos necesarios de manera automática.</li>
+            <li>No se pueden usar productos en más de una oferta a la vez.</li>
         </ul>
-
     </div>
 <?php endif; ?>
 
 <?php if ($modoSeleccion): ?>
     <form method="POST" action="../../scripts/ofertas/aplicarOfertas.php">
-    <?php endif; ?>
+<?php endif; ?>
 
-    <div class="panel table-wrap">
-        <table>
-            <tr>
-                <?php if ($modoSeleccion): ?>
-                    <th>Seleccionar</th>
-                <?php endif; ?>
-                <th>Nombre</th>
-                <!-- <th>Descripción</th> -->
-                <th>Productos</th>
-                <!-- <th>Precio pack</th> -->
-                <th>Descuento</th>
-                <!-- <th>Precio final</th> -->
-                <?php if ($modoSeleccion): ?>
-                    <th>Aplicable</th>
-                <?php endif; ?>
-            </tr>
+<div class="panel table-wrap">
+    <table>
+        <tr>
+            <?php if ($modoSeleccion): ?>
+                <th>Seleccionar</th>
+            <?php endif; ?>
+            <th>Nombre</th>
+            <th>Productos</th>
+            <th>Descuento</th>
+            <?php if ($modoSeleccion): ?>
+                <th>Aplicable</th>
+            <?php endif; ?>
+        </tr>
 
-            <?php foreach ($ofertas as $oferta): ?>
-                <?php
-                // $precio_total = 0;
-                $productos = ProductoDAO::getProductosDeOferta($oferta->getId());
+        <?php foreach ($ofertas as $oferta): ?>
 
-                $lista = array_map(function ($p) use (&$precio_total) {
-                    $precio = $p->getPrecioFinal();
-                    $cantidad = $p->cantidad;
-                    $precio_cant = $precio * $cantidad;
+            <?php
+            $precio_total = 0;
+            $productos = ProductoDAO::getProductosDeOferta($oferta->getId());
 
-                    $precio_total += $precio_cant;
+            $lista = array_map(function ($p) use (&$precio_total) {
+                $precio = $p->getPrecioFinal();
+                $cantidad = $p->cantidad;
+                $precio_cant = $precio * $cantidad;
 
-                    return $p->getNombre() . " ($cantidad) " . round($precio_cant, 2) . '€';
-                }, $productos);
+                $precio_total += $precio_cant;
 
-                // $precio_final = $oferta->aplicarDescuento($precio_total);
+                return $p->getNombre() . " ($cantidad) " . round($precio_cant, 2) . '€';
+            }, $productos);
 
-                $aplicable = true;
+            $aplicable = true;
 
-                if ($modoSeleccion) {
-                    foreach ($productos as $p) {
-                        $id = $p->getId();
-                        if (!isset($pedido_productos[$id]) || $pedido_productos[$id] < $p->cantidad) {
-                            $aplicable = false;
-                            break;
-                        }
+            if ($modoSeleccion) {
+                foreach ($productos as $p) {
+                    $id = $p->getId();
+                    if (!isset($pedido_productos[$id]) || $pedido_productos[$id] < $p->cantidad) {
+                        $aplicable = false;
+                        break;
                     }
                 }
-                ?>
+            }
 
-                <tr>
-                    <?php if ($modoSeleccion): ?>
-                        <td>
-                            <input type="checkbox"
-                                name="ofertas[]"
-                                value="<?= $oferta->getId() ?>"
-                                <?= !$aplicable ? 'disabled' : '' ?>>
-                        </td>
-                    <?php endif; ?>
+            /**
+             * 🔥 comprobar si está seleccionada (estado sesión)
+             */
+            $checked = in_array($oferta->getId(), $_SESSION['ofertas_seleccionadas']);
+            ?>
 
+            <tr>
+                <?php if ($modoSeleccion): ?>
                     <td>
-                        <a class="click"
-                            href="detalleOferta.php?id=<?= $oferta->getId() ?>&return=<?= "../pedidos/carrito.php" ?>">
-                            <?= htmlspecialchars($oferta->getNombre()) ?>
-                        </a>
+                        <input type="radio"
+                            name="oferta"
+                            value="<?= $oferta->getId() ?>"
+                            <?= $checked ? 'checked' : '' ?>
+                            <?= !$aplicable ? 'disabled' : '' ?>>
                     </td>
-                    <!-- <td><?= htmlspecialchars($oferta->getDescripcion()) ?></td> -->
+                <?php endif; ?>
 
-                    <td><?= implode(', ', $lista) ?></td>
+                <td>
+                    <a class="click"
+                            href="detalleOferta.php?id=<?= $oferta->getId() ?>&return=<?= urlencode("../ofertas/ofertaCliente.php" . ($modoSeleccion ? "?modo=edicion" : "")) ?>">
+                            <?= htmlspecialchars($oferta->getNombre()) ?>
+                    </a>
+                </td>
 
-                    <!-- <td>?= round($precio_total, 2) ?>€</td> -->
-                    <td><?= $oferta->getDescuento() ?>%</td>
-                    <!-- <td>?= round($precio_final, 2) ?>€</td> -->
+                <td><?= implode(', ', $lista) ?></td>
 
-                    <?php if ($modoSeleccion): ?>
-                        <td>
-                            <?= $aplicable
-                                ? '<span style="color:green">Sí</span>'
-                                : '<span style="color:red">No</span>' ?>
-                        </td>
-                    <?php endif; ?>
-                </tr>
-            <?php endforeach; ?>
-        </table>
-    </div>
+                <td><?= $oferta->getDescuento() ?>%</td>
 
-    <br>
+                <?php if ($modoSeleccion): ?>
+                    <td>
+                        <?= $aplicable
+                            ? '<span style="color:green">Sí</span>'
+                            : '<span style="color:red">No</span>' ?>
+                    </td>
+                <?php endif; ?>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+</div>
 
-    <?php if ($modoSeleccion): ?>
-        <button class="btn-aceptar" type="submit">Aplicar ofertas</button>
-    </form>
+<br>
+
+<?php if ($modoSeleccion): ?>
+    <button class="btn-aceptar" type="submit">
+        Añadir / Quitar oferta
+    </button>
+</form>
 <?php endif; ?>
 
 <p>
