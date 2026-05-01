@@ -28,7 +28,7 @@ ob_start();
     <p>Tu pedido se ha registrado correctamente.</p>
     <?php if ($pedido): ?>
       <p><strong>Número de pedido:</strong> <?= e((string)$pedido->getNumero_pedido()) ?></p>
-      <p><strong>Estado:</strong> <?= e((string)$pedido->getEstado()) ?></p>
+      <p><strong>Estado:</strong> <?= e(ucwords(str_replace('_', ' ', $pedido->getEstado()))) ?></p>
     <?php endif; ?>
     <p>Puedes consultar su estado desde tu perfil o seguir navegando por la aplicación.</p>
 

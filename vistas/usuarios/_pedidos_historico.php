@@ -28,7 +28,7 @@
                             <td><?= e((string) $p['fecha_hora']) ?></td>
                             <td><?= e((string) $p['tipo']) ?></td>
                             <td><?= e((string) $p['total']) ?> €</td>
-                            <td><?= e((string) $p['estado']) ?></td>
+                            <td><?= e(ucwords(str_replace('_', ' ', (string) $p['estado']))) ?></td>
                             <td>+<?= (int)($p['bistrocoins_generados'] ?? 0) ?> / -<?= (int)($p['bistrocoins_gastados'] ?? 0) ?></td>
                             <td>
                                 <a class="btn small" href="<?= RUTA_APP ?>/vistas/pedidos/estadoPedido.php?id=<?= (int) $p['id'] ?>">Ver detalle</a>

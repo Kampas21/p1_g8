@@ -20,7 +20,7 @@
             <!-- Script de apoyo iterativo renderizado limpio sin SQL -->
             <div class="pedido-linea">
                 <strong>Pedido #<?= e((string) $p['numero_pedido']) ?></strong>
-                <div class="muted">Estado actual: <?= e((string) $p['estado']) ?></div>
+                <div class="muted">Estado actual: <?= e(ucwords(str_replace('_', ' ', (string) $p['estado']))) ?></div>
                 <div class="muted">Importe: <?= e((string) $p['total']) ?> €</div>
                 <?php if (!empty($p['lineas'])): ?>
                     <ul>
