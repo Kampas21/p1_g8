@@ -1837,3 +1837,22 @@ td.descripcion {
         padding-left: 18px;
     }
 }
+
+/* =======================================================
+   AVATAR EN PANEL USUARIO en siderbarder
+======================================================= */
+
+.sidebar-avatar-box {
+    margin: 14px 0 18px;
+    text-align: center;
+}
+
+.sidebar-avatar {
+    width: 95px;
+    height: 95px;
+    border-radius: 14px;
+    object-fit: cover;
+    border: 2px solid #c9b89d;
+    background: #fff;
+    display: inline-block;
+}
