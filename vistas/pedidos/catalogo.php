@@ -94,8 +94,7 @@ ob_start();
 
 <div class="table-wrap">
 
-<table>
-
+<table class="tabla-productos-movil">
 <thead>
 <tr>
 <th>Imagen</th>
@@ -112,8 +111,7 @@ ob_start();
 
 <tr>
 
-<td>
-
+<td data-label="Imagen">
 <?php if ($p->getImagen()): ?>
 
 <img
@@ -125,7 +123,7 @@ alt="<?= e($p->getNombre()) ?>">
 
 </td>
 
-<td>
+<td data-label="Nombre">
 
 <a
 href="<?= RUTA_APP ?>/vistas/productos/detalle_producto.php?id=<?= $p->getId() ?>"
@@ -137,16 +135,16 @@ style="font-weight:bold;text-decoration:none;">
 
 </td>
 
-<td>
-<?= e($p->getDescripcion()) ?>
+<td data-label="Descripción">
+    <?= e($p->getDescripcion()) ?>
 </td>
 
-<td class="col-precio">
+<td data-label="Precio" class="col-precio">
 <?= $p->getPrecioFinal() ?> €
 </td>
 
-<td class="col-boton">
-<?= $formHtmls[$p->getId()] ?>
+<td class="col-boton" data-label="Acción">
+    <?= $formHtmls[$p->getId()] ?>
 </td>
 
 </tr>

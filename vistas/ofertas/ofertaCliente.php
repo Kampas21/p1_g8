@@ -1,4 +1,4 @@
-<?php 
+<?php
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
@@ -8,11 +8,11 @@ require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/ProductoDAO.php';
 require_once __DIR__ . '/../../includes/ofertaDAO.php';
 require_once __DIR__ . '/../../includes/pedidoService.php';
+require_once __DIR__ . '/../../includes/util.php';
 
 $user = require_login();
 
 $modoSeleccion = ($_GET['modo'] ?? '') === 'edicion';
-
 
 $pedido_productos = [];
 
@@ -22,9 +22,6 @@ if ($modoSeleccion) {
     }
 }
 
-/**
- * 🔥 estado de ofertas seleccionadas (persistente)
- */
 if (!isset($_SESSION['ofertas_seleccionadas'])) {
     $_SESSION['ofertas_seleccionadas'] = [];
 }
@@ -56,21 +53,23 @@ ob_start();
 <?php endif; ?>
 
 <div class="panel table-wrap">
-    <table>
-        <tr>
-            <?php if ($modoSeleccion): ?>
-                <th>Seleccionar</th>
-            <?php endif; ?>
-            <th>Nombre</th>
-            <th>Productos</th>
-            <th>Descuento</th>
-            <?php if ($modoSeleccion): ?>
-                <th>Aplicable</th>
-            <?php endif; ?>
-        </tr>
+    <table class="tabla-movil">
+        <thead>
+            <tr>
+                <?php if ($modoSeleccion): ?>
+                    <th>Seleccionar</th>
+                <?php endif; ?>
+                <th>Nombre</th>
+                <th>Productos</th>
+                <th>Descuento</th>
+                <?php if ($modoSeleccion): ?>
+                    <th>Aplicable</th>
+                <?php endif; ?>
+            </tr>
+        </thead>
 
+        <tbody>
         <?php foreach ($ofertas as $oferta): ?>
-
             <?php
             $precio_total = 0;
             $productos = ProductoDAO::getProductosDeOferta($oferta->getId());
@@ -82,7 +81,7 @@ ob_start();
 
                 $precio_total += $precio_cant;
 
-                return $p->getNombre() . " ($cantidad) " . round($precio_cant, 2) . '€';
+                return e($p->getNombre()) . " ($cantidad) " . round($precio_cant, 2) . '€';
             }, $productos);
 
             $aplicable = true;
@@ -90,6 +89,7 @@ ob_start();
             if ($modoSeleccion) {
                 foreach ($productos as $p) {
                     $id = $p->getId();
+
                     if (!isset($pedido_productos[$id]) || $pedido_productos[$id] < $p->cantidad) {
                         $aplicable = false;
                         break;
@@ -97,36 +97,37 @@ ob_start();
                 }
             }
 
-            /**
-             * 🔥 comprobar si está seleccionada (estado sesión)
-             */
             $checked = in_array($oferta->getId(), $_SESSION['ofertas_seleccionadas']);
             ?>
 
             <tr>
                 <?php if ($modoSeleccion): ?>
-                    <td>
+                    <td data-label="Seleccionar">
                         <input type="radio"
-                            name="oferta"
-                            value="<?= $oferta->getId() ?>"
-                            <?= $checked ? 'checked' : '' ?>
-                            <?= !$aplicable ? 'disabled' : '' ?>>
+                               name="oferta"
+                               value="<?= (int)$oferta->getId() ?>"
+                               <?= $checked ? 'checked' : '' ?>
+                               <?= !$aplicable ? 'disabled' : '' ?>>
                     </td>
                 <?php endif; ?>
 
-                <td>
+                <td data-label="Nombre">
                     <a class="click"
-                            href="detalleOferta.php?id=<?= $oferta->getId() ?>&return=<?= urlencode("../ofertas/ofertaCliente.php" . ($modoSeleccion ? "?modo=edicion" : "")) ?>">
-                            <?= htmlspecialchars($oferta->getNombre()) ?>
+                       href="detalleOferta.php?id=<?= (int)$oferta->getId() ?>&return=<?= urlencode("../ofertas/ofertaCliente.php" . ($modoSeleccion ? "?modo=edicion" : "")) ?>">
+                        <?= e($oferta->getNombre()) ?>
                     </a>
                 </td>
 
-                <td><?= implode(', ', $lista) ?></td>
+                <td data-label="Productos">
+                    <?= implode(', ', $lista) ?>
+                </td>
 
-                <td><?= $oferta->getDescuento() ?>%</td>
+                <td data-label="Descuento">
+                    <?= e((string)$oferta->getDescuento()) ?>%
+                </td>
 
                 <?php if ($modoSeleccion): ?>
-                    <td>
+                    <td data-label="Aplicable">
                         <?= $aplicable
                             ? '<span style="color:green">Sí</span>'
                             : '<span style="color:red">No</span>' ?>
@@ -134,6 +135,7 @@ ob_start();
                 <?php endif; ?>
             </tr>
         <?php endforeach; ?>
+        </tbody>
     </table>
 </div>
 
@@ -143,7 +145,7 @@ ob_start();
     <button class="btn-aceptar" type="submit">
         Añadir / Quitar oferta
     </button>
-</form>
+    </form>
 <?php endif; ?>
 
 <p>

@@ -1,12 +1,12 @@
 <tr>
 
-<td><?= (int)$cat->getId() ?></td>
+<td data-label="ID"><?= (int)$cat->getId() ?></td>
 
-<td><?= e($cat->getNombre()) ?></td>
+<td data-label="Nombre"><?= e($cat->getNombre()) ?></td>
 
-<td><?= e($cat->getDescripcion()) ?></td>
+<td data-label="Descripción"><?= e($cat->getDescripcion()) ?></td>
 
-<td>
+<td data-label="Imagen">
 <img
 src="<?= RUTA_APP ?>/img/categorias/<?= e($cat->getImagen()) ?>"
 width="70"
@@ -16,7 +16,7 @@ object-fit:cover;
 ">
 </td>
 
-<td>
+<td data-label="Estado">
 <?php if ($cat->isActiva()): ?>
     <span class="texto-ok">Activa</span>
 <?php else: ?>
@@ -24,7 +24,7 @@ object-fit:cover;
 <?php endif; ?>
 </td>
 
-<td>
+<td data-label="Acciones">
 <div class="actions-inline">
 
 <a href="editarCategoria.php?id=<?= (int)$cat->getId() ?>"

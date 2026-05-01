@@ -39,7 +39,7 @@ ob_start();
 <?php if (empty($categorias)): ?>
     <p>No hay categorías.</p>
 <?php else: ?>
-    <table class="tabla">
+    <table class="tabla tabla-movil">
         <thead>
             <tr>
                 <th>ID</th>

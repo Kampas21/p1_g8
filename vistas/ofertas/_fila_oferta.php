@@ -1,23 +1,23 @@
 <tr>
 
-<td><?= (int)$oferta->getId() ?></td>
+<td data-label="ID"><?= (int)$oferta->getId() ?></td>
 
-<td>
+<td data-label="Nombre">
     <a class="click"
        href="detalleOferta.php?id=<?= (int)$oferta->getId() ?>&return=<?= urlencode($_SERVER['REQUEST_URI']) ?>">
         <?= e($oferta->getNombre()) ?>
     </a>
 </td>
 
-<td>
+<td data-label="Fecha inicio">
 <?= e(date('d/m/Y H:i', strtotime($oferta->getFechaInicio()))) ?>
 </td>
 
-<td>
+<td data-label="Fecha fin">
 <?= e(date('d/m/Y H:i', strtotime($oferta->getFechaFin()))) ?>
 </td>
 
-<td>
+<td data-label="Estado">
 <?php if (!$oferta->estaActiva()): ?>
     <span class="text-danger">Caducada</span>
 <?php else: ?>
@@ -25,7 +25,7 @@
 <?php endif; ?>
 </td>
 
-<td>
+<td data-label="Acciones">
 <div class="actions-inline">
 
 <a href="editarOferta.php?id=<?= (int)$oferta->getId() ?>"

@@ -15,7 +15,7 @@ ob_start();
   </div>
   <h2>Gestión de recompensas</h2>
   <div class="table-wrap">
-    <table>
+    <table class="tabla-movil">
       <thead>
         <tr>
           <th>ID</th>
@@ -29,12 +29,12 @@ ob_start();
       <tbody>
       <?php foreach ($recompensas as $recompensa): ?>
         <tr>
-          <td><?= (int)$recompensa->getId() ?></td>
-          <td><?= e($recompensa->getProductoNombre()) ?></td>
-          <td><?= number_format($recompensa->getProductoPrecioFinal(), 2) ?> €</td>
-          <td><?= (int)$recompensa->getBistrocoins() ?></td>
-          <td><?= $recompensa->isActiva() ? 'Activa' : 'Inactiva' ?></td>
-          <td class="actions-inline">
+        <td data-label="ID"><?= (int)$recompensa->getId() ?></td>
+        <td data-label="Producto"><?= e($recompensa->getProductoNombre()) ?></td>
+        <td data-label="Precio carta"><?= number_format($recompensa->getProductoPrecioFinal(), 2) ?> €</td>
+        <td data-label="BistroCoins"><?= (int)$recompensa->getBistrocoins() ?></td>
+        <td data-label="Estado"><?= $recompensa->isActiva() ? 'Activa' : 'Inactiva' ?></td>
+        <td data-label="Acciones" class="actions-inline">
             <a class="btn small" href="recompensa_ver.php?id=<?= (int)$recompensa->getId() ?>">Ver</a>
             <a class="btn editar small" href="editarRecompensa.php?id=<?= (int)$recompensa->getId() ?>">Editar</a>
             <a class="btn borrar small" href="borrarRecompensa.php?id=<?= (int)$recompensa->getId() ?>" onclick="return confirm('¿Seguro que quieres borrar esta recompensa?');">Borrar</a>

@@ -37,7 +37,7 @@ ob_start();
 </p>
 
 <div class="panel table-wrap">
-    <table class="tabla">
+    <table class="tabla tabla-movil">
         <thead>
             <tr>
                 <th>ID</th>
