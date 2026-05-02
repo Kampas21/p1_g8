@@ -1,9 +1,9 @@
 <?php
 //require_once __DIR__ . '/../../entities/oferta.php';
-require_once __DIR__ . '/../../includes/productoService.php';
+require_once __DIR__ . '/../../includes/ProductoDAO.php';
 require_once __DIR__ . '/../../includes/ofertaDAO.php';
 
-$productos = ProductoService::getAllActivos();
+$productos = ProductoDAO::getAllActivos();
 
 $modoEdicion = isset($oferta);
 
@@ -28,7 +28,7 @@ $fecha_fin = $modoEdicion && $oferta->getFechaFin()
 $productosSeleccionados = [];
 
 if ($modoEdicion) {
-    $productosSeleccionados = ProductoService::getProductosDeOferta($oferta->getId());
+    $productosSeleccionados = ProductoDAO::getProductosDeOferta($oferta->getId());
 }
 ?>
 

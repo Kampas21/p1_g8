@@ -5,7 +5,7 @@ error_reporting(E_ALL);
 require_once __DIR__ . '/../../includes/auth.php';
 
 require_once __DIR__ . '/../../entities/oferta.php';
-require_once __DIR__ . '/../../includes/productoDAO.php';
+require_once __DIR__ . '/../../includes/ProductoDAO.php';
 require_once __DIR__ . '/../../includes/ofertaDAO.php';
 
 $id = $_GET['id'] ?? null;
