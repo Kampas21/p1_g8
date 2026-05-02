@@ -51,7 +51,7 @@ class FormularioPago extends Formulario {
           <h3>💵 Pagar al camarero</h3>
           <p>El camarero pasará a cobrarle en su mesa o en el mostrador.</p>
           <button type="button" class="btn primary"
-            onclick="this.name='metodo_pago'; this.value='camarero'; this.form.submit();">
+            onclick="const h = document.createElement('input'); h.type='hidden'; h.name='metodo_pago'; h.value='camarero'; this.form.appendChild(h); this.form.submit();">
             Pagar al camarero
           </button>
         </div>
