@@ -19,7 +19,6 @@ class OfertaService
         $pedido_productos = [];
 
         foreach (PedidoService::getCarritoItems() as $item) {
-            if (!empty($item['es_recompensa'])) continue;
             $pid = $item['producto_id'];
             $pedido_productos[$pid] = ($pedido_productos[$pid] ?? 0) + (int)($item['cantidad'] ?? 0);
         }
@@ -41,7 +40,7 @@ class OfertaService
             $reserva = [];
             $precio_pack = 0;
 
-            // 🔥 UN SOLO BUCLE REAL
+            
             foreach ($productos_oferta as $po) {
 
                 $id = $po->getId();
@@ -61,13 +60,13 @@ class OfertaService
                 $precio_pack += $po->getPrecioFinal() * $req;
             }
 
-            // ❌ no aplicable
+            //  no aplicable
             if ($veces <= 0) {
                 $errores[] = "Faltan productos en '{$oferta->getNombre()}': " . implode(', ', $faltantes);
                 continue;
             }
 
-            // 🔥 construir reserva ya con veces final
+           
             foreach ($productos_oferta as $po) {
                 $id = $po->getId();
                 $reserva[$id] = $po->cantidad * $veces;

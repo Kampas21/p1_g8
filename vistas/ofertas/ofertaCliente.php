@@ -18,7 +18,9 @@ $pedido_productos = [];
 
 if ($modoSeleccion) {
     foreach (PedidoService::getCarritoItems() as $producto_id => $item) {
-        $pedido_productos[(int)$producto_id] = (int)($item['cantidad'] ?? 0);
+        if (!empty($item['producto_id']) && strpos($item['producto_id'], '_R') === false) {
+            $pedido_productos[(int)$producto_id] = (int)($item['cantidad'] ?? 0);
+        }
     }
 }
 
