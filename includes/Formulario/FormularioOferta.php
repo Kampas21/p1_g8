@@ -3,7 +3,9 @@
 namespace es\ucm\fdi\aw\Formulario;
 
 require_once __DIR__ . '/Formulario.php';
-require_once __DIR__ . '/../OfertaDAO.php';
+require_once __DIR__ . '/../../includes/ProductoDAO.php';
+require_once __DIR__ . '/../../includes/OfertaDAO.php';
+require_once __DIR__ . '/../../includes/OfertaProductoDAO.php';
 
 class FormularioOferta extends Formulario
 {
@@ -45,19 +47,68 @@ class FormularioOferta extends Formulario
             'UTF-8'
         );
 
-        // valores numéricos SIN escapar para cálculo
-        $precio_inicial = $datos['precio_inicial']
-            ?? ($this->oferta ? $this->oferta->getPrecioInicial() : 0);
-
         $descuento = $datos['descuento']
             ?? ($this->oferta ? $this->oferta->getDescuento() : 0);
 
-        $precio_inicial = (float)$precio_inicial;
-        $descuento = (float)$descuento;
+        // $precio_final = $datos['precio_final']
+        //     ?? ($this->oferta ? $this->oferta->aplicarDescuento() : 0);
 
-        $precio_final = ($precio_inicial > 0)
-            ? $precio_inicial * (1 - $descuento / 100)
-            : 0;
+        // ─────────────────────────────────────
+        // PRODUCTOS DISPONIBLES
+        // ─────────────────────────────────────
+        $productosDisponibles = \ProductoDAO::getAllActivos();
+
+        $productosDisponibles = array_map(function ($p) {
+            return [
+                'id' => $p->getId(),
+                'nombre' => $p->getNombre(),
+                'precio' => (float)$p->getPrecioFinal()
+            ];
+        }, $productosDisponibles);
+
+        // ─────────────────────────────────────
+        // PRODUCTOS YA ASIGNADOS (EDICIÓN)
+        // ─────────────────────────────────────
+        $productosOferta = [];
+
+        if ($this->oferta) {
+
+            $productosOferta = \ProductoDAO::getProductosDeOferta($this->oferta->getId());
+            //$relaciones = \OfertaProductoDAO::getByOferta($this->oferta->getId());
+
+
+            $productosOferta = array_map(function ($p) {
+                return [
+                    'id' => $p->getId(),
+                    'nombre' => $p->getNombre(),
+                    'precio' => (float)$p->getPrecioFinal(),
+                    'cantidad' => $p->cantidad
+                ];
+            }, $productosOferta);
+
+            // // 🔥 crear mapa: producto_id => cantidad
+            // $cantidades = [];
+
+            // foreach ($relaciones as $r) {
+            //     $cantidades[$r->getProductoId()] = $r->getCantidadId();
+            // }
+
+            // // 🔥 unir datos correctamente
+            // $productosOferta = array_map(function ($p) use ($cantidades) {
+
+            //     $id = $p->getId();
+
+            //     return [
+            //         'id' => $id,
+            //         'nombre' => $p->getNombre(),
+            //         'precio' => (float)$p->getPrecioFinal(),
+            //         'cantidad' => $cantidades[$id] ?? 0
+            //     ];
+            // }, $productosOferta);
+        }
+
+        $productosJSON = json_encode($productosDisponibles, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
+        $productosEditJSON = json_encode($productosOferta, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
 
         $errores = self::generaErroresCampos(
             ['nombre', 'descripcion', 'fecha_inicio', 'fecha_fin', 'precio_inicial', 'precio_final'],
@@ -70,61 +121,67 @@ class FormularioOferta extends Formulario
             $this->errores,
             'text-danger'
         );
-
-        $textoBoton = $this->oferta ? 'Actualizar oferta' : 'Crear oferta';
-
         return <<<HTML
 
 {$erroresGlobales}
 
+<script>
+    const productosDisponibles = $productosJSON;
+    const productosSeleccionados = $productosEditJSON;
+</script>
+
 <p>
 <label for="nombre">Nombre:</label><br>
-<input id="nombre" type="text" name="nombre" value="{$nombre}" required minlength="3" maxlength="100">
+<input type="text" name="nombre" value="{$nombre}" required minlength="3" maxlength="100">
 {$errores['nombre']}
 </p>
 
 <p>
-<label for="descripcion">Descripción:</label><br>
-<textarea id="descripcion" name="descripcion">{$descripcion}</textarea>
-{$errores['descripcion']}
+<label>Descripción:</label><br>
+<textarea name="descripcion">{$descripcion}</textarea>
 </p>
 
 <p>
-<label for="fecha_inicio">Fecha inicio:</label><br>
-<input id="fecha_inicio" type="datetime-local" name="fecha_inicio" value="{$fecha_inicio}" required>
-{$errores['fecha_inicio']}
+<label>Fecha inicio:</label><br>
+<input type="datetime-local" name="fecha_inicio" value="{$fecha_inicio}">
 </p>
 
 <p>
-<label for="fecha_fin">Fecha fin:</label><br>
-<input id="fecha_fin" type="datetime-local" name="fecha_fin" value="{$fecha_fin}" required>
-{$errores['fecha_fin']}
+<label>Fecha fin:</label><br>
+<input type="datetime-local" name="fecha_fin" value="{$fecha_fin}">
+</p>
+
+<br>
+
+<div id="contenedorProductosDinamicos"></div>
+
+<button type="button" id="aAddProduct">Añadir producto</button>
+
+<br><br>
+
+<p>
+<label>Precio inicial:</label>
+<input id="precio_inicial" type="number" readonly>
 </p>
 
 <p>
-<label for="precio_inicial">Precio inicial:</label><br>
-<input id="precio_inicial" type="number" step="0.01" name="precio_inicial" value="{$precio_inicial}" required>
-{$errores['precio_inicial']}
+<label>Precio final:</label>
+<input id="precio_final" name="precio_final" type="number" min='0'> <!--value="{precio_final}" -->
 </p>
 
 <p>
-<label for="precio_final">Precio final:</label><br>
-<input id="precio_final" type="number" step="0.01" name="precio_final" value="{$precio_final}" required>
-{$errores['precio_final']}
-</p>
-
-<p>
-<label>Descuento calculado:</label><br>
+<label>Descuento:</label>
 <input id="descuento" type="text" readonly value="{$descuento}">
 </p>
 
-<p>
-<button type="submit">
-{$textoBoton}
-</button>
-</p>
+<input type="hidden" id="descuentoHidden" name="descuento" value="{$descuento}">
 
+<script src="../../JS/ofertaProductos.js"></script>
 <script src="../../JS/ofertaDescuento.js"></script>
+
+<p>
+<button type="submit">Guardar oferta</button>
+</p>
 
 HTML;
     }
@@ -137,13 +194,16 @@ HTML;
         $descripcion = trim((string)($datos['descripcion'] ?? ''));
         $fecha_inicio = trim((string)($datos['fecha_inicio'] ?? ''));
         $fecha_fin = trim((string)($datos['fecha_fin'] ?? ''));
-        $precio_inicial = trim((string)($datos['precio_inicial'] ?? ''));
+
         $precio_final = trim((string)($datos['precio_final'] ?? ''));
+        $descuento = (float)($_POST['descuento'] ?? 0);
+
+        $productos = $_POST['productos'] ?? [];
+        $cantidades = $_POST['cantidades'] ?? [];
 
         $nombre = filter_var($nombre, FILTER_SANITIZE_SPECIAL_CHARS);
         $descripcion = filter_var($descripcion, FILTER_SANITIZE_SPECIAL_CHARS);
 
-        // VALIDACIONES
         if ($nombre === '' || mb_strlen($nombre) < 3) {
             $this->errores['nombre'] = 'El nombre debe tener al menos 3 caracteres.';
         }
@@ -156,43 +216,27 @@ HTML;
             $this->errores['fecha_fin'] = 'La fecha de fin es obligatoria.';
         }
 
-        if ($precio_inicial === '' || !is_numeric($precio_inicial)) {
-            $this->errores['precio_inicial'] = 'Precio inicial no válido.';
-        }
-
         if ($precio_final === '' || !is_numeric($precio_final)) {
             $this->errores['precio_final'] = 'Precio final no válido.';
         }
 
-        if ($precio_final > $precio_inicial) {
-            $this->errores['precio_final'] = 'El precio final no puede ser mayor que el inicial.';
+        if ($descuento < 0) {
+            $this->errores['precio_final'] = 'Precio final no válido.';
         }
 
         if (!empty($this->errores)) {
             return;
         }
 
-        $precio_inicial = (float)$precio_inicial;
-        $precio_final = (float)$precio_final;
+        // ─────────────────────────────────────
+        // CREAR O EDITAR OFERTA
+        // ─────────────────────────────────────
+        if ($this->oferta) {
 
-        $descuento = 0;
+            $ofertaId = $this->oferta->getId();
 
-        if ($precio_inicial > 0) {
-            $descuento = (($precio_inicial - $precio_final) / $precio_inicial) * 100;
-        }
-
-        $ok = $this->oferta
-
-            ? \OfertaDAO::editarOferta(
-                $this->oferta->getId(),
-                $nombre,
-                $descripcion,
-                $fecha_inicio,
-                $fecha_fin,
-                $descuento
-            )
-
-            : \OfertaDAO::crearOferta(
+            \OfertaDAO::editarOferta(
+                $ofertaId,
                 $nombre,
                 $descripcion,
                 $fecha_inicio,
@@ -200,7 +244,36 @@ HTML;
                 $descuento
             );
 
-        if (!$ok) {
+            // 🔥 LIMPIAR RELACIONES (IMPORTANTE)
+            \OfertaProductoDAO::removeProductosDeOferta($ofertaId);
+        } else {
+
+            $ofertaId = \OfertaDAO::crearOferta(
+                $nombre,
+                $descripcion,
+                $fecha_inicio,
+                $fecha_fin,
+                $descuento
+            );
+        }
+
+        // ─────────────────────────────────────
+        // GUARDAR PRODUCTOS
+        // ─────────────────────────────────────
+        foreach ($productos as $i => $productoId) {
+
+            $cantidad = $cantidades[$i] ?? 0;
+
+            if ($cantidad > 0) {
+                \OfertaProductoDAO::addProducto(
+                    $ofertaId,
+                    $productoId,
+                    $cantidad
+                );
+            }
+        }
+
+        if (!$ofertaId) {
             $this->errores[] = 'No se pudo guardar la oferta.';
             return;
         }

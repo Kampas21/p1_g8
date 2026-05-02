@@ -88,60 +88,6 @@ if ($modoEdicion) {
 
     <div id="contenedorProductosDinamicos"></div>
 
-    <h3>Productos de la oferta</h3>
-
-    <table border="1">
-        <tr>
-            <?php
-            if ($modoEdicion) {
-                echo '<th>Seleccionados</th>';
-            }
-            ?>
-            <th>Producto</th>
-            <th>Precio</th>
-            <th>Cantidad</th>
-        </tr>
-
-        <?php foreach ($productos as $p):
-            $cantidad = 0;
-
-            if ($modoEdicion) {
-                foreach ($productosSeleccionados as $ps) {
-                    if ($ps->getId() == $p->getId()) {
-                        $cantidad = $ps->cantidad;
-                        break;
-                    }
-                }
-            }
-
-        ?>
-
-            <tr>
-
-                <?php if ($modoEdicion): ?>
-                    <td>
-                        <?= $cantidad > 0
-                            ? '<span class="text-success">✔</span>'
-                            : '<span class="text-gray">—</span>' ?>
-                    </td>
-                <?php endif; ?>
-
-
-                <td><?= htmlspecialchars($p->getNombre()) ?></td>
-                <td><?= number_format($p->getPrecioFinal(), 2) ?> €</td>
-
-                <td>
-                    <input type="number"
-                        name="cantidades[<?= $p->getId() ?>]"
-                        value="<?= $cantidad ?>"
-                        min="0"
-                        data-precio="<?= $p->getPrecioFinal() ?>">
-                </td>
-            </tr>
-
-        <?php endforeach; ?>
-    </table>
-
     <h3>Resumen</h3>
 
     <p>Total: <span id="precioTotal">0</span> €</p>

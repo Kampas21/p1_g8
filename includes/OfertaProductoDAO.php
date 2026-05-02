@@ -4,9 +4,39 @@ require_once __DIR__ . '/../entities/ofertaProducto.php';
 
 class OfertaProductoDAO
 {
+    public static function getByOferta($oferta_id)
+    {
+        global $conn;
+
+        $stmt = $conn->prepare("
+            SELECT id, oferta_id, producto_id, cantidad 
+            FROM oferta_productos 
+            WHERE oferta_id = ?
+        ");
+        $stmt->bind_param("i", $oferta_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $productosOferta = [];
+        while ($fila = $result->fetch_assoc()) {
+            $productosOferta[] = new OfertaProducto(
+                $fila['id'],
+                $fila['oferta_id'],
+                $fila['producto_id'],
+                $fila['cantidad']
+            );
+        }
+
+        $result->free();
+        $stmt->close();
+
+        return $productosOferta;
+    }
+
+
     public static function addProducto($oferta_id, $producto_id, $cantidad)
     {
-       global $conn;
+        global $conn;
 
         $stmt = $conn->prepare(
             "INSERT INTO oferta_productos (oferta_id, producto_id, cantidad)

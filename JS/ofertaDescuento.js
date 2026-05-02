@@ -1,10 +1,21 @@
 function actualizarValores() {
-    let inicial = parseFloat(document.getElementById('precio_inicial')?.value) || 0;
+
+    let inicial = 0;
+
+    document.querySelectorAll("input[name^='cantidades']").forEach(input => {
+        const cantidad = parseFloat(input.value) || 0;
+        const precio = parseFloat(input.dataset.precio) || 0;
+        inicial += cantidad * precio;
+    });
+
+    const campoInicial = document.getElementById('precio_inicial');
+    if (campoInicial) campoInicial.value = inicial.toFixed(2);
+
     let final = parseFloat(document.getElementById('precio_final')?.value) || 0;
 
     let descuento = 0;
 
-    if (inicial > 0) {
+    if (inicial > 0 && final > 0) {
         descuento = ((inicial - final) / inicial) * 100;
     }
 
@@ -12,16 +23,27 @@ function actualizarValores() {
     if (campo) {
         campo.value = descuento.toFixed(2);
     }
+
+    const campoDesc = document.getElementById('descuento');
+    const hidden = document.getElementById('descuentoHidden');
+
+    if (hidden) {
+        hidden.value = descuento.toFixed(2);
+    }
 }
 
-// Esperar a que cargue la página
+// ─────────────────────────────
+// 🔥 AQUÍ ESTÁ LA CLAVE
+// ─────────────────────────────
+document.addEventListener('productos:actualizados', actualizarValores);
+
+// ─────────────────────────────
+// INIT
+// ─────────────────────────────
 document.addEventListener('DOMContentLoaded', function () {
 
-    let inicial = document.getElementById('precio_inicial');
     let final = document.getElementById('precio_final');
-
-    if (inicial) inicial.addEventListener('input', actualizarValores);
     if (final) final.addEventListener('input', actualizarValores);
 
-    actualizarValores(); // calcular al cargar
+    actualizarValores();
 });
