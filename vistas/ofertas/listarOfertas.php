@@ -1,7 +1,7 @@
 <?php 
 
 require_once __DIR__ . '/../../includes/auth.php';
-require_once __DIR__ . '/../../includes/OfertaDAO.php';
+require_once __DIR__ . '/../../includes/ofertaDAO.php';
 
 $user = current_user();
 

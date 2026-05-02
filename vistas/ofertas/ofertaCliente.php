@@ -17,10 +17,10 @@ $modoSeleccion = ($_GET['modo'] ?? '') === 'edicion';
 $pedido_productos = [];
 
 if ($modoSeleccion) {
-    foreach (PedidoService::getCarritoItems() as $producto_id => $item) {
-        if (!empty($item['producto_id']) && strpos($item['producto_id'], '_R') === false) {
-            $pedido_productos[(int)$producto_id] = (int)($item['cantidad'] ?? 0);
-        }
+    foreach (PedidoService::getCarritoItems() as $item) {
+        if (!empty($item['es_recompensa'])) continue;
+        $pid = (int)$item['producto_id'];
+        $pedido_productos[$pid] = ($pedido_productos[$pid] ?? 0) + (int)($item['cantidad'] ?? 0);
     }
 }
 
