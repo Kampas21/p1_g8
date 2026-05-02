@@ -18,8 +18,10 @@ class OfertaService
 
         $pedido_productos = [];
 
-        foreach (PedidoService::getCarritoItems() as $id => $item) {
-            $pedido_productos[$id] = (int)($item['cantidad'] ?? 0);
+        foreach (PedidoService::getCarritoItems() as $item) {
+            if (!empty($item['es_recompensa'])) continue;
+            $pid = $item['producto_id'];
+            $pedido_productos[$pid] = ($pedido_productos[$pid] ?? 0) + (int)($item['cantidad'] ?? 0);
         }
 
         $ofertas_validas = [];
