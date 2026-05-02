@@ -18,7 +18,7 @@ ob_start();
     <h2>👔 Visión Global de Gerencia</h2>
     <p>
         Usuario: <?= e($user->getNombre()) ?>
-        (Rol: <?= e($user->getRol()) ?>)
+         (<?= e(ucfirst((string) $user->getRol())) ?>)
     </p>
 </div>
 
@@ -32,6 +32,7 @@ ob_start();
                     <th>ID</th>
                     <th>Estado</th>
                     <th>Cocinero Asignado</th>
+                    <th>Camarero Asignado</th>
                     <th>Productos</th>
                 </tr>
             </thead>
@@ -39,7 +40,7 @@ ob_start();
             <tbody>
                 <?php if (empty($pedidos)): ?>
                     <tr>
-                        <td colspan="4" class="tabla-panel-vacia" data-label="">
+                        <td colspan="5" class="tabla-panel-vacia" data-label="">
                             No hay pedidos pendientes en este momento.
                         </td>
                     </tr>
@@ -102,6 +103,46 @@ ob_start();
                                 <?php endif; ?>
                             </td>
 
+                            <td data-label="Camarero asignado" class="celda-flex">
+                                <?php if ($p['camarero_nombre']): ?>
+                                    <?php
+                                    $nombreCompleto = trim($p['camarero_nombre'] . ' ' . $p['camarero_apellidos']);
+
+                                    $avatarEmergencia = 'https://ui-avatars.com/api/?name='
+                                        . urlencode($nombreCompletoCamarero)
+                                        . '&background=random&color=fff&rounded=true&size=100';
+
+                                    if (!empty($p['camarero_avatar_valor'])) {
+                                        $avatarImg = (
+                                            strpos($p['camarero_avatar_valor'], '/') === 0
+                                            || strpos($p['camarero_avatar_valor'], 'http') === 0
+                                        )
+                                            ? $p['camarero_avatar_valor']
+                                            : RUTA_APP . '/' . $p['camarero_avatar_valor'];
+                                    } else {
+                                        $avatarImgCamarero = $avatarEmergenciaCamarero;
+                                    }
+                                    ?>
+
+                                    <img src="<?= e($avatarImgCamarero) ?>"
+                                         alt="Avatar camarero"
+                                         onerror="this.onerror=null; this.src='<?= e($avatarEmergenciaCamarero) ?>';"
+                                         class="avatar-empleado">
+
+                                    <span class="texto-destacado">
+                                        <?= e($nombreCompletoCamarero) ?>
+                                    </span>
+                                <?php else: ?>
+                                    <div class="avatar-placeholder">
+                                        🕒
+                                    </div>
+
+                                    <span class="texto-gris-cursiva">
+                                        Sin asignar
+                                    </span>
+                                <?php endif; ?>
+                            </td>
+                            
                             <td data-label="Productos">
                                 <ul>
                                     <?php foreach ($productos as $prod): ?>
