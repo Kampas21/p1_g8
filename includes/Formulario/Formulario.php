@@ -85,7 +85,7 @@ abstract class Formulario
     protected $action;
 
     /**
-     * @var string Valor del atributo "class" de la etiqueta &lt;form&gt; asociada al formulario. Si este parámetro incluye la cadena "nocsrf" no se generá el token CSRF para este formulario.
+     * @var string Valor del atributo "class" de la etiqueta &lt;form&gt; asociada al formulario.
      */
     protected $classAtt;
 
@@ -125,8 +125,7 @@ abstract class Formulario
      *     <tr>
      *       <td>class</td>
      *       <td><code>null</code></td>       
-     *       <td>Valor del atributo "class" de la etiqueta &lt;form&gt; asociada al formulario. Si este parámetro incluye la cadena
-     *        "nocsrf" no se generá el token CSRF para este formulario.</td>
+     *       <td>Valor del atributo "class" de la etiqueta &lt;form&gt; asociada al formulario. </td>
      *     </tr>
      *     <tr>
      *       <td>enctype</td>

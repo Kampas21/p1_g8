@@ -109,45 +109,7 @@ ob_start();
 
 <?php foreach ($productos as $p): ?>
 
-<tr>
-
-<td data-label="Imagen">
-<?php if ($p->getImagen()): ?>
-
-<img
-src="<?= escaparHtml(RUTA_APP . '/' . $p->getImagen()) ?>"
-class="img-thumbnail"
-alt="<?= escaparHtml($p->getNombre()) ?>">
-
-<?php endif; ?>
-
-</td>
-
-<td data-label="Nombre">
-
-<a
-href="<?= RUTA_APP ?>/vistas/productos/detalle_producto.php?id=<?= $p->getId() ?>"
-class="link-destacado">
-
-<?= escaparHtml($p->getNombre()) ?>
-
-</a>
-
-</td>
-
-<td data-label="Descripción">
-    <?= escaparHtml($p->getDescripcion()) ?>
-</td>
-
-<td data-label="Precio" class="col-precio">
-<?= $p->getPrecioFinal() ?> €
-</td>
-
-<td class="col-boton" data-label="Acción">
-    <?= $formHtmls[$p->getId()] ?>
-</td>
-
-</tr>
+                <?php require __DIR__ . '/_fila_producto_catalogo.php'; ?>
 
 <?php endforeach; ?>
 
@@ -178,29 +140,7 @@ class="link-destacado">
 
 <?php foreach ($categorias as $cat): ?>
 
-<div class="categoria-card">
-
-<a href="catalogo.php?categoria=<?= (int)$cat->getId() ?>">
-
-<img
-src="<?= RUTA_APP ?>/img/categorias/<?= escaparHtml($cat->getImagen()) ?>"
-alt="<?= escaparHtml($cat->getNombre()) ?>">
-
-</a>
-
-<h4>
-<?= escaparHtml($cat->getNombre()) ?>
-</h4>
-
-<a
-href="catalogo.php?categoria=<?= (int)$cat->getId() ?>"
-class="btn primary">
-
-Ver productos
-
-</a>
-
-</div>
+                <?php require __DIR__ . '/_tarjeta_categoria_catalogo.php'; ?>
 
 <?php endforeach; ?>
 
