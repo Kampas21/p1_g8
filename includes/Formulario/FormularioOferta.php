@@ -86,14 +86,14 @@ class FormularioOferta extends Formulario
                 ];
             }, $productosOferta);
 
-            // // 🔥 crear mapa: producto_id => cantidad
+            // //  crear mapa: producto_id => cantidad
             // $cantidades = [];
 
             // foreach ($relaciones as $r) {
             //     $cantidades[$r->getProductoId()] = $r->getCantidadId();
             // }
 
-            // // 🔥 unir datos correctamente
+            // //  unir datos correctamente
             // $productosOferta = array_map(function ($p) use ($cantidades) {
 
             //     $id = $p->getId();
@@ -228,9 +228,9 @@ HTML;
             return;
         }
 
-        // ─────────────────────────────────────
+        
         // CREAR O EDITAR OFERTA
-        // ─────────────────────────────────────
+        
         if ($this->oferta) {
 
             $ofertaId = $this->oferta->getId();
@@ -244,7 +244,7 @@ HTML;
                 $descuento
             );
 
-            // 🔥 LIMPIAR RELACIONES (IMPORTANTE)
+            //  LIMPIAR RELACIONES (IMPORTANTE)
             \OfertaProductoDAO::removeProductosDeOferta($ofertaId);
         } else {
 
@@ -257,9 +257,9 @@ HTML;
             );
         }
 
-        // ─────────────────────────────────────
+        
         // GUARDAR PRODUCTOS
-        // ─────────────────────────────────────
+        
         foreach ($productos as $i => $productoId) {
 
             $cantidad = $cantidades[$i] ?? 0;
