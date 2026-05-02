@@ -3,7 +3,7 @@ require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/application.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/util.php';
-require_once __DIR__ . '/../../includes/Formulario/FormularioEstadoCamarero.php';
+require_once __DIR__ . '/../../includes/Formulario/FormularioAccionesCamarero.php';
 require_once __DIR__ . '/../../includes/pedidoService.php';
 
 $user = require_role('camarero');

@@ -4,7 +4,7 @@ namespace es\ucm\fdi\aw\Formulario;
 require_once __DIR__ . '/Formulario.php';
 require_once __DIR__ . '/../../includes/pedidoService.php';
 
-class FormularioEstadoCamarero extends Formulario {
+class FormularioAccionesCamarero extends Formulario {
 
     private $pedido_id;
     private $accion;

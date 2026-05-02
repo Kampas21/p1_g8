@@ -5,7 +5,7 @@ require_once __DIR__ . '/Formulario.php';
 require_once __DIR__ . '/../../includes/UsuarioDAO.php';
 require_once __DIR__ . '/../../includes/util.php';
 
-class FormularioAdminUsuario extends Formulario
+class FormularioEdicionUsuario extends Formulario
 {
     private $isCreate;
     private $userToEdit;

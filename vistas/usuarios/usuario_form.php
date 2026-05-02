@@ -5,9 +5,9 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../includes/UsuarioDAO.php';
 require_once __DIR__ . '/../../includes/auth.php';
-require_once __DIR__ . '/../../includes/Formulario/FormularioAdminUsuario.php';
+require_once __DIR__ . '/../../includes/Formulario/FormularioEdicionUsuario.php';
 
-use es\ucm\fdi\aw\Formulario\FormularioAdminUsuario;
+use es\ucm\fdi\aw\Formulario\FormularioEdicionUsuario;
 
 $admin = require_role('gerente');
 
@@ -26,7 +26,7 @@ if (!$isCreate) {
 }
 
 // Instanciamos nuestro objeto formulario
-$form = new FormularioAdminUsuario($isCreate, $userToEdit);
+$form = new FormularioEdicionUsuario($isCreate, $userToEdit);
 $htmlFormUsuario = $form->gestiona();
 
 $tituloAccion = $isCreate ? 'Crear Nuevo Usuario' : 'Editar Usuario';

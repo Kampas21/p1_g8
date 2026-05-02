@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/application.php';
 require_once __DIR__ . '/../entities/pedido.php';
-require_once __DIR__ . '/../entities/productos_Pedido.php';
+require_once __DIR__ . '/../entities/productoPedido.php';
 
 class PedidoDAO
 {
@@ -339,7 +339,7 @@ class PedidoDAO
         $productos = [];
 
         while ($fila = $result->fetch_assoc()) {
-            $productos[] = new Productos_Pedido(
+            $productos[] = new ProductoPedido(
                 $fila['id'],
                 $fila['nombre'],
                 $fila['pedido_id'],
