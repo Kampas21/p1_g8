@@ -6,11 +6,11 @@ require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/util.php';
 require_once __DIR__ . '/../../includes/CategoriaDAO.php';
 require_once __DIR__ . '/../../includes/ProductoDAO.php';
-require_once __DIR__ . '/../../entities/pedido.php';
-require_once __DIR__ . '/../../entities/producto.php';
-require_once __DIR__ . '/../../entities/categoria.php';
+require_once __DIR__ . '/../../entities/Pedido.php';
+require_once __DIR__ . '/../../entities/Producto.php';
+require_once __DIR__ . '/../../entities/Categoria.php';
 require_once __DIR__ . '/../../includes/Formulario/FormularioAddCarrito.php';
-require_once __DIR__ . '/../../includes/pedidoService.php';
+require_once __DIR__ . '/../../includes/PedidoService.php';
 
 $user = require_login();
 if (!PedidoService::carritoTieneTipo()) {

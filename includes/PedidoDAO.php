@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/application.php';
-require_once __DIR__ . '/../entities/pedido.php';
-require_once __DIR__ . '/../entities/productoPedido.php';
+require_once __DIR__ . '/../entities/Pedido.php';
+require_once __DIR__ . '/../entities/ProductoPedido.php';
 
 class PedidoDAO
 {
@@ -67,7 +67,7 @@ class PedidoDAO
             $pedido_id = self::crearPedidoFormal($numero, $estado, $tipo, $metodo_pago, $usuario_id, $total_sin_descuentos, $total_descuento);
 
             require_once __DIR__ . '/ProductoDAO.php';
-            require_once __DIR__ . '/ofertaEnPedidoDAO.php';
+            require_once __DIR__ . '/OfertaEnPedidoDAO.php';
 
             foreach ($lineas as $clave => $item) {
                 $producto_id = isset($item['producto_id']) ? (int) $item['producto_id'] : (int) $clave;

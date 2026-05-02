@@ -4,14 +4,15 @@ require_once __DIR__ . '/../../includes/application.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/util.php';
 
-require_once __DIR__ . '/../../entities/pedido.php';
+require_once __DIR__ . '/../../entities/Pedido.php';
 
 require_once __DIR__ . '/../../includes/Formulario/FormularioActualizarLineaPedido.php';
 require_once __DIR__ . '/../../includes/Formulario/FormularioEliminarLineaPedido.php';
 require_once __DIR__ . '/../../includes/Formulario/FormularioCancelarPedido.php';
 
-require_once __DIR__ . '/../../includes/pedidoService.php';
+require_once __DIR__ . '/../../includes/PedidoService.php';
 require_once __DIR__ . '/../../includes/ProductoDAO.php';
+require_once __DIR__ . '/../../includes/OfertaService.php';
 
 $user = require_login();
 if (!PedidoService::carritoTieneTipo()) {

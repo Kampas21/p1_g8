@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../entities/producto.php';
+require_once __DIR__ . '/../entities/Producto.php';
 require_once __DIR__ . '/application.php';
 
 class ProductoDAO {

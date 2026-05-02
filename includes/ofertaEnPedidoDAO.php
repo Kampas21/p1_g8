@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../includes/application.php';
-require_once __DIR__ . '/../entities/ofertaEnPedido.php';
+require_once __DIR__ . '/../entities/OfertaEnPedido.php';
 
 class OfertaEnPedidoDAO
 {

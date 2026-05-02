@@ -6,9 +6,9 @@ require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/util.php';
 require_once __DIR__ . '/../../includes/UsuarioDAO.php';
-require_once __DIR__ . '/../../entities/pedido.php';
+require_once __DIR__ . '/../../entities/Pedido.php';
 require_once __DIR__ . '/../../includes/Formulario/FormularioPerfil.php';
-require_once __DIR__ . '/../../includes/pedidoService.php';
+require_once __DIR__ . '/../../includes/PedidoService.php';
 
 use es\ucm\fdi\aw\Formulario\FormularioPerfil;
 

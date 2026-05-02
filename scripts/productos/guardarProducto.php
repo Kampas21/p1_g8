@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../../includes/config.php';
-require_once __DIR__ . '/../../entities/producto.php';
+require_once __DIR__ . '/../../entities/Producto.php';
 require_once __DIR__ . '/../../includes/ProductoDAO.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -56,7 +56,7 @@ if (!empty($errores)) {
     $_SESSION['errores_producto'] = $errores;
 
     if ($id) {
-        header("Location: ../../vistas/productos/editarProducto.php?id=$id");
+        header("Location: ../../vistas/productos/crearProducto.php?id=$id");
     } else {
         header("Location: ../../vistas/productos/crearProducto.php");
     }

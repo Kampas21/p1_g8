@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/application.php';
-require_once __DIR__ . '/../entities/usuario.php'; 
+require_once __DIR__ . '/../entities/Usuario.php'; 
 require_once __DIR__ . '/util.php';
 
 class UsuarioDAO {

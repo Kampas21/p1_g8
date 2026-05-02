@@ -1,7 +1,7 @@
 <?php
 
-require_once __DIR__ . '/pedidoService.php';
-require_once __DIR__ . '/ofertaDAO.php';
+require_once __DIR__ . '/PedidoService.php';
+require_once __DIR__ . '/OfertaDAO.php';
 require_once __DIR__ . '/ProductoDAO.php';
 
 class OfertaService

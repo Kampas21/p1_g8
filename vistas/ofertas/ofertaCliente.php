@@ -6,8 +6,8 @@ session_start();
 
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/ProductoDAO.php';
-require_once __DIR__ . '/../../includes/ofertaDAO.php';
-require_once __DIR__ . '/../../includes/pedidoService.php';
+require_once __DIR__ . '/../../includes/OfertaDAO.php';
+require_once __DIR__ . '/../../includes/PedidoService.php';
 require_once __DIR__ . '/../../includes/util.php';
 
 $user = require_login();
