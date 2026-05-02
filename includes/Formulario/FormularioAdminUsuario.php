@@ -28,10 +28,10 @@ class FormularioAdminUsuario extends Formulario
 
     protected function generaCamposFormulario(&$datos)
     {
-        $username = e($datos['username'] ?? ($this->userToEdit ? $this->userToEdit->getUsername() : ''));
-        $email = e($datos['email'] ?? ($this->userToEdit ? $this->userToEdit->getEmail() : ''));
-        $nombre = e($datos['nombre'] ?? ($this->userToEdit ? $this->userToEdit->getNombre() : ''));
-        $apellidos = e($datos['apellidos'] ?? ($this->userToEdit ? $this->userToEdit->getApellidos() : ''));
+        $username = escaparHtml($datos['username'] ?? ($this->userToEdit ? $this->userToEdit->getUsername() : ''));
+        $email = escaparHtml($datos['email'] ?? ($this->userToEdit ? $this->userToEdit->getEmail() : ''));
+        $nombre = escaparHtml($datos['nombre'] ?? ($this->userToEdit ? $this->userToEdit->getNombre() : ''));
+        $apellidos = escaparHtml($datos['apellidos'] ?? ($this->userToEdit ? $this->userToEdit->getApellidos() : ''));
         $rol = $datos['rol'] ?? ($this->userToEdit ? $this->userToEdit->getRol() : 'cliente');
 
         $htmlErroresGlobales = self::generaListaErroresGlobales($this->errores);
@@ -145,7 +145,7 @@ $htmlErroresGlobales
             Avatar predefinido
         </label>
 
-        <div style="display:flex; gap:20px; margin-top:10px;">
+        <div class="avatar-preset-grid">
             <label>
                 <input type="radio" name="avatar_preset" value="preset_chef" disabled>
                 <img src="$chef" width="70">

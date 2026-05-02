@@ -46,13 +46,13 @@ ob_start();
   <?php 
   // Mostrar mensajes flash
   foreach (flash_get_all() as $f): ?>
-      <div class="mensaje-<?= e($f['type']) ?>"><?= e($f['message']) ?></div>
+      <div class="mensaje-<?= escaparHtml($f['type']) ?>"><?= escaparHtml($f['message']) ?></div>
   <?php endforeach; ?>
 
   <div class="panel">
     <div class="actions-inline flex-between">
       <h2 class="m-0">
-        <?= $esGerenteConsultando ? 'Pedidos de ' . e($usuarioConsulta->getNombreCompleto()) : 'Mis pedidos' ?>
+        <?= $esGerenteConsultando ? 'Pedidos de ' . escaparHtml($usuarioConsulta->getNombreCompleto()) : 'Mis pedidos' ?>
       </h2>
       <div class="actions-inline">
         <?php if (user_has_role($user, 'gerente')): ?>
@@ -87,11 +87,11 @@ ob_start();
           <tbody>
           <?php foreach ($pedidos as $p): ?>
             <tr>
-              <td><strong>#<?= e($p->getNumero_pedido()) ?></strong></td>
-              <td><?= e(substr($p->getFecha_hora(), 0, 16)) ?></td>
+              <td><strong>#<?= escaparHtml($p->getNumero_pedido()) ?></strong></td>
+              <td><?= escaparHtml(substr($p->getFecha_hora(), 0, 16)) ?></td>
               <td><?= $p->getTipo() === 'local' ? '🍽️ Local' : '🥡 Llevar' ?></td>
-              <td><?= e($etiquetas[$p->getEstado()] ?? $p->getEstado()) ?></td>
-              <td><?= e($p->setTotal()) ?> €</td>
+              <td><?= escaparHtml($etiquetas[$p->getEstado()] ?? $p->getEstado()) ?></td>
+              <td><?= escaparHtml($p->setTotal()) ?> €</td>
               <td>
                 <a href="estadoPedido.php?id=<?= (int)$p->getId() ?><?= $esGerenteConsultando ? '&usuario_id=' . $usuarioIdConsulta : '' ?>" class="btn small">
                   Ver detalle

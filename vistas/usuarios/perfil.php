@@ -65,21 +65,21 @@ ob_start();
 
     <?php foreach (flash_get_all() as $item): ?>
         <?php $type = in_array($item['type'], ['error', 'success', 'info'], true) ? $item['type'] : 'info'; ?>
-        <div class="notice <?= e($type) ?>"><?= e($item['message']) ?></div>
+        <div class="notice <?= escaparHtml($type) ?>"><?= escaparHtml($item['message']) ?></div>
     <?php endforeach; ?>
 </div>
 
 <main class="profile-layout">
 
     <?php if ($tab === 'datos'): ?>
-        <section class="panel profile-card" style="grid-column: 1 / -1;">
+        <section class="panel profile-card span-full">
             <h3>Mis Datos</h3>
 
             <div class="profile-top">
                 <div class="perfil-avatar-box">
                     <img class="avatar lg"
-                         src="<?= e($user->getAvatarUrl()) ?>"
-                         alt="Avatar de <?= e($user->getUsername()) ?>">
+                         src="<?= escaparHtml($user->getAvatarUrl()) ?>"
+                         alt="Avatar de <?= escaparHtml($user->getUsername()) ?>">
 
                     <?php if ($user->getAvatarTipo() === 'custom'): ?>
                         <form method="post" onsubmit="return confirm('¿Quitar avatar personalizado?');">
@@ -90,10 +90,10 @@ ob_start();
                 </div>
 
                 <div class="perfil-datos-box">
-                    <p><strong>Usuario:</strong> <?= e($user->getUsername()) ?></p>
-                    <p><strong>Email:</strong> <?= e($user->getEmail()) ?></p>
-                    <p><strong>Nombre y apellidos:</strong> <?= e($user->getNombre()) ?> <?= e($user->getApellidos()) ?></p>
-                    <p><strong>Rol:</strong> <?= e(UsuarioDAO::role_label((string)$user->getRol())) ?></p>
+                    <p><strong>Usuario:</strong> <?= escaparHtml($user->getUsername()) ?></p>
+                    <p><strong>Email:</strong> <?= escaparHtml($user->getEmail()) ?></p>
+                    <p><strong>Nombre y apellidos:</strong> <?= escaparHtml($user->getNombre()) ?> <?= escaparHtml($user->getApellidos()) ?></p>
+                    <p><strong>Rol:</strong> <?= escaparHtml(UsuarioDAO::role_label((string)$user->getRol())) ?></p>
                     <p><strong>BistroCoins:</strong> <?= (int)$saldoBistrocoins ?></p>
                 </div>
             </div>
@@ -105,13 +105,13 @@ ob_start();
     <?php endif; ?>
 
     <?php if ($tab === 'activos'): ?>
-        <section style="grid-column: 1 / -1;">
+        <section class="span-full">
             <?php include __DIR__ . '/_pedidos_activos.php'; ?>
         </section>
     <?php endif; ?>
 
     <?php if ($tab === 'historico'): ?>
-        <section style="grid-column: 1 / -1;">
+        <section class="span-full">
             <?php include __DIR__ . '/_pedidos_historico.php'; ?>
         </section>
     <?php endif; ?>

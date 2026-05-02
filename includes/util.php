@@ -9,14 +9,6 @@ function escaparHtml(?string $value): string
     return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
-/**
- * Alias temporal para no romper código antiguo que todavía use e().
- * Lo ideal es ir sustituyendo e(...) por escaparHtml(...).
- */
-function e(?string $value): string
-{
-    return escaparHtml($value);
-}
 
 /**
  * Comprueba si la petición actual es POST.

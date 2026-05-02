@@ -50,9 +50,7 @@ class FormularioOferta extends Formulario
         $descuento = $datos['descuento']
             ?? ($this->oferta ? $this->oferta->getDescuento() : 0);
 
-        // $precio_final = $datos['precio_final']
-        //     ?? ($this->oferta ? $this->oferta->aplicarDescuento() : 0);
-
+        
         // ─────────────────────────────────────
         // PRODUCTOS DISPONIBLES
         // ─────────────────────────────────────
@@ -74,7 +72,6 @@ class FormularioOferta extends Formulario
         if ($this->oferta) {
 
             $productosOferta = \ProductoDAO::getProductosDeOferta($this->oferta->getId());
-            //$relaciones = \OfertaProductoDAO::getByOferta($this->oferta->getId());
 
 
             $productosOferta = array_map(function ($p) {
@@ -86,25 +83,6 @@ class FormularioOferta extends Formulario
                 ];
             }, $productosOferta);
 
-            // //  crear mapa: producto_id => cantidad
-            // $cantidades = [];
-
-            // foreach ($relaciones as $r) {
-            //     $cantidades[$r->getProductoId()] = $r->getCantidadId();
-            // }
-
-            // //  unir datos correctamente
-            // $productosOferta = array_map(function ($p) use ($cantidades) {
-
-            //     $id = $p->getId();
-
-            //     return [
-            //         'id' => $id,
-            //         'nombre' => $p->getNombre(),
-            //         'precio' => (float)$p->getPrecioFinal(),
-            //         'cantidad' => $cantidades[$id] ?? 0
-            //     ];
-            // }, $productosOferta);
         }
 
         $productosJSON = json_encode($productosDisponibles, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);

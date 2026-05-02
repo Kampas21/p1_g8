@@ -35,10 +35,10 @@ ob_start();
 ?>
 
 <div class="panel">
-    <h2><?= e($tituloAccion) ?></h2>
+    <h2><?= escaparHtml($tituloAccion) ?></h2>
     
     <?php foreach (flash_get_all() as $f): ?>
-        <div class="mensaje-<?= e($f['type']) ?>"><?= e($f['message']) ?></div>
+        <div class="mensaje-<?= escaparHtml($f['type']) ?>"><?= escaparHtml($f['message']) ?></div>
     <?php endforeach; ?>
     
     <!-- Imprimimos el formulario generado por el Objeto -->

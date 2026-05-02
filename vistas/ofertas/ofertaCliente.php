@@ -83,7 +83,7 @@ ob_start();
 
                 $precio_total += $precio_cant;
 
-                return e($p->getNombre()) . " ($cantidad) " . round($precio_cant, 2) . '€';
+                return escaparHtml($p->getNombre()) . " ($cantidad) " . round($precio_cant, 2) . '€';
             }, $productos);
 
             $aplicable = true;
@@ -116,7 +116,7 @@ ob_start();
                 <td data-label="Nombre">
                     <a class="click"
                        href="detalleOferta.php?id=<?= (int)$oferta->getId() ?>&return=<?= urlencode("../ofertas/ofertaCliente.php" . ($modoSeleccion ? "?modo=edicion" : "")) ?>">
-                        <?= e($oferta->getNombre()) ?>
+                        <?= escaparHtml($oferta->getNombre()) ?>
                     </a>
                 </td>
 
@@ -125,14 +125,14 @@ ob_start();
                 </td>
 
                 <td data-label="Descuento">
-                    <?= e((string)$oferta->getDescuento()) ?>%
+                    <?= escaparHtml((string)$oferta->getDescuento()) ?>%
                 </td>
 
                 <?php if ($modoSeleccion): ?>
                     <td data-label="Aplicable">
                         <?= $aplicable
-                            ? '<span style="color:green">Sí</span>'
-                            : '<span style="color:red">No</span>' ?>
+                            ? '<span class="texto-ok">Sí</span>'
+                            : '<span class="texto-error">No</span>' ?>
                     </td>
                 <?php endif; ?>
             </tr>

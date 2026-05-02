@@ -27,8 +27,8 @@ ob_start();
 
     <?php foreach (flash_get_all() as $item): ?>
         <?php $type = in_array($item['type'], ['error', 'success', 'info'], true) ? $item['type'] : 'info'; ?>
-        <div class="notice <?= e($type) ?>">
-            <?= e($item['message']) ?>
+        <div class="notice <?= escaparHtml($type) ?>">
+            <?= escaparHtml($item['message']) ?>
         </div>
     <?php endforeach; ?>
 
@@ -38,23 +38,23 @@ ob_start();
 <section class="panel">
     <div class="profile-top">
         <img class="avatar lg"
-             src="<?= e($user->getAvatarUrl()) ?>"
-             alt="Avatar de <?= e($user->getUsername()) ?>">
+             src="<?= escaparHtml($user->getAvatarUrl()) ?>"
+             alt="Avatar de <?= escaparHtml($user->getUsername()) ?>">
 
         <div>
             <p><strong>ID:</strong> <?= (int)$user->getId() ?></p>
-            <p><strong>Usuario:</strong> <?= e($user->getUsername()) ?></p>
-            <p><strong>Email:</strong> <?= e($user->getEmail()) ?></p>
-            <p><strong>Nombre:</strong> <?= e($user->getNombre()) ?></p>
-            <p><strong>Apellidos:</strong> <?= e($user->getApellidos()) ?></p>
-            <p><strong>Rol:</strong> <?= e(UsuarioDAO::role_label((string)$user->getRol())) ?></p>
+            <p><strong>Usuario:</strong> <?= escaparHtml($user->getUsername()) ?></p>
+            <p><strong>Email:</strong> <?= escaparHtml($user->getEmail()) ?></p>
+            <p><strong>Nombre:</strong> <?= escaparHtml($user->getNombre()) ?></p>
+            <p><strong>Apellidos:</strong> <?= escaparHtml($user->getApellidos()) ?></p>
+            <p><strong>Rol:</strong> <?= escaparHtml(UsuarioDAO::role_label((string)$user->getRol())) ?></p>
             <p>
                 <strong>Estado:</strong>
                 <?= $user->isActivo()
                     ? '<span class="texto-exito">Activo</span>'
                     : '<span class="texto-error">Inactivo</span>' ?>
             </p>
-            <p><strong>Actualizado:</strong> <?= e($user->getUpdatedAt()) ?></p>
+            <p><strong>Actualizado:</strong> <?= escaparHtml($user->getUpdatedAt()) ?></p>
         </div>
     </div>
 

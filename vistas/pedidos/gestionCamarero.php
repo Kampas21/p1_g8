@@ -20,10 +20,10 @@ ob_start();
 ?>
 
 <div class="panel">
-    <h2>Panel de Camarero — <?= e($user->getNombre()) ?></h2>
+    <h2>Panel de Camarero — <?= escaparHtml($user->getNombre()) ?></h2>
     
     <!-- Menú de Pestañas Diferenciadas -->
-    <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+    <div class="tab-bar">
         <a href="gestionCamarero.php?tab=recibidos" class="btn <?= $tab === 'recibidos' ? 'editar' : '' ?>">💰 Pendientes de cobro (<?= count($recibidos) ?>)</a>
         <a href="gestionCamarero.php?tab=listos" class="btn <?= $tab === 'listos' ? 'editar' : '' ?>">✅ Listos en cocina (<?= count($listos_cocina) ?>)</a>
         <a href="gestionCamarero.php?tab=entregar" class="btn <?= $tab === 'entregar' ? 'editar' : '' ?>">🛎️ Para entregar (<?= count($terminados) ?>)</a>
@@ -37,7 +37,7 @@ ob_start();
         <div class="columna-header recibido">
           <span>💰 Pedidos Recibidos (Pendiente de cobro)</span>
         </div>
-        <div class="columna-body" style="flex-direction: row; flex-wrap: wrap;">
+        <div class="columna-body columna-body-row">
             <?php 
                 $pedidos = $recibidos; 
                 $accion = 'cobrar'; 
@@ -54,7 +54,7 @@ ob_start();
         <div class="columna-header listo">
           <span>✅ Listos en cocina</span>
         </div>
-        <div class="columna-body" style="flex-direction: row; flex-wrap: wrap;">
+        <div class="columna-body columna-body-row">
             <?php 
                 $pedidos = $listos_cocina; 
                 $accion = 'preparar_barra'; 
@@ -71,7 +71,7 @@ ob_start();
         <div class="columna-header terminado">
           <span>🛎️ Para entregar al Cliente</span>
         </div>
-        <div class="columna-body" style="flex-direction: row; flex-wrap: wrap;">
+        <div class="columna-body columna-body-row">
             <?php 
                 $pedidos = $terminados; 
                 $accion = 'entregar'; 

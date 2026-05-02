@@ -43,8 +43,8 @@ ob_start();
 
 <main>
     <?php foreach (flash_get_all() as $f): ?>
-        <div class="mensaje-<?= e($f['type']) ?>">
-            <?= e($f['message']) ?>
+        <div class="mensaje-<?= escaparHtml($f['type']) ?>">
+            <?= escaparHtml($f['message']) ?>
         </div>
     <?php endforeach; ?>
 
@@ -90,8 +90,8 @@ ob_start();
 
                         <tr>
                             <td data-label="Producto">
-                                <strong><?= e($recompensa->getProductoNombre()) ?></strong><br>
-                                <span class="muted"><?= e($recompensa->getProductoDescripcion()) ?></span>
+                                <strong><?= escaparHtml($recompensa->getProductoNombre()) ?></strong><br>
+                                <span class="muted"><?= escaparHtml($recompensa->getProductoDescripcion()) ?></span>
                             </td>
 
                             <td data-label="Precio carta">

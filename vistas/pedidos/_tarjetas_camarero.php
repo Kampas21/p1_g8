@@ -2,7 +2,7 @@
 // SCRIPT DE APOYO: Sólo recibe $pedidos y $accion por scope y pinta
 if (empty($pedidos)): 
 ?>
-    <p class="text-muted-italic" style="grid-column: 1 / -1;">No hay pedidos en esta zona.</p>
+    <p class="text-muted-italic span-full">No hay pedidos en esta zona.</p>
 <?php 
 else: 
     foreach ($pedidos as $p): 
@@ -18,9 +18,9 @@ else:
             </div>
 
             <div class="pedido-card-body">
-                <p><strong>Cliente:</strong> <?= e($p['cliente_nombre']) ?></p>
-                <p><strong>Hora:</strong> <?= e(substr($p['fecha_hora'], 11, 5)) ?></p>
-                <p><strong>Total:</strong> <?= e($p['total']) ?> €</p>
+                <p><strong>Cliente:</strong> <?= escaparHtml($p['cliente_nombre']) ?></p>
+                <p><strong>Hora:</strong> <?= escaparHtml(substr($p['fecha_hora'], 11, 5)) ?></p>
+                <p><strong>Total:</strong> <?= escaparHtml($p['total']) ?> €</p>
             </div>
 
             <?php

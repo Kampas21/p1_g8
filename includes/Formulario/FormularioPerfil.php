@@ -22,10 +22,10 @@ class FormularioPerfil extends Formulario
 
     protected function generaCamposFormulario(&$datos)
     {
-        $username = e($datos['username'] ?? $this->user->getUsername() ?? '');
-        $email = e($datos['email'] ?? $this->user->getEmail() ?? '');
-        $nombre = e($datos['nombre'] ?? $this->user->getNombre() ?? '');
-        $apellidos = e($datos['apellidos'] ?? $this->user->getApellidos() ?? '');
+        $username = escaparHtml($datos['username'] ?? $this->user->getUsername() ?? '');
+        $email = escaparHtml($datos['email'] ?? $this->user->getEmail() ?? '');
+        $nombre = escaparHtml($datos['nombre'] ?? $this->user->getNombre() ?? '');
+        $apellidos = escaparHtml($datos['apellidos'] ?? $this->user->getApellidos() ?? '');
 
         $htmlErroresGlobales = self::generaListaErroresGlobales($this->errores);
         $erroresCampos = self::generaErroresCampos(
@@ -91,7 +91,7 @@ $htmlErroresGlobales
             Avatar predefinido
         </label>
 
-        <div style="display:flex; gap:20px; margin-top:10px;">
+        <div class="avatar-preset-grid">
             <label>
                 <input type="radio" name="avatar_preset" value="preset_chef" disabled>
                 <img src="$chef" width="70">

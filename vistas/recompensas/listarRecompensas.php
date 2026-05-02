@@ -30,7 +30,7 @@ ob_start();
       <?php foreach ($recompensas as $recompensa): ?>
         <tr>
         <td data-label="ID"><?= (int)$recompensa->getId() ?></td>
-        <td data-label="Producto"><?= e($recompensa->getProductoNombre()) ?></td>
+        <td data-label="Producto"><?= escaparHtml($recompensa->getProductoNombre()) ?></td>
         <td data-label="Precio carta"><?= number_format($recompensa->getProductoPrecioFinal(), 2) ?> €</td>
         <td data-label="BistroCoins"><?= (int)$recompensa->getBistrocoins() ?></td>
         <td data-label="Estado"><?= $recompensa->isActiva() ? 'Activa' : 'Inactiva' ?></td>

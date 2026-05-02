@@ -1,22 +1,17 @@
 <article class="producto-card panel mb-15">
 
-<div style="display:flex; gap:20px; align-items:flex-start;">
+<div class="producto-card-inner">
 
-<div style="flex-shrink:0;">
+<div class="producto-img-box">
 <img
 src="../../<?= trim($p->getImagen()) ?>"
 alt="<?= htmlspecialchars($p->getNombre(), ENT_QUOTES,'UTF-8') ?>"
 width="140"
 height="100"
-style="
-object-fit:cover;
-border-radius:8px;
-border:1px solid #ccc;
-display:block;
-">
+class="img-rounded">
 </div>
 
-<div style="flex:1;">
+<div class="producto-info-box">
 
 <h3><?= htmlspecialchars($p->getNombre()) ?></h3>
 

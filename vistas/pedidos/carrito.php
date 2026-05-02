@@ -78,8 +78,8 @@ ob_start();
 <main>
 
   <?php foreach (flash_get_all() as $f): ?>
-    <div class="mensaje-<?= e($f['type']) ?>">
-      <?= e($f['message']) ?>
+    <div class="mensaje-<?= escaparHtml($f['type']) ?>">
+      <?= escaparHtml($f['message']) ?>
     </div>
   <?php endforeach; ?>
 
@@ -87,7 +87,7 @@ ob_start();
 
     <h2>Mi carrito
       <span class="text-muted-italic">
-        — pedido <?= e($tipoPedido === 'local' ? '🍽️ en local' : '🥡 para llevar') ?>
+        — pedido <?= escaparHtml($tipoPedido === 'local' ? '🍽️ en local' : '🥡 para llevar') ?>
       </span>
     </h2>
 
@@ -116,14 +116,14 @@ ob_start();
               <li>
 
                 <strong>
-                  <?= e($o['nombre'] ?? '') ?>
+                  <?= escaparHtml($o['nombre'] ?? '') ?>
                 </strong>
 
                 — <?= (int)($o['veces_aplicada'] ?? 0) ?>x
                 — -<?= round((float)($o['descuento_total'] ?? 0), 2) ?> €
 
 
-                <div style="margin-left:15px; font-size: 0.9em; color:#666;">
+                <div class="oferta-detalle">
 
                   <?php
 
@@ -134,7 +134,7 @@ ob_start();
                   foreach ($productos_oferta as $po):
                   ?>
 
-                    • <?= e($po->getNombre()) ?> (x<?= $po->cantidad ?>)<br>
+                    • <?= escaparHtml($po->getNombre()) ?> (x<?= $po->cantidad ?>)<br>
 
                   <?php endforeach; ?>
 
@@ -177,12 +177,12 @@ ob_start();
               <tr>
 
                 <td>
-                  <img src="<?= e(RUTA_APP . '/' . $producto->getImagen()) ?>" class="img-thumbnail" alt="<?= e($producto->getNombre()) ?>">
+                  <img src="<?= escaparHtml(RUTA_APP . '/' . $producto->getImagen()) ?>" class="img-thumbnail" alt="<?= escaparHtml($producto->getNombre()) ?>">
                 </td>
 
                 <td>
                   <a href="<?= RUTA_APP ?>/vistas/productos/detalle_producto.php?id=<?= $producto->getId() ?>" class="click">
-                    <?= e($producto->getNombre()) ?>
+                    <?= escaparHtml($producto->getNombre()) ?>
                   </a>
                   <?php if ($esRecompensa): ?>
                       <br><small><strong>(Recompensa)</strong></small>
@@ -191,23 +191,23 @@ ob_start();
 
                 <td class="col-precio">
                     <?php if ($esRecompensa): ?>
-                        <?= e((string)$bistrocoinsUnitarios) ?> BC
+                        <?= escaparHtml((string)$bistrocoinsUnitarios) ?> BC
                     <?php else: ?>
-                        <?= e((string)$precio) ?> €
+                        <?= escaparHtml((string)$precio) ?> €
                     <?php endif; ?>
                 </td>
 
                 <td>
                     <?php if ($esRecompensa): ?>
-                        <?= e((string)$cantidad) ?>
+                        <?= escaparHtml((string)$cantidad) ?>
                     <?php else: ?>
-                        <?= $formsActualizarHtml[$clave] ?? e((string)$cantidad) ?>
+                        <?= $formsActualizarHtml[$clave] ?? escaparHtml((string)$cantidad) ?>
                     <?php endif; ?>
                 </td>
 
                 <td class="col-precio">
                     <?php if ($esRecompensa): ?>
-                        <?= e((string)($bistrocoinsUnitarios * $cantidad)) ?> BC
+                        <?= escaparHtml((string)($bistrocoinsUnitarios * $cantidad)) ?> BC
                     <?php else: ?>
                         <?= round($precio * $cantidad, 2) ?> €
                     <?php endif; ?>
@@ -245,7 +245,7 @@ ob_start();
             <?php if ($bistrocoins_reservados > 0): ?>
               <tr>
                 <td colspan="4"><strong>BistroCoins reservados:</strong></td>
-                <td class="col-precio"><strong><?= e((string)$bistrocoins_reservados) ?> BC</strong></td>
+                <td class="col-precio"><strong><?= escaparHtml((string)$bistrocoins_reservados) ?> BC</strong></td>
               </tr>
             <?php endif; ?>
 

@@ -24,11 +24,11 @@
                 <tbody>
                     <?php foreach ($pedidosHistorico as $p): ?>
                         <tr>
-                            <td><?= e((string) $p['numero_pedido']) ?></td>
-                            <td><?= e((string) $p['fecha_hora']) ?></td>
-                            <td><?= e((string) $p['tipo']) ?></td>
-                            <td><?= e((string) $p['total']) ?> €</td>
-                            <td><?= e(ucwords(str_replace('_', ' ', (string) $p['estado']))) ?></td>
+                            <td><?= escaparHtml((string) $p['numero_pedido']) ?></td>
+                            <td><?= escaparHtml((string) $p['fecha_hora']) ?></td>
+                            <td><?= escaparHtml((string) $p['tipo']) ?></td>
+                            <td><?= escaparHtml((string) $p['total']) ?> €</td>
+                            <td><?= escaparHtml(ucwords(str_replace('_', ' ', (string) $p['estado']))) ?></td>
                             <td>+<?= (int)($p['bistrocoins_generados'] ?? 0) ?> / -<?= (int)($p['bistrocoins_gastados'] ?? 0) ?></td>
                             <td>
                                 <a class="btn small" href="<?= RUTA_APP ?>/vistas/pedidos/estadoPedido.php?id=<?= (int) $p['id'] ?>">Ver detalle</a>

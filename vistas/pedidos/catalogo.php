@@ -52,7 +52,7 @@ if ($categoria_id) {
 }
 
 $titulo = $categoria_id && isset($categoria)
-    ? 'Catálogo — ' . e($categoria->getNombre())
+    ? 'Catálogo — ' . escaparHtml($categoria->getNombre())
     : 'Catálogo';
 
 $tituloPagina = $titulo . ' | Bistro FDI';
@@ -64,8 +64,8 @@ ob_start();
 <main>
 
 <?php foreach (flash_get_all() as $f): ?>
-<div class="mensaje-<?= e($f['type']) ?>">
-<?= e($f['message']) ?>
+<div class="mensaje-<?= escaparHtml($f['type']) ?>">
+<?= escaparHtml($f['message']) ?>
 </div>
 <?php endforeach; ?>
 
@@ -84,7 +84,7 @@ ob_start();
 </a>
 </div>
 
-<h2><?= e($categoria->getNombre()) ?></h2>
+<h2><?= escaparHtml($categoria->getNombre()) ?></h2>
 
 <?php if (empty($productos)): ?>
 
@@ -115,9 +115,9 @@ ob_start();
 <?php if ($p->getImagen()): ?>
 
 <img
-src="<?= e(RUTA_APP . '/' . $p->getImagen()) ?>"
+src="<?= escaparHtml(RUTA_APP . '/' . $p->getImagen()) ?>"
 class="img-thumbnail"
-alt="<?= e($p->getNombre()) ?>">
+alt="<?= escaparHtml($p->getNombre()) ?>">
 
 <?php endif; ?>
 
@@ -127,16 +127,16 @@ alt="<?= e($p->getNombre()) ?>">
 
 <a
 href="<?= RUTA_APP ?>/vistas/productos/detalle_producto.php?id=<?= $p->getId() ?>"
-style="font-weight:bold;text-decoration:none;">
+class="link-destacado">
 
-<?= e($p->getNombre()) ?>
+<?= escaparHtml($p->getNombre()) ?>
 
 </a>
 
 </td>
 
 <td data-label="Descripción">
-    <?= e($p->getDescripcion()) ?>
+    <?= escaparHtml($p->getDescripcion()) ?>
 </td>
 
 <td data-label="Precio" class="col-precio">
@@ -183,13 +183,13 @@ style="font-weight:bold;text-decoration:none;">
 <a href="catalogo.php?categoria=<?= (int)$cat->getId() ?>">
 
 <img
-src="<?= RUTA_APP ?>/img/categorias/<?= e($cat->getImagen()) ?>"
-alt="<?= e($cat->getNombre()) ?>">
+src="<?= RUTA_APP ?>/img/categorias/<?= escaparHtml($cat->getImagen()) ?>"
+alt="<?= escaparHtml($cat->getNombre()) ?>">
 
 </a>
 
 <h4>
-<?= e($cat->getNombre()) ?>
+<?= escaparHtml($cat->getNombre()) ?>
 </h4>
 
 <a

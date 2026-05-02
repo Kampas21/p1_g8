@@ -2,18 +2,15 @@
 
 <td data-label="ID"><?= (int)$cat->getId() ?></td>
 
-<td data-label="Nombre"><?= e($cat->getNombre()) ?></td>
+<td data-label="Nombre"><?= escaparHtml($cat->getNombre()) ?></td>
 
-<td data-label="Descripción"><?= e($cat->getDescripcion()) ?></td>
+<td data-label="Descripción"><?= escaparHtml($cat->getDescripcion()) ?></td>
 
 <td data-label="Imagen">
 <img
-src="<?= RUTA_APP ?>/img/categorias/<?= e($cat->getImagen()) ?>"
+src="<?= RUTA_APP ?>/img/categorias/<?= escaparHtml($cat->getImagen()) ?>"
 width="70"
-style="
-border-radius:8px;
-object-fit:cover;
-">
+class="img-rounded">
 </td>
 
 <td data-label="Estado">

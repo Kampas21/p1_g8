@@ -96,7 +96,7 @@ Avatar por defecto
 Avatar predefinido
 </label>
 
-<div style="display:flex;gap:20px;margin-top:10px;">
+<div class="avatar-preset-grid">
 <label>
 <input type="radio" name="avatar_preset" value="preset_chef" disabled>
 <img src="$chef" width="70">

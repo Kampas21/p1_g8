@@ -28,8 +28,8 @@ ob_start();
 
         <?php foreach (flash_get_all() as $item): ?>
             <?php $type = in_array($item['type'], ['error', 'success', 'info'], true) ? $item['type'] : 'info'; ?>
-            <div class="notice <?= e($type) ?>">
-                <?= e($item['message']) ?>
+            <div class="notice <?= escaparHtml($type) ?>">
+                <?= escaparHtml($item['message']) ?>
             </div>
         <?php endforeach; ?>
 
@@ -39,7 +39,7 @@ ob_start();
             <input id="q"
                    type="text"
                    name="q"
-                   value="<?= e($search) ?>"
+                   value="<?= escaparHtml($search) ?>"
                    class="w-260">
 
             <label>
@@ -86,24 +86,24 @@ ob_start();
                             <tr>
                                 <td data-label="Avatar">
                                     <img class="avatar sm"
-                                         src="<?= e($u->getAvatarUrl()) ?>"
-                                         alt="Avatar de <?= e($u->getUsername()) ?>">
+                                         src="<?= escaparHtml($u->getAvatarUrl()) ?>"
+                                         alt="Avatar de <?= escaparHtml($u->getUsername()) ?>">
                                 </td>
 
                                 <td data-label="Usuario">
-                                    <?= e($u->getUsername()) ?>
+                                    <?= escaparHtml($u->getUsername()) ?>
                                 </td>
 
                                 <td data-label="Email">
-                                    <?= e($u->getEmail()) ?>
+                                    <?= escaparHtml($u->getEmail()) ?>
                                 </td>
 
                                 <td data-label="Nombre">
-                                    <?= e($u->getNombreCompleto()) ?>
+                                    <?= escaparHtml($u->getNombreCompleto()) ?>
                                 </td>
 
                                 <td data-label="Rol">
-                                    <?= e(UsuarioDAO::role_label((string)$u->getRol())) ?>
+                                    <?= escaparHtml(UsuarioDAO::role_label((string)$u->getRol())) ?>
                                 </td>
 
                                 <td data-label="Estado">

@@ -24,7 +24,7 @@ ob_start();
     <h2>👨‍🍳 Panel de Cocina - <?= htmlspecialchars($user->getNombre()) ?></h2>
     
     <!-- Menú de Pestañas Diferenciadas -->
-    <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
+    <div class="tab-bar">
         <a href="panel_cocinero.php?tab=mis_pedidos" class="btn <?= $tab === 'mis_pedidos' ? 'editar' : '' ?>">🔥 Mis Pedidos (<?= count($misPedidos) ?>)</a>
         <a href="panel_cocinero.php?tab=en_cola" class="btn <?= $tab === 'en_cola' ? 'editar' : '' ?>">📋 Pedidos en Cola (<?= count($pedidosEnCola) ?>)</a>
     </div>

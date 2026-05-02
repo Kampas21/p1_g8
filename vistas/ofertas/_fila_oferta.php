@@ -5,16 +5,16 @@
 <td data-label="Nombre">
     <a class="click"
        href="detalleOferta.php?id=<?= (int)$oferta->getId() ?>&return=<?= urlencode($_SERVER['REQUEST_URI']) ?>">
-        <?= e($oferta->getNombre()) ?>
+        <?= escaparHtml($oferta->getNombre()) ?>
     </a>
 </td>
 
 <td data-label="Fecha inicio">
-<?= e(date('d/m/Y H:i', strtotime($oferta->getFechaInicio()))) ?>
+<?= escaparHtml(date('d/m/Y H:i', strtotime($oferta->getFechaInicio()))) ?>
 </td>
 
 <td data-label="Fecha fin">
-<?= e(date('d/m/Y H:i', strtotime($oferta->getFechaFin()))) ?>
+<?= escaparHtml(date('d/m/Y H:i', strtotime($oferta->getFechaFin()))) ?>
 </td>
 
 <td data-label="Estado">

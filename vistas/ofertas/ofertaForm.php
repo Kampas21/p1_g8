@@ -1,5 +1,4 @@
 <?php
-//require_once __DIR__ . '/../../entities/oferta.php';
 require_once __DIR__ . '/../../includes/ProductoDAO.php';
 require_once __DIR__ . '/../../includes/ofertaDAO.php';
 
@@ -31,8 +30,6 @@ if ($modoEdicion) {
     $productosSeleccionados = ProductoDAO::getProductosDeOferta($oferta->getId());
 }
 ?>
-
-<link href="../../CSS/estilo.css" rel="stylesheet" type="text/css">
 
 <h1><?= $modoEdicion ? 'Editar Oferta' : 'Nueva Oferta' ?></h1>
 
@@ -72,7 +69,7 @@ if ($modoEdicion) {
         Las opciones se generan desde PHP con los productos reales de la BD.
     -->
     <template id="mySelectProductsTemplate">
-        <div class="fila-producto-dinamica" style="margin-top:6px;">
+        <div class="fila-producto-dinamica mt-6">
             <select name="mySelectProduct[]" class="form-control mb-1">
                 <option value="" selected>Seleccione un producto</option>
                 <?php foreach ($productos as $p): ?>

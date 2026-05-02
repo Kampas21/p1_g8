@@ -85,11 +85,7 @@ class FormularioProducto extends Formulario
 src='../../{$img}'
 width='140'
 height='100'
-style='
-object-fit:cover;
-border-radius:8px;
-border:1px solid #ccc;
-'>
+class='img-rounded'>
 
 </p>";
             }

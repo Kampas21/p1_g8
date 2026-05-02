@@ -112,7 +112,7 @@ maxlength="500">{$descripcion}</textarea>
 <img
 src="../../img/categorias/{$imagen}"
 width="140"
-style="border-radius:8px;">
+class="img-rounded">
 
 </p>
 
@@ -141,7 +141,7 @@ Vista previa:
 id="previewCategoria"
 src="../../img/categorias/{$imagen}"
 width="140"
-style="border-radius:8px;">
+class="img-rounded">
 
 </p>
 

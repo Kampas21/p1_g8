@@ -1902,3 +1902,83 @@ td.descripcion {
         margin-left: 0;
     }
 }
+
+/* =======================================================
+   CLASES DE SUSTITUCIÓN DE ESTILOS INLINE
+======================================================= */
+
+/* Cuadrícula de avatares predefinidos (formularios registro/perfil/admin) */
+.avatar-preset-grid {
+    display: flex;
+    gap: 20px;
+    margin-top: 10px;
+}
+
+/* Imagen redondeada genérica (categorías, productos) */
+.img-rounded {
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid #ccc;
+    display: block;
+}
+
+/* Layout interno de tarjeta de producto en gestión */
+.producto-card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.producto-img-box {
+    flex-shrink: 0;
+}
+
+.producto-info-box {
+    flex: 1;
+}
+
+/* Barra de pestañas (cocinero, camarero) */
+.tab-bar {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+/* columna-body con dirección fila (panel camarero) */
+.columna-body-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+/* Sección que ocupa toda la anchura en un grid */
+.span-full {
+    grid-column: 1 / -1;
+}
+
+/* Texto de estado disponibilidad oferta */
+.texto-ok {
+    color: green;
+}
+
+.texto-error {
+    color: red;
+}
+
+/* Enlace con negrita sin subrayado (nombre producto en catálogo) */
+.link-destacado {
+    font-weight: bold;
+    text-decoration: none;
+}
+
+/* Detalle de productos de oferta aplicada en carrito */
+.oferta-detalle {
+    margin-left: 15px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* Margen superior pequeño (filas dinámicas de oferta) */
+.mt-6 {
+    margin-top: 6px;
+}

@@ -13,13 +13,13 @@ $avatarSrc = $user ? $user->getAvatarUrl() : '';
 <section class="panel-usuario-sidebar">
     <h3>Panel usuario</h3>
 
-    <p><strong>Usuario:</strong> <?= e($nombre) ?></p>
-    <p><strong>Rol:</strong> <?= e(ucfirst($rol)) ?></p>
+    <p><strong>Usuario:</strong> <?= escaparHtml($nombre) ?></p>
+    <p><strong>Rol:</strong> <?= escaparHtml(ucfirst($rol)) ?></p>
 
     <?php if ($user): ?>
         <div class="sidebar-avatar-box">
-            <img src="<?= e($avatarSrc) ?>"
-                 alt="Foto de perfil de <?= e($nombre) ?>"
+            <img src="<?= escaparHtml($avatarSrc) ?>"
+                 alt="Foto de perfil de <?= escaparHtml($nombre) ?>"
                  class="sidebar-avatar">
         </div>
     <?php endif; ?>

@@ -19,14 +19,14 @@
         <?php foreach ($pedidosActivos as $p): ?>
             <!-- Script de apoyo iterativo renderizado limpio sin SQL -->
             <div class="pedido-linea">
-                <strong>Pedido #<?= e((string) $p['numero_pedido']) ?></strong>
-                <div class="muted">Estado actual: <?= e(ucwords(str_replace('_', ' ', (string) $p['estado']))) ?></div>
-                <div class="muted">Importe: <?= e((string) $p['total']) ?> €</div>
+                <strong>Pedido #<?= escaparHtml((string) $p['numero_pedido']) ?></strong>
+                <div class="muted">Estado actual: <?= escaparHtml(ucwords(str_replace('_', ' ', (string) $p['estado']))) ?></div>
+                <div class="muted">Importe: <?= escaparHtml((string) $p['total']) ?> €</div>
                 <?php if (!empty($p['lineas'])): ?>
                     <ul>
                         <?php foreach ($p['lineas'] as $linea): ?>
                             <li>
-                                <?= e((string)$linea['nombre']) ?>: <?= (int)$linea['cantidad'] ?>
+                                <?= escaparHtml((string)$linea['nombre']) ?>: <?= (int)$linea['cantidad'] ?>
                                 <?= ((int)$linea['es_recompensa'] === 1) ? '(Recompensa)' : '' ?>
                             </li>
                         <?php endforeach; ?>

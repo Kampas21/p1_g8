@@ -59,8 +59,6 @@ class Oferta
         $inicio = new DateTime($this->fecha_inicio, $tz);
         $fin = new DateTime($this->fecha_fin, $tz);
 
-        //var_dump($this->fecha_inicio, $this->fecha_fin, $ahora, $inicio, $fin);
-
         return $ahora >= $inicio && $ahora <= $fin;
     }
 

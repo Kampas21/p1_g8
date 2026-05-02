@@ -17,8 +17,8 @@ ob_start();
 <div class="panel">
     <h2>👔 Visión Global de Gerencia</h2>
     <p>
-        Usuario: <?= e($user->getNombre()) ?>
-         (<?= e(ucfirst((string) $user->getRol())) ?>)
+        Usuario: <?= escaparHtml($user->getNombre()) ?>
+         (<?= escaparHtml(ucfirst((string) $user->getRol())) ?>)
     </p>
 </div>
 
@@ -58,8 +58,8 @@ ob_start();
                             </td>
 
                             <td data-label="Estado">
-                                <span class="badge-estado estado-<?= e($p['estado']) ?>">
-                                    <?= e(strtoupper(str_replace('_', ' ', $p['estado']))) ?>
+                                <span class="badge-estado estado-<?= escaparHtml($p['estado']) ?>">
+                                    <?= escaparHtml(strtoupper(str_replace('_', ' ', $p['estado']))) ?>
                                 </span>
                             </td>
 
@@ -84,13 +84,13 @@ ob_start();
                                     }
                                     ?>
 
-                                    <img src="<?= e($avatarImg) ?>"
+                                    <img src="<?= escaparHtml($avatarImg) ?>"
                                          alt="Avatar"
-                                         onerror="this.onerror=null; this.src='<?= e($avatarEmergencia) ?>';"
+                                         onerror="this.onerror=null; this.src='<?= escaparHtml($avatarEmergencia) ?>';"
                                          class="avatar-empleado">
 
                                     <span class="texto-destacado">
-                                        <?= e($nombreCompleto) ?>
+                                        <?= escaparHtml($nombreCompleto) ?>
                                     </span>
                                 <?php else: ?>
                                     <div class="avatar-placeholder">
@@ -124,13 +124,13 @@ ob_start();
                                     }
                                     ?>
 
-                                    <img src="<?= e($avatarImgCamarero) ?>"
+                                    <img src="<?= escaparHtml($avatarImgCamarero) ?>"
                                          alt="Avatar camarero"
-                                         onerror="this.onerror=null; this.src='<?= e($avatarEmergenciaCamarero) ?>';"
+                                         onerror="this.onerror=null; this.src='<?= escaparHtml($avatarEmergenciaCamarero) ?>';"
                                          class="avatar-empleado">
 
                                     <span class="texto-destacado">
-                                        <?= e($nombreCompletoCamarero) ?>
+                                        <?= escaparHtml($nombreCompletoCamarero) ?>
                                     </span>
                                 <?php else: ?>
                                     <div class="avatar-placeholder">
@@ -148,7 +148,7 @@ ob_start();
                                     <?php foreach ($productos as $prod): ?>
                                         <li>
                                             <?= (int)$prod->getCantidad() ?>x
-                                            <?= e($prod->getNombre()) ?>
+                                            <?= escaparHtml($prod->getNombre()) ?>
 
                                             <?= $prod->getSeCocina() ? '👨‍🍳' : '🤵' ?>
 

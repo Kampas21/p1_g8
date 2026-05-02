@@ -14,8 +14,8 @@ ob_start();
 <div class="panel">
   <h2>Detalle de recompensa</h2>
   <p><strong>ID:</strong> <?= (int)$recompensa->getId() ?></p>
-  <p><strong>Producto:</strong> <?= e($recompensa->getProductoNombre()) ?></p>
-  <p><strong>Descripción:</strong> <?= e($recompensa->getProductoDescripcion()) ?></p>
+  <p><strong>Producto:</strong> <?= escaparHtml($recompensa->getProductoNombre()) ?></p>
+  <p><strong>Descripción:</strong> <?= escaparHtml($recompensa->getProductoDescripcion()) ?></p>
   <p><strong>Precio en carta:</strong> <?= number_format($recompensa->getProductoPrecioFinal(), 2) ?> €</p>
   <p><strong>BistroCoins necesarias:</strong> <?= (int)$recompensa->getBistrocoins() ?></p>
   <p><strong>Estado:</strong> <?= $recompensa->isActiva() ? 'Activa' : 'Inactiva' ?></p>
