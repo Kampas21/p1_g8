@@ -4,7 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-
+/*
  //---- PARA LOCAL (XAMPP) ----
     define("DB_HOST", "localhost");
     define("DB_USER", "root");
@@ -14,8 +14,8 @@ if (session_status() === PHP_SESSION_NONE) {
 
     define('RUTA_APP', '/p1_g8');
 
- /*
-    ---- PARA EL VPS ----
+*/
+//   ---- PARA EL VPS ----
     define("DB_HOST", "vm017.db.swarm.test");
     define("DB_USER", "root");  
     define("DB_PASS", "n0A35DSbiMkvi1f9dCXS");
@@ -23,5 +23,5 @@ if (session_status() === PHP_SESSION_NONE) {
 
     define('RUTA_APP', ''); 
 
-*/
+
 ?>
