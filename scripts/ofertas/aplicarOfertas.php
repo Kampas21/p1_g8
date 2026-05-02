@@ -7,9 +7,7 @@ require_once __DIR__ . '/../../includes/ofertaService.php';
 
 $user = require_login();
 
-/**
- * 🔹 Toggle de ofertas en sesión
- */
+// Toggle de ofertas en sesión
 $oferta_id = $_POST['oferta'] ?? null;
 
 if (!isset($_SESSION['ofertas_seleccionadas'])) {
@@ -27,9 +25,8 @@ if ($oferta_id !== null) {
     }
 }
 
-/**
- * 🔥 Aplicar TODAS las ofertas actuales
- */
+// Aplicar TODAS las ofertas actuales
+ 
 $errores = OfertaService::aplicarOfertas($_SESSION['ofertas_seleccionadas']);
 
 $_SESSION['errores_ofertas'] = $errores;

@@ -43,8 +43,6 @@ class FormularioActualizarLineaPedido extends Formulario {
             }
         }
 
-        
-
         $ofertas = $_SESSION['ofertas_seleccionadas'] ?? [];
 
         $errores = \OfertaService::aplicarOfertas($ofertas);

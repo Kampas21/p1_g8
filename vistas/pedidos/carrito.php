@@ -33,6 +33,8 @@ foreach ($lineas as $item) {
     }
 }
 
+$ofertas_ids = $_SESSION['ofertas_seleccionadas'] ?? [];
+OfertaService::aplicarOfertas($ofertas_ids);
 
 $formsActualizarHtml = [];
 $formsEliminarHtml = [];

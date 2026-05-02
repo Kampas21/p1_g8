@@ -31,6 +31,12 @@ HTML;
 
         \PedidoService::eliminarProductoDelCarrito($producto_id);
 
+        $ofertas = $_SESSION['ofertas_seleccionadas'] ?? [];
+
+        $errores = \OfertaService::aplicarOfertas($ofertas);
+
+        $_SESSION['errores_ofertas'] = $errores;
+
         header("Location: " . RUTA_APP . "/vistas/pedidos/carrito.php");
         exit;
     }

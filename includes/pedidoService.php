@@ -100,7 +100,7 @@ class PedidoService
         }
 
         $saldo = UsuarioDAO::getBistrocoinsByUserId($usuario_id);
-        
+
         self::asegurarCarritoSesion();
         $gastados = 0;
         foreach ($_SESSION['carrito']['items'] as $item) {
@@ -161,6 +161,46 @@ class PedidoService
     public static function getCarritoOfertas(): array
     {
         self::asegurarCarritoSesion();
+
+        $itemsCarrito = self::getCarritoItems();
+
+        foreach ($_SESSION['carrito']['ofertas'] as $key => $item) {
+
+            $oferta = \OfertaDAO::getById($item['oferta_id']);
+
+            // oferta borrada
+            if (!$oferta) {
+                unset($_SESSION['carrito']['ofertas'][$key]);
+                continue;
+            }
+
+            // oferta caducada
+            if (!$oferta->estaActiva()) {
+                unset($_SESSION['carrito']['ofertas'][$key]);
+                continue;
+            }
+
+            // ACTUALIZAR NOMBRE (esto sí es correcto)
+            $_SESSION['carrito']['ofertas'][$key]['nombre'] = $oferta->getNombre();
+
+            // RECALCULAR DESCUENTO REAL
+            $descuentoCalculado = self::calcularDescuentoOferta($oferta, $itemsCarrito);
+
+            if ($descuentoCalculado <= 0) {
+                unset($_SESSION['carrito']['ofertas'][$key]);
+                continue;
+            }
+
+            $_SESSION['carrito']['ofertas'][$key]['descuento_total'] = $descuentoCalculado;
+        }
+
+        $_SESSION['carrito']['ofertas'] = array_values($_SESSION['carrito']['ofertas']);
+
+        // $ofertas = $_SESSION['ofertas_seleccionadas'] ?? [];
+
+        // $errores = \OfertaService::aplicarOfertas($ofertas);
+
+        // $_SESSION['errores_ofertas'] = $errores;
 
         return $_SESSION['carrito']['ofertas'];
     }
@@ -407,4 +447,69 @@ class PedidoService
     {
         return PedidoDAO::updateEstadoSimple($pedido_id, $estado_nuevo);
     }
+
+
+    private static function calcularDescuentoOferta($oferta, $itemsCarrito): float
+    {
+        // reconstruir mapa producto_id => cantidad
+        $pedido_productos = [];
+
+        foreach ($itemsCarrito as $item) {
+            if (!empty($item['es_recompensa'])) continue;
+
+            $pid = $item['producto_id'];
+            $pedido_productos[$pid] = ($pedido_productos[$pid] ?? 0) + (int)$item['cantidad'];
+        }
+
+        $datos = OfertaService::calcularDatosOferta($oferta, $pedido_productos, $itemsCarrito);
+
+        return $datos['descuento_total'] ?? 0.0;
+    }
+
+    // private static function calcularDescuentoOferta($oferta, $itemsCarrito): float
+    // {
+    //     $productosOferta = \ProductoDAO::getProductosDeOferta($oferta->getId());
+
+    //     // map carrito: producto_id => cantidad
+    //     $carritoCantidades = [];
+    //     $carritoPrecios = [];
+
+    //     foreach ($itemsCarrito as $item) {
+    //         $id = $item['producto_id'];
+    //         $carritoCantidades[$id] = ($carritoCantidades[$id] ?? 0) + $item['cantidad'];
+    //         $carritoPrecios[$id] = $item['precio_unitario'];
+    //     }
+
+    //     // calcular cuántas veces se puede aplicar la oferta
+    //     $veces = PHP_INT_MAX;
+
+    //     foreach ($productosOferta as $po) {
+    //         $id = $po->getId();
+    //         $req = $po->cantidad;
+    //         $disponible = $carritoCantidades[$id] ?? 0;
+
+    //         $veces = min($veces, intdiv($disponible, $req));
+    //     }
+
+    //     if ($veces <= 0) {
+    //         return 0.0;
+    //     }
+
+    //     // calcular total SOLO de productos usados en la oferta
+    //     $totalOferta = 0.0;
+
+    //     foreach ($productosOferta as $po) {
+    //         $id = $po->getId();
+    //         $req = $po->cantidad;
+
+    //         $cantidadUsada = $req * $veces;
+    //         $precio = $carritoPrecios[$id] ?? 0;
+
+    //         $totalOferta += $precio * $cantidadUsada;
+    //     }
+
+    //     $descuento = $oferta->getDescuento();
+
+    //     return round($totalOferta * ($descuento / 100), 2);
+    // }
 }
