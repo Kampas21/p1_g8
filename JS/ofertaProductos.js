@@ -1,14 +1,13 @@
 
-// ─────────────────────────────────────────────
-//  SISTEMA DE PRODUCTOS DINÁMICOS EN OFERTA
-// ─────────────────────────────────────────────
 
-// ⚠️ Se asume que existe:
+//  SISTEMA DE PRODUCTOS DINÁMICOS EN OFERTA
+
+// Se asume que existe:
 // const productosDisponibles = [...]; (inyectado desde PHP)
 
-// ─────────────────────────────────────────────
+
 //  CREAR PRODUCTO EN FORMULARIO
-// ─────────────────────────────────────────────
+
 
 function crearSelectorProducto() {
 
@@ -50,25 +49,25 @@ function crearSelectorProducto() {
     emitirCambioProductos();
 }
 
-// ─────────────────────────────────────────────
+
 //  EVENTOS GLOBALS
-// ─────────────────────────────────────────────
+
 
 function registrarEventos() {
 
-    // 🔁 Cambio de producto seleccionado
+    // Cambio de producto seleccionado
     document.querySelectorAll('.selector-producto').forEach(select => {
         select.removeEventListener('change', onProductoChange);
         select.addEventListener('change', onProductoChange);
     });
 
-    // 🔁 Cambio de cantidad
+    // Cambio de cantidad
     document.querySelectorAll("input[name^='cantidades']").forEach(input => {
         input.removeEventListener('input', onCantidadChange);
         input.addEventListener('input', onCantidadChange);
     });
 
-    // ❌ eliminar producto
+    // eliminar producto
     document.querySelectorAll('.eliminar-producto').forEach(btn => {
         btn.removeEventListener('click', onEliminarProducto);
         btn.addEventListener('click', onEliminarProducto);
@@ -79,9 +78,9 @@ function registrarEventos() {
     });
 }
 
-// ─────────────────────────────────────────────
-//  CUANDO SE SELECCIONA PRODUCTO
-// ─────────────────────────────────────────────
+
+// CUANDO SE SELECCIONA PRODUCTO
+
 
 function onProductoChange(e) {
 
@@ -99,9 +98,8 @@ function onProductoChange(e) {
     emitirCambioProductos();
 }
 
-// ─────────────────────────────────────────────
+
 //  CAMBIO DE CANTIDAD
-// ─────────────────────────────────────────────
 
 function onCantidadChange(e) {
 
@@ -113,9 +111,9 @@ function onCantidadChange(e) {
     emitirCambioProductos();
 }
 
-// ─────────────────────────────────────────────
+
 //  ELIMINAR PRODUCTO MANUAL
-// ─────────────────────────────────────────────
+
 
 function onEliminarProducto(e) {
     const fila = e.target.closest('.producto-item');
@@ -124,18 +122,18 @@ function onEliminarProducto(e) {
     emitirCambioProductos();
 }
 
-// ─────────────────────────────────────────────
+
 //  NOTIFICAR CAMBIOS AL SISTEMA DE CÁLCULO
-// ─────────────────────────────────────────────
+
 
 function emitirCambioProductos() {
 
     document.dispatchEvent(new Event('productos:actualizados'));
 }
 
-// ─────────────────────────────────────────────
+
 //  INIT
-// ─────────────────────────────────────────────
+
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -150,9 +148,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     registrarEventos();
 
-    // ─────────────────────────────────────
-    // 🔥 EDICIÓN DE OFERTA (IMPORTANTE)
-    // ─────────────────────────────────────
+
+    //  EDICIÓN DE OFERTA (IMPORTANTE)
+    
     if (typeof productosSeleccionados !== 'undefined' && productosSeleccionados.length > 0) {
 
         productosSeleccionados.forEach(p => {
@@ -168,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function () {
             select.value = String(p.id);
             input.value = p.cantidad;
 
-            // 🔥 fuerza cálculo de precio
+            // fuerza cálculo de precio
             select.dispatchEvent(new Event('change'));
         });
 

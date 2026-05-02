@@ -32,14 +32,11 @@ function actualizarValores() {
     }
 }
 
-// ─────────────────────────────
-// 🔥 AQUÍ ESTÁ LA CLAVE
-// ─────────────────────────────
+//  AQUÍ ESTÁ LA CLAVE
 document.addEventListener('productos:actualizados', actualizarValores);
 
-// ─────────────────────────────
 // INIT
-// ─────────────────────────────
+
 document.addEventListener('DOMContentLoaded', function () {
 
     let final = document.getElementById('precio_final');
