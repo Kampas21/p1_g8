@@ -478,26 +478,35 @@ class PedidoDAO
 
     public static function getPedidosPendientesGerente()
     {
-        global $conn;
+    global $conn;
 
-        $query = "SELECT p.*, u.nombre AS cocinero_nombre, u.apellidos AS cocinero_apellidos, u.avatar_valor
-                  FROM pedidos p LEFT JOIN usuarios u ON p.cocinero_id = u.id
-                  WHERE p.estado IN ('recibido', 'en_preparacion', 'cocinando', 'listo_cocina', 'terminado')
-                  ORDER BY p.fecha_hora ASC";
+    $query = "SELECT 
+                p.*,
+                uc.nombre AS cocinero_nombre,
+                uc.apellidos AS cocinero_apellidos,
+                uc.avatar_valor AS avatar_valor,
+                um.nombre AS camarero_nombre,
+                um.apellidos AS camarero_apellidos,
+                um.avatar_valor AS camarero_avatar_valor
+              FROM pedidos p
+              LEFT JOIN usuarios uc ON p.cocinero_id = uc.id
+              LEFT JOIN usuarios um ON p.camarero_id = um.id
+              WHERE p.estado IN ('recibido', 'en_preparacion', 'cocinando', 'listo_cocina', 'terminado')
+              ORDER BY p.fecha_hora ASC";
 
-        $stmt = $conn->prepare($query);
-        $stmt->execute();
+    $stmt = $conn->prepare($query);
+    $stmt->execute();
 
-        $result = $stmt->get_result();
-        $pedidos = [];
-        while ($fila = $result->fetch_assoc()) {
-            $pedidos[] = $fila;
-        }
+    $result = $stmt->get_result();
+    $pedidos = [];
+    while ($fila = $result->fetch_assoc()) {
+        $pedidos[] = $fila;
+    }
 
-        $result->free();
-        $stmt->close();
+    $result->free();
+    $stmt->close();
 
-        return $pedidos;
+    return $pedidos;
     }
 
     public static function getPedidosActivosByUsuario(int $usuario_id): array

@@ -62,10 +62,12 @@ CREATE TABLE IF NOT EXISTS `pedidos`(
     `bistrocoins_gastados` INT NOT NULL DEFAULT 0,
     `bistrocoins_liquidados` TINYINT(1) NOT NULL DEFAULT 0,
     `cocinero_id` INT DEFAULT NULL,
+    `camarero_id` INT DEFAULT NULL,
 
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
     UNIQUE (`fecha`, `numero_pedido`),      
-    FOREIGN KEY (cocinero_id) REFERENCES usuarios(id)
+    FOREIGN KEY (cocinero_id) REFERENCES usuarios(id),
+    FOREIGN KEY (camarero_id) REFERENCES usuarios(id)
 );
 
 

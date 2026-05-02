@@ -15,7 +15,7 @@ $pedido_cerrado = in_array($p['estado'], ['terminado', 'entregado'], true);
         </span>
     </td>
 
-    <td data-label="Cocinero asignado" class="celda-flex">
+    <td data-label="Cocinero asignado" class="celda-centrada">
         <?php if ($p['cocinero_nombre']): ?>
             <?php
             $nombreCompleto = trim($p['cocinero_nombre'] . ' ' . $p['cocinero_apellidos']);
@@ -36,27 +36,31 @@ $pedido_cerrado = in_array($p['estado'], ['terminado', 'entregado'], true);
             }
             ?>
 
-            <img src="<?= escaparHtml($avatarImg) ?>"
-                 alt="Avatar"
-                 onerror="this.onerror=null; this.src='<?= escaparHtml($avatarEmergencia) ?>';"
-                 class="avatar-empleado">
+            <div class="celda-flex-centro">
+                <img src="<?= escaparHtml($avatarImg) ?>"
+                     alt="Avatar"
+                     onerror="this.onerror=null; this.src='<?= escaparHtml($avatarEmergencia) ?>';"
+                     class="avatar-empleado">
 
-            <span class="texto-destacado">
-                <?= escaparHtml($nombreCompleto) ?>
-            </span>
-        <?php else: ?>
-            <div class="avatar-placeholder">
-                🕒
+                <span class="texto-destacado">
+                    <?= escaparHtml($nombreCompleto) ?>
+                </span>
             </div>
+        <?php else: ?>
+            <div class="celda-flex-centro">
+                <div class="avatar-placeholder">
+                    🕒
+                </div>
 
-            <span class="texto-gris-cursiva">
-                Sin asignar
-            </span>
+                <span class="texto-gris-cursiva">
+                    Sin asignar
+                </span>
+            </div>
         <?php endif; ?>
     </td>
 
-    <td data-label="Camarero asignado" class="celda-flex">
-        <?php if ($p['camarero_nombre']): ?>
+    <td data-label="Camarero asignado" class="celda-centrada">
+        <?php if (!empty($p['camarero_nombre'])): ?>
             <?php
             $nombreCompletoCamarero = trim($p['camarero_nombre'] . ' ' . $p['camarero_apellidos']);
 
@@ -76,27 +80,31 @@ $pedido_cerrado = in_array($p['estado'], ['terminado', 'entregado'], true);
             }
             ?>
 
-            <img src="<?= escaparHtml($avatarImgCamarero) ?>"
-                 alt="Avatar camarero"
-                 onerror="this.onerror=null; this.src='<?= escaparHtml($avatarEmergenciaCamarero) ?>';"
-                 class="avatar-empleado">
+            <div class="celda-flex-centro">
+                <img src="<?= escaparHtml($avatarImgCamarero) ?>"
+                     alt="Avatar camarero"
+                     onerror="this.onerror=null; this.src='<?= escaparHtml($avatarEmergenciaCamarero) ?>';"
+                     class="avatar-empleado">
 
-            <span class="texto-destacado">
-                <?= escaparHtml($nombreCompletoCamarero) ?>
-            </span>
-        <?php else: ?>
-            <div class="avatar-placeholder">
-                🕒
+                <span class="texto-destacado">
+                    <?= escaparHtml($nombreCompletoCamarero) ?>
+                </span>
             </div>
+        <?php else: ?>
+            <div class="celda-flex-centro">
+                <div class="avatar-placeholder">
+                    🕒
+                </div>
 
-            <span class="texto-gris-cursiva">
-                Sin asignar
-            </span>
+                <span class="texto-gris-cursiva">
+                    Sin asignar
+                </span>
+            </div>
         <?php endif; ?>
     </td>
     
-    <td data-label="Productos">
-        <ul>
+    <td data-label="Productos" class="celda-centrada">
+        <ul class="lista-productos-gerente">
             <?php foreach ($productos as $prod): ?>
                 <li>
                     <?= (int)$prod->getCantidad() ?>x

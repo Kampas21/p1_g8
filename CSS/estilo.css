@@ -622,6 +622,27 @@ td.descripcion {
     min-width: 0;
 }
 
+.celda-centrada {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.celda-flex-centro {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    text-align: center;
+}
+
+.lista-productos-gerente {
+    display: inline-block;
+    text-align: left;
+    margin: 0;
+    padding-left: 18px;
+}
+
 /* =======================================================
    CATEGORÍAS DEL CATÁLOGO
    IMPORTANTE: está fuera del media de PC para que funcione en móvil.
