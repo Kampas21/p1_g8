@@ -144,7 +144,7 @@ class FormularioOferta extends Formulario
 
 <p>
 <label>Precio final:</label>
-<input id="precio_final" name="precio_final" type="number" min='0'> <!--value="{precio_final}" -->
+<input id="precio_final" name="precio_final" type="number" min='0' step="0.01"> <!--value="{precio_final}" -->
 </p>
 
 <p>
