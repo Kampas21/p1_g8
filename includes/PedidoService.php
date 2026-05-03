@@ -390,6 +390,11 @@ class PedidoService
         return PedidoDAO::asignarCocineroYEstado($pedido_id, $cocinero_id, $estado);
     }
 
+    public static function asignarCamarero($pedido_id, $camarero_id)
+    {
+        return PedidoDAO::asignarCamarero($pedido_id, $camarero_id);
+    }
+
     public static function getPedidosPendientesGerente()
     {
         return PedidoDAO::getPedidosPendientesGerente();

@@ -8,7 +8,7 @@ else:
     foreach ($pedidos as $p): 
         $pedido_id = (int)$p['id'];
         $pedido_cerrado = in_array($p['estado'], ['terminado', 'entregado'], true);
-        $formObj = new \es\ucm\fdi\aw\Formulario\FormularioAccionesCamarero($pedido_id, $accion);
+        $formObj = new \es\ucm\fdi\aw\Formulario\FormularioAccionesCamarero($pedido_id, $accion, $user->getId());
         $htmlForm = $formObj->gestiona();
 ?>
         <div class="pedido-card">
@@ -33,7 +33,7 @@ else:
                     <p><strong>Productos de barra:</strong></p>
                     <?php if (empty($productos_barra)): ?>
                         <p class="text-muted-italic">No hay productos de barra pendientes.</p>
-                        <?php $formListo = new \es\ucm\fdi\aw\Formulario\FormularioAccionesCamarero($pedido_id, 'pasar_entrega'); ?>
+                        <?php $formListo = new \es\ucm\fdi\aw\Formulario\FormularioAccionesCamarero($pedido_id, 'pasar_entrega', $user->getId()); ?>
                         <?= $formListo->gestiona() ?>
                     <?php else: ?>
                         <ul>
@@ -45,7 +45,7 @@ else:
                                     <?php elseif ($pb->getEstado() === 'preparado'): ?>
                                         <span class="estado-plato-listo">✅ Preparado</span>
                                     <?php else: ?>
-                                        <?php $formLinea = new \es\ucm\fdi\aw\Formulario\FormularioAccionesCamarero($pedido_id, 'preparar_linea', (int)$pb->getProductoId()); ?>
+                                        <?php $formLinea = new \es\ucm\fdi\aw\Formulario\FormularioAccionesCamarero($pedido_id, 'preparar_linea', $user->getId(), (int)$pb->getProductoId()); ?>
                                         <?= $formLinea->gestiona() ?>
                                     <?php endif; ?>
                                 </li>

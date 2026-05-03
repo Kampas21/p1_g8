@@ -9,10 +9,12 @@ class FormularioAccionesCamarero extends Formulario {
     private $pedido_id;
     private $accion;
     private $producto_id;
+    private $camarero_id;
 
-    public function __construct($pedido_id, $accion, $producto_id = 0) {
+    public function __construct($pedido_id, $accion, $camarero_id = 0, $producto_id = 0) {
         $this->pedido_id = $pedido_id;
         $this->accion = $accion;
+        $this->camarero_id = (int)$camarero_id;
         $this->producto_id = (int)$producto_id;
 
         parent::__construct('formCamarero_' . $pedido_id . '_' . $accion . ($this->producto_id ? '_' . $this->producto_id : ''));
@@ -24,6 +26,7 @@ class FormularioAccionesCamarero extends Formulario {
         <input type='hidden' name='pedido_id' value='{$this->pedido_id}'>
         <input type='hidden' name='accion' value='{$this->accion}'>
         <input type='hidden' name='producto_id' value='{$this->producto_id}'>
+        <input type='hidden' name='camarero_id' value='{$this->camarero_id}'>
         <button type='submit' class='btn primary'>
             " . ($this->accion === 'cobrar' ? '💰 Cobrar' : ($this->accion === 'preparar_linea' ? '🟡 Preparar' : ($this->accion === 'pasar_entrega' ? '🛎️ Pasar a entrega' : '📦 Entregar'))) . "
         </button>
@@ -35,12 +38,16 @@ class FormularioAccionesCamarero extends Formulario {
     $pedido_id = filter_var($datos['pedido_id'], FILTER_VALIDATE_INT);
     $accion = $datos['accion'] ?? null;
     $producto_id = filter_var($datos['producto_id'] ?? null, FILTER_VALIDATE_INT);
+    $camarero_id = filter_var($datos['camarero_id'] ?? null, FILTER_VALIDATE_INT);
 
     if (!$pedido_id || !$accion) {
         return;
     }
 
-  
+    // Si tenemos un camarero, lo asignamos al pedido
+    if ($camarero_id) {
+        \PedidoService::asignarCamarero($pedido_id, $camarero_id);
+    }
 
     if ($accion === 'cobrar') {
         $ok = \PedidoService::cambiarEstado($pedido_id, 'en_preparacion');

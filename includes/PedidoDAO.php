@@ -476,6 +476,18 @@ class PedidoDAO
         return $ok;
     }
 
+    public static function asignarCamarero($pedido_id, $camarero_id)
+    {
+        global $conn;
+
+        $stmt = $conn->prepare("UPDATE pedidos SET camarero_id = ? WHERE id = ?");
+        $stmt->bind_param("ii", $camarero_id, $pedido_id);
+        $ok = $stmt->execute();
+        $stmt->close();
+
+        return $ok;
+    }
+
     public static function getPedidosPendientesGerente()
     {
     global $conn;
