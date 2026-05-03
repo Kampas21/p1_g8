@@ -1,9 +1,10 @@
 <?php
-require_once __DIR__ . '/../includes/application.php';
+require_once __DIR__ . '/application.php';
 require_once __DIR__ . '/../entities/Producto.php';
-require_once __DIR__ . '/../includes/ProductoDAO.php';
-require_once __DIR__ . '/../includes/OfertaEnPedidoDAO.php';
-require_once __DIR__ . '/../includes/PedidoDAO.php';
+require_once __DIR__ . '/ProductoDAO.php';
+require_once __DIR__ . '/OfertaEnPedidoDAO.php';
+require_once __DIR__ . '/PedidoDAO.php';
+require_once __DIR__ . '/OfertaDAO.php';
 require_once __DIR__ . '/OfertaService.php';
 
 class PedidoService
