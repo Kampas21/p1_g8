@@ -4,11 +4,13 @@ require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/application.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/util.php';
-require_once __DIR__ . '/../../entities/pedido.php';
-require_once __DIR__ . '/../../includes/pedidoService.php';
+require_once __DIR__ . '/../../entities/Pedido.php';
+require_once __DIR__ . '/../../includes/PedidoService.php';
 
 $user = require_login();
 $usuario_id = (int)$user->getId();
+$esGerente = user_has_role($user, 'gerente');
+$usuarioIdContexto = isset($_GET['usuario_id']) ? (int)$_GET['usuario_id'] : 0;
 
 $pedido_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 if (!$pedido_id) {
@@ -17,7 +19,7 @@ if (!$pedido_id) {
 
 $pedido = PedidoService::getPedidoById($pedido_id);
 
-if (!$pedido || (int)$pedido->getUsuario_id() !== $usuario_id) {
+if (!$pedido || (!$esGerente && (int)$pedido->getUsuario_id() !== $usuario_id)) {
     http_response_code(403);
     
     $tituloPagina = 'Acceso denegado | Bistro FDI';
@@ -59,21 +61,21 @@ ob_start();
   <?php 
   // Mostrar mensajes flash
   foreach (flash_get_all() as $f): ?>
-      <div class="mensaje-<?= e($f['type']) ?>"><?= e($f['message']) ?></div>
+      <div class="mensaje-<?= escaparHtml($f['type']) ?>"><?= escaparHtml($f['message']) ?></div>
   <?php endforeach; ?>
 
   <div class="panel">
     <div class="actions-inline mb-12">
-      <a href="listarPedidosCliente.php" class="btn">← Mis pedidos</a>
+      <a href="listarPedidosCliente.php<?= $esGerente && $usuarioIdContexto > 0 ? '?usuario_id=' . $usuarioIdContexto : '' ?>" class="btn">← Volver</a>
     </div>
 
-    <h2>Pedido #<?= e($pedido->getNumero_pedido()) ?></h2>
+    <h2>Pedido #<?= escaparHtml($pedido->getNumero_pedido()) ?></h2>
 
     <table>
       <tbody>
         <tr>
           <th>Estado</th>
-          <td><strong><?= e($etiquetas[$pedido->getEstado()] ?? $pedido->getEstado()) ?></strong></td>
+          <td><strong><?= escaparHtml($etiquetas[$pedido->getEstado()] ?? $pedido->getEstado()) ?></strong></td>
         </tr>
         <tr>
           <th>Tipo</th>
@@ -85,11 +87,11 @@ ob_start();
         </tr>
         <tr>
           <th>Fecha</th>
-          <td><?= e($pedido->getFecha_hora()) ?></td>
+          <td><?= escaparHtml($pedido->getFecha_hora()) ?></td>
         </tr>
         <tr>
           <th>Total</th>
-          <td><?= e($pedido->setTotal()) ?> €</td>
+          <td><?= escaparHtml($pedido->setTotal()) ?> €</td>
         </tr>
       </tbody>
     </table>
@@ -110,8 +112,8 @@ ob_start();
         <tbody>
         <?php foreach ($lineas as $linea): ?>
           <tr>
-            <td><?= e($linea->getNombre()) ?></td>
-            <td><?= e($linea->getPrecio()) ?> €</td>
+            <td><?= escaparHtml($linea->getNombre()) ?></td>
+            <td><?= escaparHtml($linea->getPrecio()) ?> €</td>
             <td><?= (int)$linea->getCantidad() ?></td>
             <td><?= round($linea->getPrecio() * $linea->getCantidad(), 2) ?> €</td>
           </tr>
@@ -120,7 +122,7 @@ ob_start();
         <tfoot>
           <tr>
             <td colspan="3"><strong>Total</strong></td>
-            <td><strong><?= e($pedido->setTotal()) ?> €</strong></td>
+            <td><strong><?= escaparHtml($pedido->setTotal()) ?> €</strong></td>
           </tr>
         </tfoot>
       </table>

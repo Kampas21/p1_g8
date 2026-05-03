@@ -4,30 +4,13 @@ error_reporting(E_ALL);
 
 require_once __DIR__ . '/../../includes/auth.php';
 
-$user = current_user();
-
-if (!$user || !user_has_role($user, 'gerente')) {
-    $tituloPagina = 'Acceso bloqueado';
-    $rutaCSS = '../../CSS/estilo.css';
-
-    ob_start();
-?>
-    <div class="panel">
-        <h1>Acceso bloqueado</h1>
-        <p>Necesitas ser gerente para acceder a esta oferta.</p>
-        <p><a class="btn-volver" href="../../index.php">Volver al inicio</a></p>
-    </div>
-<?php
-    $contenidoPrincipal = ob_get_clean();
-    require __DIR__ . '/../../includes/plantilla.php';
-    exit;
-}
-
-require_once __DIR__ . '/../../entities/oferta.php';
-require_once __DIR__ . '/../../includes/productoService.php';
-require_once __DIR__ . '/../../includes/ofertaDAO.php';
+require_once __DIR__ . '/../../entities/Oferta.php';
+require_once __DIR__ . '/../../includes/ProductoDAO.php';
+require_once __DIR__ . '/../../includes/OfertaDAO.php';
 
 $id = $_GET['id'] ?? null;
+
+$return = $_GET['return'] ?? 'index.php';
 
 if (!$id) {
     die("ID de oferta no proporcionado");
@@ -75,7 +58,7 @@ ob_start();
 
     <?php
     $precio_total = 0;
-    $productos = ProductoService::getProductosDeOferta($oferta->getId());
+    $productos = ProductoDAO::getProductosDeOferta($oferta->getId());
     ?>
 
     <?php if (empty($productos)): ?>
@@ -113,7 +96,7 @@ ob_start();
 </div>
 
 <p>
-    <a class="btn-volver" href="listarOfertas.php">Volver</a>
+    <a class="btn-volver" href="<?= htmlspecialchars($return) ?>">Volver</a>
 </p>
 
 <?php

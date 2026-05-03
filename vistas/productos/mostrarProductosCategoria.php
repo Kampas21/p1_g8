@@ -2,7 +2,7 @@
 
 
 require_once __DIR__ . '/../../includes/auth.php';
-require_once __DIR__ . '/../../includes/categoriaService.php';
+require_once __DIR__ . '/../../includes/CategoriaDAO.php';
 
 $user = current_user();
 if (!$user || !user_has_role($user, 'gerente')) {
@@ -16,13 +16,14 @@ if (!$categoria_id) {
     die('Categoría inválida');
 }
 
-$categoria = CategoriaService::getById($categoria_id);
+$categoria = CategoriaDAO::getById($categoria_id);
 if (!$categoria) {
     http_response_code(404);
     die('Categoría no encontrada');
 }
 
-require_once __DIR__ . '/../../scripts/productos/cargarProductosCategoria.php';
+require_once __DIR__ . '/../../includes/ProductoDAO.php';
+$productos = ProductoDAO::getAllByCategoria($categoria_id);
 
 $tituloPagina = 'Productos';
 $rutaCSS = '../../CSS/estilo.css';
@@ -36,15 +37,7 @@ ob_start();
     <a class="btn-nuevo" href="crearProducto.php?categoria_id=<?= (int)$categoria_id ?>">+ Nuevo producto</a>
 </p>
 
-<?php if (empty($productos)): ?>
-    <p>No hay productos en esta categoría.</p>
-<?php else: ?>
-    <div class="productos-container">
-        <?php foreach ($productos as $p): ?>
-            <?php require __DIR__ . '/_tarjeta_producto.php'; ?>
-        <?php endforeach; ?>
-    </div>
-<?php endif; ?>
+<?php require __DIR__ . '/../../scripts/productos/pintarProductosCategoria.php'; ?>
 
 <p class="mt-20">
     <a class="btn-volver" href="../categorias/categoriasList.php">← Volver a categorías</a>

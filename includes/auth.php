@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . '/user_repo.php';
+require_once __DIR__ . '/UsuarioDAO.php';
 
 function current_user(): ?Usuario {
     if (empty($_SESSION['user_id'])) {
         return null;
     }
     $id = (int)$_SESSION['user_id'];
-    $user = user_find_by_id($id);
+    $user = UsuarioDAO::user_find_by_id($id);
     if (!$user || !$user->isActivo()) {
         unset($_SESSION['user_id']);
         return null;
@@ -35,7 +35,7 @@ function require_login(): Usuario {
 }
 
 function user_has_role(Usuario $user, string $minRole): bool {
-    return role_priority($user->getRol()) >= role_priority($minRole);
+    return UsuarioDAO::role_priority($user->getRol()) >= UsuarioDAO::role_priority($minRole);
 }
 
 function require_role(string $minRole): Usuario {

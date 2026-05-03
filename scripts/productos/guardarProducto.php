@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../includes/config.php';
-require_once __DIR__ . '/../../entities/producto.php';
-require_once __DIR__ . '/../../includes/productoService.php';
+require_once __DIR__ . '/../../entities/Producto.php';
+require_once __DIR__ . '/../../includes/ProductoDAO.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -17,6 +17,7 @@ $descripcion = filter_input(INPUT_POST, 'descripcion', FILTER_SANITIZE_SPECIAL_C
 $categoria_id = filter_input(INPUT_POST, 'categoria_id', FILTER_VALIDATE_INT);
 $precio = filter_input(INPUT_POST, 'precio', FILTER_VALIDATE_FLOAT);
 $iva = filter_input(INPUT_POST, 'iva', FILTER_VALIDATE_INT);
+$se_cocina = isset($_POST['se_cocina']) ? 1 : 0;
 
 
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
@@ -55,7 +56,7 @@ if (!empty($errores)) {
     $_SESSION['errores_producto'] = $errores;
 
     if ($id) {
-        header("Location: ../../vistas/productos/editarProducto.php?id=$id");
+        header("Location: ../../vistas/productos/crearProducto.php?id=$id");
     } else {
         header("Location: ../../vistas/productos/crearProducto.php");
     }
@@ -68,9 +69,9 @@ if (!empty($errores)) {
 ========================= */
 
 if ($id) {
-    ProductoService::update($id, $nombre, $descripcion, $categoria_id, $precio, $iva);
+    ProductoDAO::update($id, $nombre, $descripcion, $categoria_id, $precio, $iva, $se_cocina);
 } else {
-    ProductoService::create($nombre, $descripcion, $categoria_id, $precio, $iva);
+    ProductoDAO::create($nombre, $descripcion, $categoria_id, $precio, $iva, $se_cocina);
 }
 
 /* =========================

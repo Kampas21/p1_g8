@@ -1,48 +1,52 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/../../includes/application.php';
 require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/auth.php';
-require_once __DIR__ . '/../../includes/user_repo.php';
-require_once __DIR__ . '/../../entities/pedido.php'; // Incluimos la Entidad Pedido
+require_once __DIR__ . '/../../includes/util.php';
+require_once __DIR__ . '/../../includes/UsuarioDAO.php';
+require_once __DIR__ . '/../../entities/Pedido.php';
 require_once __DIR__ . '/../../includes/Formulario/FormularioPerfil.php';
-require_once __DIR__ . '/../../includes/pedidoService.php';
+require_once __DIR__ . '/../../includes/PedidoService.php';
 
 use es\ucm\fdi\aw\Formulario\FormularioPerfil;
 
 $user = require_login();
 
-// Si piden quitar el avatar (POST)
 if (is_post() && ($_POST['accion'] ?? '') === 'quitar_avatar') {
-    require_csrf();
-    user_remove_custom_avatar($user->getId());
+    UsuarioDAO::user_remove_custom_avatar($user->getId());
     flash_set('success', 'Avatar personalizado eliminado.');
     header("Location: perfil.php");
     exit();
 }
 
-// Inicialización de vista y Formulario
 $form = new FormularioPerfil();
 $htmlFormPerfil = $form->gestiona();
 
-// Aquí hemos eliminado TODO el SQL en crudo. Delega a los modelos:
 $pedidosActivos = [];
 $pedidosHistorico = [];
 $pedidosDisponibles = false;
+$numPedidosActivos = 0;
 
-$conn = crearConexion();
-$checkTable = $conn->query("SHOW TABLES LIKE 'pedidos'");
+$uid = $user->getId();
+$tab = $_GET['tab'] ?? 'datos';
 
-if ($checkTable && $checkTable->num_rows > 0) {
+try {
+    if ($tab === 'activos') {
+        $pedidosActivos = PedidoService::getPedidosActivosByUsuario($uid);
+    } elseif ($tab === 'historico') {
+        $pedidosHistorico = PedidoService::getPedidosHistoricoByUsuario($uid);
+    }
+
+    $numPedidosActivos = PedidoService::contarPedidosActivosByUsuario($uid);
     $pedidosDisponibles = true;
-    $uid = $user->getId();
-    
-    $pedidosActivos = PedidoService::getPedidosActivosByUsuario($uid);
-    $pedidosHistorico = PedidoService::getPedidosHistoricoByUsuario($uid);
+} catch (\Exception $e) {
+    $pedidosDisponibles = false;
 }
-$conn->close();
 
-$tab = $_GET['tab'] ?? 'datos'; // 'datos' será la pestaña por defecto
+$saldoBistrocoins = method_exists($user, 'getBistrocoins') ? (int)$user->getBistrocoins() : 0;
+
 $tituloPagina = 'Perfil | Bistro FDI';
 $rutaCSS = RUTA_APP . '/CSS/estilo.css';
 
@@ -51,72 +55,68 @@ ob_start();
 
 <div class="panel">
     <h2>Mi Cuenta</h2>
-    
-    <!-- Menú de Pestañas (Submenú rápido) -->
-    <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+
+    <div class="actions-inline mb-12">
         <a href="perfil.php?tab=datos" class="btn <?= $tab === 'datos' ? 'editar' : '' ?>">👤 Configuración de Perfil</a>
-        <a href="perfil.php?tab=activos" class="btn <?= $tab === 'activos' ? 'editar' : '' ?>">⏳ Pedidos Activos (<?= count($pedidosActivos) ?>)</a>
+        <a href="perfil.php?tab=activos" class="btn <?= $tab === 'activos' ? 'editar' : '' ?>">⏳ Pedidos Activos (<?= (int)$numPedidosActivos ?>)</a>
         <a href="perfil.php?tab=historico" class="btn <?= $tab === 'historico' ? 'editar' : '' ?>">📜 Histórico de Pedidos</a>
+        <a href="<?= RUTA_APP ?>/vistas/recompensas/recompensaCliente.php" class="btn">🎁 Recompensas</a>
     </div>
 
     <?php foreach (flash_get_all() as $item): ?>
         <?php $type = in_array($item['type'], ['error', 'success', 'info'], true) ? $item['type'] : 'info'; ?>
-        <div class="notice <?= e($type) ?>"><?= e($item['message']) ?></div>
+        <div class="notice <?= escaparHtml($type) ?>"><?= escaparHtml($item['message']) ?></div>
     <?php endforeach; ?>
 </div>
 
 <main class="profile-layout">
 
     <?php if ($tab === 'datos'): ?>
-    <!-- 1. PESTAÑA: Todo lo del formulario, avatar y detalles del usuario -->
-    <section class="panel profile-card" style="grid-column: 1 / -1;">
-        <h3>Mis Datos</h3>
+        <section class="panel profile-card span-full">
+            <h3>Mis Datos</h3>
 
-        <div class="profile-top" style="align-items: center; border-bottom: 1px solid #eee; padding-bottom: 20px; margin-bottom: 20px;">
-            <div style="text-align: center;">
-                <img class="avatar lg" style="margin-bottom: 8px;" src="<?= e($user->getAvatarUrl()) ?>" alt="Avatar de <?= e($user->getUsername()) ?>">
-                
-                <?php if ($user->getAvatarTipo() === 'custom'): ?>
-                    <form method="post" onsubmit="return confirm('¿Quitar avatar personalizado?');">
-                        <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
-                        <input type="hidden" name="accion" value="quitar_avatar">
-                        <button class="btn danger small" type="submit">Eliminar foto</button>
-                    </form>
-                <?php endif; ?>
+            <div class="profile-top">
+                <div class="perfil-avatar-box">
+                    <img class="avatar lg"
+                         src="<?= escaparHtml($user->getAvatarUrl()) ?>"
+                         alt="Avatar de <?= escaparHtml($user->getUsername()) ?>">
+
+                    <?php if ($user->getAvatarTipo() === 'custom'): ?>
+                        <form method="post" onsubmit="return confirm('¿Quitar avatar personalizado?');">
+                            <input type="hidden" name="accion" value="quitar_avatar">
+                            <button class="btn danger small" type="submit">Eliminar foto</button>
+                        </form>
+                    <?php endif; ?>
+                </div>
+
+                <div class="perfil-datos-box">
+                    <p><strong>Usuario:</strong> <?= escaparHtml($user->getUsername()) ?></p>
+                    <p><strong>Email:</strong> <?= escaparHtml($user->getEmail()) ?></p>
+                    <p><strong>Nombre y apellidos:</strong> <?= escaparHtml($user->getNombre()) ?> <?= escaparHtml($user->getApellidos()) ?></p>
+                    <p><strong>Rol:</strong> <?= escaparHtml(UsuarioDAO::role_label((string)$user->getRol())) ?></p>
+                    <p><strong>BistroCoins:</strong> <?= (int)$saldoBistrocoins ?></p>
+                </div>
             </div>
-            
-            <div style="margin-left: 10px;">
-                <p><strong>Usuario:</strong> <?= e($user->getUsername()) ?></p>
-                <p><strong>Email:</strong> <?= e($user->getEmail()) ?></p>
-                <p><strong>Nombre y apellidos:</strong> <?= e($user->getNombre()) ?> <?= e($user->getApellidos()) ?></p>
-                <p><strong>Rol:</strong> <?= e(role_label((string)$user->getRol())) ?></p>
+
+            <div class="mt-20">
+                <?= $htmlFormPerfil ?>
             </div>
-        </div>
-        
-        <div class="mt-20">
-            <!-- Renderizamos el FormularioPerfil configurado con clases POO -->
-            <?= $htmlFormPerfil ?>
-        </div>
-    </section>
+        </section>
     <?php endif; ?>
-
 
     <?php if ($tab === 'activos'): ?>
-    <!-- 2. PESTAÑA: Pedidos en curso -->
-    <section style="grid-column: 1 / -1;">
-        <?php include __DIR__ . '/_pedidos_activos.php'; ?>
-    </section>
+        <section class="span-full">
+            <?php include __DIR__ . '/_pedidos_activos.php'; ?>
+        </section>
     <?php endif; ?>
-
 
     <?php if ($tab === 'historico'): ?>
-    <!-- 3. PESTAÑA: Pedidos terminados/entregados -->
-    <section style="grid-column: 1 / -1;">
-        <?php include __DIR__ . '/_pedidos_historico.php'; ?>
-    </section>
+        <section class="span-full">
+            <?php include __DIR__ . '/_pedidos_historico.php'; ?>
+        </section>
     <?php endif; ?>
 
-</main> <!-- / profile-layout -->
+</main>
 
 <?php
 $contenidoPrincipal = ob_get_clean();

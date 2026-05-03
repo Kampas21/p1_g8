@@ -2,18 +2,22 @@
 namespace es\ucm\fdi\aw\Formulario;
 
 require_once __DIR__ . '/Formulario.php';
-require_once __DIR__ . '/../../entities/pedido.php';
-require_once __DIR__ . '/../../includes/pedidoService.php';
+require_once __DIR__ . '/../../entities/Pedido.php';
+require_once __DIR__ . '/../../includes/PedidoService.php';
 
 class FormularioPago extends Formulario {
 
-    private $pedido_id;
-    private $total;
+  private $usuario_id;
+  private $total_sin_descuentos;
+  private $total_descuento;
+  private $total;
 
-    public function __construct(int $pedido_id, float $total) {
-        $this->pedido_id = $pedido_id;
-        $this->total = $total;
-        parent::__construct('formPago', ['urlRedireccion' => 'confirmacion.php']);
+  public function __construct(int $usuario_id, float $total_sin_descuentos, float $total_descuento, float $total) {
+    $this->usuario_id = $usuario_id;
+    $this->total_sin_descuentos = $total_sin_descuentos;
+    $this->total_descuento = $total_descuento;
+    $this->total = $total;
+    parent::__construct('formPago', ['urlRedireccion' => 'confirmacion.php']);
     }
 
     protected function generaCamposFormulario(&$datos) {
@@ -25,6 +29,20 @@ class FormularioPago extends Formulario {
         $htmlErroresGlobales = self::generaListaErroresGlobales($this->errores);
         $erroresCampos = self::generaErroresCampos(['metodo_pago', 'numero_tarjeta', 'nombre_tarjeta', 'caducidad', 'cvv'], $this->errores, 'span', ['class' => 'mensaje-error']);
 
+        if ($this->total <= 0) {
+            return <<<EOF
+            $htmlErroresGlobales
+            <div class="panel">
+              <h3>🎉 Pedido gratuito</h3>
+              <p>El total de tu pedido es de 0.00€. No es necesario realizar ningún pago.</p>
+              <br>
+              <button type="submit" name="metodo_pago" value="gratis" class="btn primary">
+                Confirmar y preparar pedido
+              </button>
+            </div>
+            EOF;
+        }
+
         return <<<EOF
         $htmlErroresGlobales
 
@@ -32,7 +50,8 @@ class FormularioPago extends Formulario {
         <div class="panel">
           <h3>💵 Pagar al camarero</h3>
           <p>El camarero pasará a cobrarle en su mesa o en el mostrador.</p>
-          <button type="submit" name="metodo_pago" value="camarero" class="btn primary">
+          <button type="button" class="btn primary"
+            onclick="const h = document.createElement('input'); h.type='hidden'; h.name='metodo_pago'; h.value='camarero'; this.form.appendChild(h); this.form.submit();">
             Pagar al camarero
           </button>
         </div>
@@ -78,43 +97,58 @@ class FormularioPago extends Formulario {
     }
 
     protected function procesaFormulario(&$datos) {
+        $this->errores = [];
         $metodo = $datos['metodo_pago'] ?? '';
-        $errores = [];
+
+        if ($metodo === 'gratis') {
+            if ($this->total > 0) {
+                $this->errores['metodo_pago'] = 'Operación inválida.';
+                return;
+            }
+            
+            $pedido_id = \PedidoService::confirmarCarrito($this->usuario_id, 'tarjeta', $this->total_sin_descuentos, $this->total_descuento);
+            if (!$pedido_id) {
+                $this->errores['metodo_pago'] = 'No se ha podido confirmar el pedido.';
+            }
+            return;
+        }
 
         if ($metodo === 'camarero') {
-            \PedidoService::confirmarPedido($this->pedido_id, 'camarero', $this->total);
-            $_SESSION['ultimo_pedido_id'] = $this->pedido_id;
+            $pedido_id = \PedidoService::confirmarCarrito($this->usuario_id, 'camarero', $this->total_sin_descuentos, $this->total_descuento);
+            if (!$pedido_id) {
+                $this->errores['metodo_pago'] = 'No se ha podido confirmar el pedido.';
+            }
             return;
         }
 
         if ($metodo === 'tarjeta') {
-            $numero    = trim($datos['numero_tarjeta'] ?? '');
-            $nombre    = trim($datos['nombre_tarjeta'] ?? '');
-            $caducidad = trim($datos['caducidad']      ?? '');
-            $cvv       = trim($datos['cvv']            ?? '');
-
+            $numero = trim($datos['numero_tarjeta'] ?? '');
+            $nombre = trim($datos['nombre_tarjeta'] ?? '');
+            $caducidad = trim($datos['caducidad'] ?? '');
+            $cvv = trim($datos['cvv'] ?? '');
             if (!preg_match('/^\d{16}$/', preg_replace('/\s+/', '', $numero))) {
-                $errores['numero_tarjeta'] = 'El número de tarjeta debe tener 16 dígitos.';
+                $this->errores['numero_tarjeta'] = 'El número de tarjeta debe tener 16 dígitos.';
             }
             if ($nombre === '') {
-                $errores['nombre_tarjeta'] = 'Introduce el nombre del titular.';
+                $this->errores['nombre_tarjeta'] = 'Introduce el nombre del titular.';
             }
             if (!preg_match('/^(0[1-9]|1[0-2])\/\d{2}$/', $caducidad)) {
-                $errores['caducidad'] = 'Formato de caducidad inválido (MM/AA).';
+                $this->errores['caducidad'] = 'Formato de caducidad inválido (MM/AA).';
             }
             if (!preg_match('/^\d{3,4}$/', $cvv)) {
-                $errores['cvv'] = 'El CVV debe tener 3 o 4 dígitos.';
+                $this->errores['cvv'] = 'El CVV debe tener 3 o 4 dígitos.';
             }
-
-            if (count($errores) === 0) {
-                \PedidoService::confirmarPedido($this->pedido_id, 'tarjeta', $this->total);
-                $_SESSION['ultimo_pedido_id'] = $this->pedido_id;
+            if (count($this->errores) === 0) {
+                $pedido_id = \PedidoService::confirmarCarrito($this->usuario_id, 'tarjeta', $this->total_sin_descuentos, $this->total_descuento);
+                if (!$pedido_id) {
+                    $this->errores['metodo_pago'] = 'No se ha podido confirmar el pedido.';
+                    return;
+                }
                 return;
-            } else {
-                return $errores;
             }
+            return;
         }
 
-        return ['metodo_pago' => 'Selecciona un método de pago.'];
+        $this->errores['metodo_pago'] = 'Selecciona un método de pago.';
     }
 }

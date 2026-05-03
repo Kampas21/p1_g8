@@ -3,7 +3,7 @@
 
 
 require_once __DIR__ . '/../../includes/auth.php';
-require_once __DIR__ . '/../../includes/productoService.php';
+require_once __DIR__ . '/../../includes/ProductoDAO.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -25,7 +25,7 @@ if (!$id || !$categoria_id) {
     die("Datos inválidos");
 }
 
-$ok = ProductoService::activar($id);
+$ok = ProductoDAO::activar($id);
 
 if (!$ok) {
     http_response_code(500);

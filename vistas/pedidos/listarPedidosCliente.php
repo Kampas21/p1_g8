@@ -4,11 +4,27 @@ require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/application.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/util.php';
-require_once __DIR__ . '/../../entities/pedido.php';
-require_once __DIR__ . '/../../includes/pedidoService.php';
+require_once __DIR__ . '/../../entities/Pedido.php';
+require_once __DIR__ . '/../../includes/UsuarioDAO.php';
+require_once __DIR__ . '/../../includes/PedidoService.php';
 
-$user    = require_login();
-$pedidos = PedidoService::getPedidosDeUsuario((int)$user->getId());
+$user = require_login();
+$usuarioIdConsulta = isset($_GET['usuario_id']) ? (int)$_GET['usuario_id'] : (int)$user->getId();
+
+if ($usuarioIdConsulta !== (int)$user->getId() && !user_has_role($user, 'gerente')) {
+  http_response_code(403);
+  flash_set('error', 'No tienes permiso para ver los pedidos de otro usuario.');
+  redirect('listarPedidosCliente.php');
+}
+
+$usuarioConsulta = UsuarioDAO::user_find_by_id($usuarioIdConsulta);
+if (!$usuarioConsulta) {
+  flash_set('error', 'Usuario no encontrado.');
+  redirect('listarPedidosCliente.php');
+}
+
+$pedidos = PedidoService::getPedidosDeUsuario($usuarioIdConsulta);
+$esGerenteConsultando = $usuarioIdConsulta !== (int)$user->getId();
 
 $etiquetas = [
     'recibido'       => 'Pendiente de pago',
@@ -30,20 +46,28 @@ ob_start();
   <?php 
   // Mostrar mensajes flash
   foreach (flash_get_all() as $f): ?>
-      <div class="mensaje-<?= e($f['type']) ?>"><?= e($f['message']) ?></div>
+      <div class="mensaje-<?= escaparHtml($f['type']) ?>"><?= escaparHtml($f['message']) ?></div>
   <?php endforeach; ?>
 
   <div class="panel">
     <div class="actions-inline flex-between">
-      <h2 class="m-0">Mis pedidos</h2>
-      <a href="elegirTipo.php" class="btn primary">+ Nuevo pedido</a>
+      <h2 class="m-0">
+        <?= $esGerenteConsultando ? 'Pedidos de ' . escaparHtml($usuarioConsulta->getNombreCompleto()) : 'Mis pedidos' ?>
+      </h2>
+      <div class="actions-inline">
+        <?php if (user_has_role($user, 'gerente')): ?>
+          <a href="../usuarios/usuario_ver.php?id=<?= $usuarioIdConsulta ?>" class="btn">← Volver al usuario</a>
+        <?php endif; ?>
+      </div>
     </div>
   </div>
 
   <?php if (empty($pedidos)): ?>
     <div class="panel">
-      <p>Todavía no tienes pedidos.</p>
-      <a href="elegirTipo.php" class="btn primary">Hacer mi primer pedido</a>
+      <p><?= $esGerenteConsultando ? 'Este usuario todavía no tiene pedidos.' : 'Todavía no tienes pedidos.' ?></p>
+      <?php if (user_has_role($user, 'gerente')): ?>
+        <a href="../usuarios/usuario_ver.php?id=<?= $usuarioIdConsulta ?>" class="btn">← Volver al usuario</a>
+      <?php endif; ?>
     </div>
 
   <?php else: ?>
@@ -63,13 +87,13 @@ ob_start();
           <tbody>
           <?php foreach ($pedidos as $p): ?>
             <tr>
-              <td><strong>#<?= e($p->getNumero_pedido()) ?></strong></td>
-              <td><?= e(substr($p->getFecha_hora(), 0, 16)) ?></td>
+              <td><strong>#<?= escaparHtml($p->getNumero_pedido()) ?></strong></td>
+              <td><?= escaparHtml(substr($p->getFecha_hora(), 0, 16)) ?></td>
               <td><?= $p->getTipo() === 'local' ? '🍽️ Local' : '🥡 Llevar' ?></td>
-              <td><?= e($etiquetas[$p->getEstado()] ?? $p->getEstado()) ?></td>
-              <td><?= e($p->setTotal()) ?> €</td>
+              <td><?= escaparHtml($etiquetas[$p->getEstado()] ?? $p->getEstado()) ?></td>
+              <td><?= escaparHtml($p->setTotal()) ?> €</td>
               <td>
-                <a href="estadoPedido.php?id=<?= (int)$p->getId() ?>" class="btn small">
+                <a href="estadoPedido.php?id=<?= (int)$p->getId() ?><?= $esGerenteConsultando ? '&usuario_id=' . $usuarioIdConsulta : '' ?>" class="btn small">
                   Ver detalle
                 </a>
               </td>

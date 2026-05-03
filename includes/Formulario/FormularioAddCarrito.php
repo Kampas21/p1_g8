@@ -2,19 +2,17 @@
 namespace es\ucm\fdi\aw\Formulario;
 
 require_once __DIR__ . '/Formulario.php';
-require_once __DIR__ . '/../../entities/pedido.php';
-require_once __DIR__ . '/../../includes/productoService.php';
+require_once __DIR__ . '/../../entities/Pedido.php';
+require_once __DIR__ . '/../../includes/ProductoDAO.php';
 require_once __DIR__ . '/../../includes/util.php';
-require_once __DIR__ . '/../../includes/pedidoService.php';
+require_once __DIR__ . '/../../includes/PedidoService.php';
 
 class FormularioAddCarrito extends Formulario {
 
-    private $pedido_id;
     private $producto_id;
     private $categoria_id;
 
-    public function __construct(int $pedido_id, int $producto_id, int $categoria_id) {
-        $this->pedido_id = $pedido_id;
+    public function __construct(int $producto_id, int $categoria_id) {
         $this->producto_id = $producto_id;
         $this->categoria_id = $categoria_id;
         
@@ -39,10 +37,10 @@ class FormularioAddCarrito extends Formulario {
         $prod_id = (int)($datos['producto_id'] ?? 0);
         
         if ($prod_id > 0) {
-            $producto = \ProductoService::getById($prod_id);
+            $producto = \ProductoDAO::getById($prod_id);
             if ($producto) {
                 $precio = $producto->getPrecioFinal();
-                \PedidoService::addProducto($this->pedido_id, $prod_id, $precio);
+                \PedidoService::agregarProductoAlCarrito($prod_id, $precio);
                 flash_set('success', 'Producto añadido al carrito.');
             } else {
                 return ['general' => 'El producto no existe.'];

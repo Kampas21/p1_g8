@@ -2,16 +2,14 @@
 namespace es\ucm\fdi\aw\Formulario;
 
 require_once __DIR__ . '/Formulario.php';
-require_once __DIR__ . '/../../includes/pedidoService.php';
+require_once __DIR__ . '/../../includes/PedidoService.php';
 
 class FormularioEliminarLineaPedido extends Formulario {
 
-    private $pedido_id;
     private $producto_id;
 
-    public function __construct($pedido_id, $producto_id) {
+    public function __construct($producto_id) {
         parent::__construct('formRemoveLinea_' . $producto_id);
-        $this->pedido_id = $pedido_id;
         $this->producto_id = $producto_id;
     }
 
@@ -25,13 +23,19 @@ HTML;
 
     protected function procesaFormulario(&$datos) {
 
-        $producto_id = filter_var($datos['producto_id'], FILTER_VALIDATE_INT);
+        $producto_id = trim($datos['producto_id'] ?? '');
 
-        if (!$producto_id) {
+        if (empty($producto_id)) {
             return;
         }
 
-        \PedidoService::removeProducto($this->pedido_id, $producto_id);
+        \PedidoService::eliminarProductoDelCarrito($producto_id);
+
+        $ofertas = $_SESSION['ofertas_seleccionadas'] ?? [];
+
+        $errores = \OfertaService::aplicarOfertas($ofertas);
+
+        $_SESSION['errores_ofertas'] = $errores;
 
         header("Location: " . RUTA_APP . "/vistas/pedidos/carrito.php");
         exit;

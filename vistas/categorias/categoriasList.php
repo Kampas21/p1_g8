@@ -2,7 +2,9 @@
 
 
 require_once __DIR__ . '/../../includes/auth.php';
-require_once __DIR__ . '/../../scripts/categorias/cargarCategorias.php';
+require_once __DIR__ . '/../../includes/CategoriaDAO.php';
+
+$categorias = CategoriaDAO::getAll();
 
 $user = current_user();
 if (!$user || !user_has_role($user, 'gerente')) {
@@ -37,12 +39,13 @@ ob_start();
 <?php if (empty($categorias)): ?>
     <p>No hay categorías.</p>
 <?php else: ?>
-    <table class="tabla">
+    <table class="tabla tabla-movil">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Nombre</th>
                 <th>Descripción</th>
+                <th>Imagen</th>
                 <th>Estado</th>
                 <th>Acciones</th>
             </tr>

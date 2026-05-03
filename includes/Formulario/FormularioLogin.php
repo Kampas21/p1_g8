@@ -2,7 +2,7 @@
 namespace es\ucm\fdi\aw\Formulario; 
 
 require_once __DIR__ . '/Formulario.php';
-require_once __DIR__ . '/../../includes/user_repo.php'; 
+require_once __DIR__ . '/../../includes/UsuarioDAO.php'; 
 require_once __DIR__ . '/../../includes/auth.php'; 
 
 class FormularioLogin extends Formulario
@@ -62,11 +62,11 @@ class FormularioLogin extends Formulario
         }
         
         if (count($this->errores) === 0) {
-            $user = user_find_by_username_or_email($login);
+            $user = \UsuarioDAO::user_find_by_username_or_email($login);
             
             
             if (!$user || !password_verify($password, $user->getPasswordHash())) {
-                $this->errores['global'] = "El usuario o el password introducido no son correctos.";
+                $this->errores[0] = "El usuario o la contraseña introducidos no son correctos.";
             } else {
                 login_user($user); 
             }

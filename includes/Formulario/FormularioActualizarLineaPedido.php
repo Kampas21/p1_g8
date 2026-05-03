@@ -2,21 +2,20 @@
 namespace es\ucm\fdi\aw\Formulario;
 
 require_once __DIR__ . '/Formulario.php';
-require_once __DIR__ . '/../../entities/pedido.php';
-require_once __DIR__ . '/../../includes/pedidoService.php';
+require_once __DIR__ . '/../../entities/Pedido.php';
+require_once __DIR__ . '/../../includes/PedidoService.php';
+require_once __DIR__ . '/../../includes/OfertaService.php';
 
 class FormularioActualizarLineaPedido extends Formulario {
 
-    private $pedido_id;
-    private $producto_id;
+    private $linea_id;
     private $cantidad_actual;
 
-    public function __construct(int $pedido_id, int $producto_id, int $cantidad_actual) {
-        $this->pedido_id = $pedido_id;
-        $this->producto_id = $producto_id;
+    public function __construct(int $linea_id, int $cantidad_actual) {
+        $this->linea_id = $linea_id;
         $this->cantidad_actual = $cantidad_actual;
         
-        parent::__construct("formUpdateLinea_{$producto_id}", [
+        parent::__construct("formUpdateLinea_{$linea_id}", [
             'urlRedireccion' => 'carrito.php',
             'class' => 'inline-form'
         ]);
@@ -24,24 +23,30 @@ class FormularioActualizarLineaPedido extends Formulario {
 
     protected function generaCamposFormulario(&$datos) {
         return <<<EOF
-            <input type="hidden" name="producto_id" value="{$this->producto_id}">
+            <input type="hidden" name="linea_id" value="{$this->linea_id}">
             <input type="number" name="cantidad" value="{$this->cantidad_actual}" min="0" class="input-cantidad">
             <button type="submit" class="btn small">OK</button>
         EOF;
     }
 
     protected function procesaFormulario(&$datos) {
-        $prod_id = (int)($datos['producto_id'] ?? 0);
+        $linea_id = (int)($datos['linea_id'] ?? 0);
         $cantidad = (int)($datos['cantidad'] ?? 1);
         
-        if ($prod_id > 0) {
+        if ($linea_id > 0) {
             if ($cantidad <= 0) {
-                \PedidoService::removeProducto($this->pedido_id, $prod_id);
+                \PedidoService::eliminarProductoDelCarrito($linea_id);
                 flash_set('success', 'Producto eliminado del carrito.');
             } else {
-                \PedidoService::updateCantidad($this->pedido_id, $prod_id, $cantidad);
+                \PedidoService::actualizarCantidadCarrito($linea_id, $cantidad);
                 flash_set('success', 'Cantidad actualizada.');
             }
         }
+
+        $ofertas = $_SESSION['ofertas_seleccionadas'] ?? [];
+
+        $errores = \OfertaService::aplicarOfertas($ofertas);
+
+        $_SESSION['errores_ofertas'] = $errores;
     }
 }

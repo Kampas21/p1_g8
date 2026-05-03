@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS `productos` (
     `disponible` BOOLEAN,
     `ofertado` BOOLEAN,
     `imagen` VARCHAR(255) DEFAULT NULL,
+    `se_cocina` BOOLEAN DEFAULT 1,
     FOREIGN KEY (`categoria_id`) REFERENCES `categorias`(`id`)
 );
 
@@ -37,7 +38,8 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
     `activo` TINYINT(1) NOT NULL DEFAULT 1,
     `deleted_at` TIMESTAMP NULL DEFAULT NULL,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `bistrocoins` INT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS `pedidos`(
@@ -56,12 +58,16 @@ CREATE TABLE IF NOT EXISTS `pedidos`(
     `total_descuento` DECIMAL(10,2) DEFAULT 0,
     
     `total` DECIMAL(10,2) GENERATED ALWAYS AS (total_sin_descuentos - total_descuento) STORED,
-
+    `bistrocoins_generados` INT NOT NULL DEFAULT 0,
+    `bistrocoins_gastados` INT NOT NULL DEFAULT 0,
+    `bistrocoins_liquidados` TINYINT(1) NOT NULL DEFAULT 0,
     `cocinero_id` INT DEFAULT NULL,
+    `camarero_id` INT DEFAULT NULL,
 
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
     UNIQUE (`fecha`, `numero_pedido`),      
-    FOREIGN KEY (cocinero_id) REFERENCES usuarios(id)
+    FOREIGN KEY (cocinero_id) REFERENCES usuarios(id),
+    FOREIGN KEY (camarero_id) REFERENCES usuarios(id)
 );
 
 
@@ -74,12 +80,25 @@ CREATE TABLE IF NOT EXISTS `productos_en_pedido` (
     `cantidad` INT NOT NULL DEFAULT 1,
     `precio_unitario` DECIMAL(10,2) NOT NULL,
 
-    `estado` ENUM('pendiente', 'preparado') DEFAULT 'pendiente',
-    
+    `estado` ENUM('pendiente', 'preparado', 'terminado') DEFAULT 'pendiente',
+    `es_recompensa` TINYINT(1) NOT NULL DEFAULT 0,
+    `bistrocoins_unitarios` INT NOT NULL DEFAULT 0,
+
     FOREIGN KEY (`pedido_id`) REFERENCES `pedidos`(`id`) ON DELETE CASCADE,
     FOREIGN KEY (`producto_id`) REFERENCES `productos`(`id`) ON DELETE CASCADE,
 
     UNIQUE (pedido_id, producto_id)
+);
+
+CREATE TABLE IF NOT EXISTS `recompensas` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `producto_id` INT NOT NULL,
+    `bistrocoins` INT NOT NULL,
+    `activa` TINYINT(1) NOT NULL DEFAULT 1,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`producto_id`) REFERENCES `productos`(`id`) ON DELETE CASCADE,
+    UNIQUE (`producto_id`)
 );
 
 /* =========================

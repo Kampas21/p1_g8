@@ -1,9 +1,8 @@
 <?php
-//require_once __DIR__ . '/../../entities/oferta.php';
-require_once __DIR__ . '/../../includes/productoService.php';
-require_once __DIR__ . '/../../includes/ofertaDAO.php';
+require_once __DIR__ . '/../../includes/ProductoDAO.php';
+require_once __DIR__ . '/../../includes/OfertaDAO.php';
 
-$productos = ProductoService::getAllActivos();
+$productos = ProductoDAO::getAllActivos();
 
 $modoEdicion = isset($oferta);
 
@@ -28,11 +27,9 @@ $fecha_fin = $modoEdicion && $oferta->getFechaFin()
 $productosSeleccionados = [];
 
 if ($modoEdicion) {
-    $productosSeleccionados = ProductoService::getProductosDeOferta($oferta->getId());
+    $productosSeleccionados = ProductoDAO::getProductosDeOferta($oferta->getId());
 }
 ?>
-
-<link href="../../CSS/estilo.css" rel="stylesheet" type="text/css">
 
 <h1><?= $modoEdicion ? 'Editar Oferta' : 'Nueva Oferta' ?></h1>
 
@@ -58,70 +55,41 @@ if ($modoEdicion) {
         <input type="datetime-local" name="fecha_fin" value="<?= htmlspecialchars($fecha_fin) ?>" required>
     </p>
     
-    <p>
-        <label>Descuento (%), del 1 al 100:</label><br>
-        <input type="number" name="descuento" step="0.01" min="0" max="100"
-            value="<?= htmlspecialchars($descuento) ?>" required>
+    <!-- El descuento se calcula automáticamente por JS según el total -->
+    <input type="hidden" id="descuentoCalculado" name="descuento"
+           value="<?= htmlspecialchars($descuento ?: 5) ?>">
 
-        <!-- <label>Precio con descuento aplicado, solo se pueden dos decimales:</label><br>
-        <input type="number" name="precio_des" step="0.01" min="0"
-            value="<?= htmlspecialchars($precio_des) ?>" required> -->
-    </p>
+    <h3>Añadir productos dinámicamente</h3>
 
+    <a class="btn-aceptar" id="aAddProduct" href="#">Añadir producto</a>
 
+    <!--
+        <template> — patrón del Ejemplo1V2 (formularioOfertasV2.js).
+        JS clona este bloque cada vez que el usuario pulsa "Añadir producto".
+        Las opciones se generan desde PHP con los productos reales de la BD.
+    -->
+    <template id="mySelectProductsTemplate">
+        <div class="fila-producto-dinamica mt-6">
+            <select name="mySelectProduct[]" class="form-control mb-1">
+                <option value="" selected>Seleccione un producto</option>
+                <?php foreach ($productos as $p): ?>
+                <option value="<?= $p->getId() ?>"
+                        data-precio="<?= $p->getPrecioFinal() ?>">
+                    <?= htmlspecialchars($p->getNombre()) ?>
+                    (<?= number_format($p->getPrecioFinal(), 2) ?> €)
+                </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+    </template>
 
-    <h3>Productos de la oferta</h3>
+    <div id="contenedorProductosDinamicos"></div>
 
-    <table border="1">
-        <tr>
-            <?php
-            if ($modoEdicion) {
-                echo '<th>Seleccionados</th>';
-            }
-            ?>
-            <th>Producto</th>
-            <th>Precio</th>
-            <th>Cantidad</th>
-        </tr>
+    <h3>Resumen</h3>
 
-        <?php foreach ($productos as $p):
-            $cantidad = 0;
-
-            if ($modoEdicion) {
-                foreach ($productosSeleccionados as $ps) {
-                    if ($ps->getId() == $p->getId()) {
-                        $cantidad = $ps->cantidad;
-                        break;
-                    }
-                }
-            }
-
-        ?>
-
-            <tr>
-
-                <?php if ($modoEdicion): ?>
-                    <td>
-                        <?= $cantidad > 0
-                            ? '<span class="text-success">✔</span>'
-                            : '<span class="text-gray">—</span>' ?>
-                    </td>
-                <?php endif; ?>
-
-
-                <td><?= htmlspecialchars($p->getNombre()) ?></td>
-                <td><?= number_format($p->getPrecioFinal(), 2) ?> €</td>
-
-                <td>
-                    <input type="number"
-                        name="cantidades[<?= $p->getId() ?>]"
-                        value="<?= $cantidad ?>"
-                        min="0">
-                </td>
-            </tr>
-
-        <?php endforeach; ?>
-    </table>
+    <p>Total: <span id="precioTotal">0</span> €</p>
+    <p>Descuento: <span id="descuentoTxt">0</span> %</p>
+    <p>Precio final: <span id="precioFinal">0</span> €</p>
 
     <h3>Resumen</h3>
 
