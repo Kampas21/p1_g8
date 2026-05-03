@@ -91,12 +91,6 @@ if ($modoEdicion) {
     <p>Descuento: <span id="descuentoTxt">0</span> %</p>
     <p>Precio final: <span id="precioFinal">0</span> €</p>
 
-    <h3>Resumen</h3>
-
-    <p>Total: <span id="precioTotal">0</span> €</p>
-    <p>Descuento: <span id="descuentoTxt">0</span> %</p>
-    <p>Precio final: <span id="precioFinal">0</span> €</p>
-
     <p>
         <button type="submit" class="btn-aceptar">Guardar</button>
     </p>
