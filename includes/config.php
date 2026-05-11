@@ -4,7 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-/*
+
  //---- PARA LOCAL (XAMPP) ----
     define("DB_HOST", "localhost");
     define("DB_USER", "root");
@@ -12,9 +12,10 @@ if (session_status() === PHP_SESSION_NONE) {
     define("DB_NAME", "BistroFDI_G8");
 
 
-    define('RUTA_APP', '/p1_g8');
-*/
+    define('RUTA_APP', '/P1/p1_g8');
 
+/*
+//prueba github
 //   ---- PARA EL VPS ----
     define("DB_HOST", "vm017.db.swarm.test");
     define("DB_USER", "root");  
@@ -23,5 +24,5 @@ if (session_status() === PHP_SESSION_NONE) {
 
     define('RUTA_APP', ''); 
 
-
+*/
 ?>
